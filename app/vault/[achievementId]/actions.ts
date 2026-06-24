@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createEvidenceSchema } from "@/lib/validation/evidence";
+import { createAchievementSchema } from "@/lib/validation/achievement";
 import { createPublicSlug, generateProofCode } from "@/lib/proof/codes";
 
 type AddEvidenceState = {
@@ -203,6 +204,115 @@ export async function generatePublicProofLink(achievementId: string) {
   revalidatePath("/vault");
   revalidatePath("/dashboard");
   revalidatePath(`/proof/${publicSlug}`);
+
+  redirect(`/vault/${achievementId}`);
+}
+
+export async function updateAchievement(
+  achievementId: string,
+  formData: FormData
+) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  const rawInput = {
+    title: String(formData.get("title") || ""),
+    category: String(formData.get("category") || "other"),
+    issuer: String(formData.get("issuer") || ""),
+    achievementDate: String(formData.get("achievementDate") || ""),
+    description: String(formData.get("description") || ""),
+    impactSummary: String(formData.get("impactSummary") || ""),
+    visibility: String(formData.get("visibility") || "private"),
+  };
+
+  const parsed = createAchievementSchema.safeParse(rawInput);
+
+  if (!parsed.success) {
+    const message =
+      parsed.error.issues[0]?.message || "Invalid achievement data.";
+
+    redirect(`/vault/${achievementId}/edit?error=${encodeURIComponent(message)}`);
+  }
+
+  const input = parsed.data;
+
+  const { data: existingRecord, error: existingRecordError } = await supabase
+    .from("achievements")
+    .select(
+      "id, user_id, title, category, issuer, achievement_date, description, impact_summary, visibility"
+    )
+    .eq("id", achievementId)
+    .eq("user_id", user.id)
+    .single();
+
+  if (existingRecordError || !existingRecord) {
+    redirect(`/vault/${achievementId}/edit?error=record-not-found`);
+  }
+
+  const updatedRecord = {
+    title: input.title,
+    category: input.category,
+    issuer: input.issuer || null,
+    achievement_date: input.achievementDate || null,
+    description: input.description || null,
+    impact_summary: input.impactSummary || null,
+    visibility: input.visibility,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error: updateError } = await supabase
+    .from("achievements")
+    .update(updatedRecord)
+    .eq("id", achievementId)
+    .eq("user_id", user.id);
+
+  if (updateError) {
+    redirect(
+      `/vault/${achievementId}/edit?error=${encodeURIComponent(
+        updateError.message
+      )}`
+    );
+  }
+
+  await supabase.from("audit_logs").insert({
+    user_id: user.id,
+    achievement_id: achievementId,
+    action: "achievement.updated",
+    entity_type: "achievement",
+    entity_id: achievementId,
+    metadata: {
+      previous: {
+        title: existingRecord.title,
+        category: existingRecord.category,
+        issuer: existingRecord.issuer,
+        achievement_date: existingRecord.achievement_date,
+        description: existingRecord.description,
+        impact_summary: existingRecord.impact_summary,
+        visibility: existingRecord.visibility,
+      },
+      updated: {
+        title: input.title,
+        category: input.category,
+        issuer: input.issuer || null,
+        achievement_date: input.achievementDate || null,
+        description: input.description || null,
+        impact_summary: input.impactSummary || null,
+        visibility: input.visibility,
+      },
+    },
+  });
+
+  revalidatePath(`/vault/${achievementId}`);
+  revalidatePath(`/vault/${achievementId}/edit`);
+  revalidatePath("/vault");
+  revalidatePath("/dashboard");
 
   redirect(`/vault/${achievementId}`);
 }

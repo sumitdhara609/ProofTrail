@@ -114,16 +114,25 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
     <main className="min-h-screen bg-[#08090d] px-6 py-10 text-white sm:px-10 lg:px-16">
       <section className="mx-auto max-w-7xl">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <Link href="/vault" className="text-sm font-medium text-cyan-200">
-            ← Back to archive
-          </Link>
+  <Link href="/vault" className="text-sm font-medium text-cyan-200">
+    ← Back to archive
+  </Link>
 
-          <div className="flex flex-wrap gap-3 text-xs text-white/35">
-            <span>Created {formatDate(record.created_at)}</span>
-            <span>•</span>
-            <span>Updated {formatDate(record.updated_at)}</span>
-          </div>
-        </div>
+  <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-wrap gap-3 text-xs text-white/35">
+      <span>Created {formatDate(record.created_at)}</span>
+      <span>•</span>
+      <span>Updated {formatDate(record.updated_at)}</span>
+    </div>
+
+    <Link
+      href={`/vault/${record.id}/edit`}
+      className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-xs font-semibold text-white/60 transition hover:bg-white/[0.06] hover:text-white"
+    >
+      Edit record
+    </Link>
+  </div>
+</div>
 
         <div className="mt-10 overflow-hidden rounded-[2.75rem] border border-white/10 bg-white/[0.032] shadow-2xl shadow-black/30">
           <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
