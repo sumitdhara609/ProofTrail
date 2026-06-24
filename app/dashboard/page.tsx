@@ -2,6 +2,24 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/auth/actions";
+import { AchievementRecord, AuditLog } from "@/lib/proof/types";
+
+function formatStatus(status: string) {
+  return status
+    .split("_")
+    .map((part) => part[0].toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function formatDateTime(value: string) {
+  return new Date(value).toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -16,80 +34,309 @@ export default async function DashboardPage() {
 
   const fullName = user.user_metadata?.full_name || "ProofTrail user";
 
-  const { count: achievementCount } = await supabase
+  const { data: achievements } = await supabase
     .from("achievements")
-    .select("*", { count: "exact", head: true })
-    .eq("user_id", user.id);
-
-  const { count: evidenceCount } = await supabase
-    .from("evidence_items")
-    .select("*", { count: "exact", head: true })
-    .eq("user_id", user.id);
-
-  const { count: publicProofCount } = await supabase
-    .from("public_proof_links")
-    .select("*", { count: "exact", head: true })
+    .select("*")
     .eq("user_id", user.id)
-    .eq("is_active", true);
+    .order("updated_at", { ascending: false });
+
+  const records = (achievements || []) as AchievementRecord[];
+  const recordIds = records.map((record) => record.id);
+
+  const { data: evidenceItems } =
+    recordIds.length > 0
+      ? await supabase
+          .from("evidence_items")
+          .select("id, achievement_id, is_public")
+          .eq("user_id", user.id)
+          .in("achievement_id", recordIds)
+      : { data: [] };
+
+  const { data: proofLinks } =
+    recordIds.length > 0
+      ? await supabase
+          .from("public_proof_links")
+          .select("id, achievement_id")
+          .eq("user_id", user.id)
+          .eq("is_active", true)
+          .in("achievement_id", recordIds)
+      : { data: [] };
+
+  const { data: auditLogs } = await supabase
+    .from("audit_logs")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(5);
+
+  const totalRecords = records.length;
+  const evidenceCount = evidenceItems?.length || 0;
+  const proofIdentityCount = proofLinks?.length || 0;
+
+  const recordsWaitingForEvidence = records.filter((record) => {
+    return !evidenceItems?.some((item) => item.achievement_id === record.id);
+  });
+
+  const recordsReadyForProof = records.filter((record) => {
+    const hasEvidence = evidenceItems?.some(
+      (item) => item.achievement_id === record.id
+    );
+
+    const hasProof = proofLinks?.some(
+      (link) => link.achievement_id === record.id
+    );
+
+    return hasEvidence && !hasProof;
+  });
+
+  const recentRecords = records.slice(0, 3);
+  const recentLogs = (auditLogs || []) as AuditLog[];
 
   return (
     <main className="min-h-screen bg-[#08090d] px-6 py-10 text-white sm:px-10 lg:px-16">
       <section className="mx-auto max-w-7xl">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.22em] text-cyan-200/80">
-              Command center
+            <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
+              Vault Overview
             </p>
-            <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em]">
-              Welcome, {fullName}.
+
+            <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-[-0.05em] sm:text-5xl">
+              Welcome back, {fullName}.
             </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55">
-              Your vault will grow into a structured record of achievements,
-              evidence, proof identities, and trust events.
+
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-white/55">
+              This is the control room for your proof records — a place to
+              preserve achievements, strengthen evidence, and prepare selected
+              records for public proof identity.
             </p>
           </div>
 
-          <form action={signOut}>
-            <button
-              type="submit"
-              className="rounded-full border border-white/10 bg-white/[0.03] px-5 py-3 text-sm font-medium text-white/70 transition hover:bg-white/[0.06] hover:text-white"
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/vault/new"
+              className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
             >
-              Sign out
-            </button>
-          </form>
-        </div>
+              New record
+            </Link>
 
-        <div className="mt-12 grid gap-4 lg:grid-cols-3">
-          <Link
-            href="/vault"
-            className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6 transition hover:border-cyan-300/25 hover:bg-white/[0.055]"
-          >
-            <p className="text-sm text-white/40">Achievement records</p>
-            <p className="mt-3 text-3xl font-semibold">
-              {achievementCount || 0}
-            </p>
-          </Link>
+            <Link
+              href="/vault"
+              className="rounded-full border border-white/10 bg-white/[0.03] px-6 py-3 text-sm font-semibold text-white/75 transition hover:bg-white/[0.06] hover:text-white"
+            >
+              Open archive
+            </Link>
 
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
-            <p className="text-sm text-white/40">Public proof cards</p>
-            <p className="mt-3 text-3xl font-semibold">
-              {publicProofCount || 0}
-            </p>
-          </div>
-
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
-            <p className="text-sm text-white/40">Evidence items</p>
-            <p className="mt-3 text-3xl font-semibold">{evidenceCount || 0}</p>
+            <form action={signOut}>
+              <button
+                type="submit"
+                className="rounded-full border border-white/10 bg-white/[0.03] px-6 py-3 text-sm font-semibold text-white/55 transition hover:bg-white/[0.06] hover:text-white"
+              >
+                Sign out
+              </button>
+            </form>
           </div>
         </div>
 
-        <div className="mt-10">
-          <Link
-            href="/vault/new"
-            className="inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
-          >
-            Create new record
-          </Link>
+        <div className="mt-12 overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.035]">
+          <div className="grid lg:grid-cols-[1fr_1.2fr]">
+            <div className="border-b border-white/10 p-8 lg:border-b-0 lg:border-r lg:p-10">
+              <p className="text-sm uppercase tracking-[0.24em] text-white/35">
+                Vault state
+              </p>
+
+              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
+                {totalRecords === 0
+                  ? "Your archive is waiting for its first record."
+                  : `${totalRecords} record${
+                      totalRecords === 1 ? "" : "s"
+                    } preserved so far.`}
+              </h2>
+
+              <p className="mt-5 text-sm leading-7 text-white/50">
+                A strong ProofTrail record is not only written. It is supported
+                by evidence, given a clear status, and shared only when ready.
+              </p>
+
+              <div className="mt-8 grid grid-cols-3 gap-3">
+                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                  <p className="text-xs text-white/35">Records</p>
+                  <p className="mt-2 text-2xl font-semibold">{totalRecords}</p>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                  <p className="text-xs text-white/35">Evidence</p>
+                  <p className="mt-2 text-2xl font-semibold">{evidenceCount}</p>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                  <p className="text-xs text-white/35">Proof IDs</p>
+                  <p className="mt-2 text-2xl font-semibold">
+                    {proofIdentityCount}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-8 lg:p-10">
+              <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
+                Suggested next action
+              </p>
+
+              {totalRecords === 0 ? (
+                <>
+                  <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
+                    Create the first record in your proof archive.
+                  </h2>
+                  <p className="mt-5 text-sm leading-7 text-white/50">
+                    Begin with one achievement that has clear context and at
+                    least one piece of evidence you can attach later.
+                  </p>
+                  <Link
+                    href="/vault/new"
+                    className="mt-8 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
+                  >
+                    Create first record
+                  </Link>
+                </>
+              ) : recordsWaitingForEvidence.length > 0 ? (
+                <>
+                  <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
+                    Strengthen records that still have no evidence.
+                  </h2>
+                  <p className="mt-5 text-sm leading-7 text-white/50">
+                    {recordsWaitingForEvidence.length} record
+                    {recordsWaitingForEvidence.length === 1 ? "" : "s"} still
+                    need supporting evidence before they become meaningful proof
+                    entries.
+                  </p>
+                  <Link
+                    href={`/vault/${recordsWaitingForEvidence[0].id}`}
+                    className="mt-8 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
+                  >
+                    Add evidence
+                  </Link>
+                </>
+              ) : recordsReadyForProof.length > 0 ? (
+                <>
+                  <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
+                    Some records are ready for proof identity.
+                  </h2>
+                  <p className="mt-5 text-sm leading-7 text-white/50">
+                    These records already contain evidence and can now receive a
+                    public ProofTrail ID with QR-backed sharing.
+                  </p>
+                  <Link
+                    href={`/vault/${recordsReadyForProof[0].id}`}
+                    className="mt-8 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
+                  >
+                    Generate proof identity
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
+                    Your proof archive is in good shape.
+                  </h2>
+                  <p className="mt-5 text-sm leading-7 text-white/50">
+                    Continue preserving new achievements or review existing
+                    public proof cards for clarity and evidence quality.
+                  </p>
+                  <Link
+                    href="/vault"
+                    className="mt-8 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
+                  >
+                    Review archive
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="rounded-[2.5rem] border border-white/10 bg-white/[0.035] p-8">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
+                  Recent records
+                </p>
+                <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em]">
+                  Latest archive entries
+                </h2>
+              </div>
+
+              <Link
+                href="/vault"
+                className="text-sm font-medium text-white/40 transition hover:text-cyan-200"
+              >
+                View all →
+              </Link>
+            </div>
+
+            {recentRecords.length === 0 ? (
+              <p className="mt-6 text-sm leading-7 text-white/50">
+                No records have been created yet.
+              </p>
+            ) : (
+              <div className="mt-6 space-y-3">
+                {recentRecords.map((record) => (
+                  <Link
+                    key={record.id}
+                    href={`/vault/${record.id}`}
+                    className="block rounded-2xl border border-white/10 bg-black/20 p-5 transition hover:border-cyan-300/25 hover:bg-white/[0.045]"
+                  >
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-white">
+                          {record.title}
+                        </p>
+                        <p className="mt-2 text-xs uppercase tracking-[0.16em] text-white/35">
+                          {record.category}
+                        </p>
+                      </div>
+
+                      <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-100">
+                        {formatStatus(record.verification_status)}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="rounded-[2.5rem] border border-white/10 bg-white/[0.035] p-8">
+            <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
+              Trust events
+            </p>
+
+            <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em]">
+              Recent audit trail
+            </h2>
+
+            {recentLogs.length === 0 ? (
+              <p className="mt-6 text-sm leading-7 text-white/50">
+                No trust events have been recorded yet.
+              </p>
+            ) : (
+              <div className="mt-6 space-y-3">
+                {recentLogs.map((log) => (
+                  <div
+                    key={log.id}
+                    className="rounded-2xl border border-white/10 bg-black/20 p-5"
+                  >
+                    <p className="text-sm font-medium text-white">
+                      {log.action}
+                    </p>
+                    <p className="mt-2 text-xs text-white/35">
+                      {formatDateTime(log.created_at)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </section>
     </main>
