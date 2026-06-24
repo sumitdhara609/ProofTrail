@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AddEvidenceForm } from "@/components/vault/AddEvidenceForm";
 import {
+  deactivatePublicProofLink,
   deleteEvidenceItem,
   generatePublicProofLink,
 } from "@/app/vault/[achievementId]/actions";
@@ -266,14 +267,25 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
                       </div>
                     ) : null}
 
-                    <a
-                      href={`/proof/${proofLink.public_slug}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-5 inline-flex w-full justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
-                    >
-                      Open public proof
-                    </a>
+                    <div className="mt-5 space-y-3">
+  <a
+    href={`/proof/${proofLink.public_slug}`}
+    target="_blank"
+    rel="noreferrer"
+    className="inline-flex w-full justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
+  >
+    Open public proof
+  </a>
+
+  <form action={deactivatePublicProofLink.bind(null, record.id)}>
+    <button
+      type="submit"
+      className="w-full rounded-full border border-red-400/20 bg-red-400/[0.06] px-5 py-3 text-sm font-semibold text-red-100/80 transition hover:bg-red-400/10 hover:text-red-100"
+    >
+      Deactivate public proof
+    </button>
+  </form>
+</div>
                   </>
                 ) : (
                   <>

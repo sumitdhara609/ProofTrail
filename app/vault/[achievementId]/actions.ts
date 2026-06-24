@@ -492,3 +492,64 @@ export async function deleteAchievement(achievementId: string) {
 
   redirect("/vault");
 }
+export async function deactivatePublicProofLink(achievementId: string) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  const { data: proofLink, error: proofLinkError } = await supabase
+    .from("public_proof_links")
+    .select("id, achievement_id, user_id, proof_code, public_slug, qr_target_url")
+    .eq("achievement_id", achievementId)
+    .eq("user_id", user.id)
+    .eq("is_active", true)
+    .single();
+
+  if (proofLinkError || !proofLink) {
+    redirect(`/vault/${achievementId}?error=active-proof-link-not-found`);
+  }
+
+  const { error: updateError } = await supabase
+    .from("public_proof_links")
+    .update({
+      is_active: false,
+      revoked_at: new Date().toISOString(),
+    })
+    .eq("id", proofLink.id)
+    .eq("achievement_id", achievementId)
+    .eq("user_id", user.id);
+
+  if (updateError) {
+    redirect(
+      `/vault/${achievementId}?error=${encodeURIComponent(
+        updateError.message
+      )}`
+    );
+  }
+
+  await supabase.from("audit_logs").insert({
+    user_id: user.id,
+    achievement_id: achievementId,
+    action: "proof_link.deactivated",
+    entity_type: "public_proof_link",
+    entity_id: proofLink.id,
+    metadata: {
+      proof_code: proofLink.proof_code,
+      public_slug: proofLink.public_slug,
+      qr_target_url: proofLink.qr_target_url,
+    },
+  });
+
+  revalidatePath(`/vault/${achievementId}`);
+  revalidatePath("/vault");
+  revalidatePath("/dashboard");
+  revalidatePath(`/proof/${proofLink.public_slug}`);
+
+  redirect(`/vault/${achievementId}`);
+}
