@@ -316,6 +316,7 @@ export async function updateAchievement(
 
   redirect(`/vault/${achievementId}`);
 }
+
 export async function deleteEvidenceItem(
   achievementId: string,
   evidenceItemId: string
@@ -332,7 +333,9 @@ export async function deleteEvidenceItem(
 
   const { data: evidenceItem, error: evidenceLookupError } = await supabase
     .from("evidence_items")
-    .select("id, achievement_id, user_id, title, evidence_type, source_url, is_public")
+    .select(
+      "id, achievement_id, user_id, title, evidence_type, source_url, is_public"
+    )
     .eq("id", evidenceItemId)
     .eq("achievement_id", achievementId)
     .eq("user_id", user.id)
@@ -389,8 +392,8 @@ export async function deleteEvidenceItem(
       .eq("id", achievementId)
       .eq("user_id", user.id);
   } else {
-    const hasSourceLinkedEvidence = remainingItems.some(
-      (item) => Boolean(item.source_url)
+    const hasSourceLinkedEvidence = remainingItems.some((item) =>
+      Boolean(item.source_url)
     );
 
     await supabase
@@ -410,4 +413,82 @@ export async function deleteEvidenceItem(
   revalidatePath("/dashboard");
 
   redirect(`/vault/${achievementId}`);
+}
+
+export async function deleteAchievement(achievementId: string) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  const { data: achievement, error: achievementError } = await supabase
+    .from("achievements")
+    .select("id, user_id, title, category, visibility, verification_status")
+    .eq("id", achievementId)
+    .eq("user_id", user.id)
+    .single();
+
+  if (achievementError || !achievement) {
+    redirect(`/vault/${achievementId}/delete?error=record-not-found`);
+  }
+
+  const { count: evidenceCount } = await supabase
+    .from("evidence_items")
+    .select("*", { count: "exact", head: true })
+    .eq("achievement_id", achievementId)
+    .eq("user_id", user.id);
+
+  const { data: proofLink } = await supabase
+    .from("public_proof_links")
+    .select("id, proof_code, public_slug")
+    .eq("achievement_id", achievementId)
+    .eq("user_id", user.id)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  await supabase.from("audit_logs").insert({
+    user_id: user.id,
+    achievement_id: achievementId,
+    action: "achievement.deleted",
+    entity_type: "achievement",
+    entity_id: achievementId,
+    metadata: {
+      title: achievement.title,
+      category: achievement.category,
+      visibility: achievement.visibility,
+      verification_status: achievement.verification_status,
+      evidence_count: evidenceCount || 0,
+      proof_link: proofLink
+        ? {
+            id: proofLink.id,
+            proof_code: proofLink.proof_code,
+            public_slug: proofLink.public_slug,
+          }
+        : null,
+    },
+  });
+
+  const { error: deleteError } = await supabase
+    .from("achievements")
+    .delete()
+    .eq("id", achievementId)
+    .eq("user_id", user.id);
+
+  if (deleteError) {
+    redirect(
+      `/vault/${achievementId}/delete?error=${encodeURIComponent(
+        deleteError.message
+      )}`
+    );
+  }
+
+  revalidatePath("/vault");
+  revalidatePath("/dashboard");
+
+  redirect("/vault");
 }

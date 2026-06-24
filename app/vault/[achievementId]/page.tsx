@@ -128,12 +128,21 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
               <span>Updated {formatDate(record.updated_at)}</span>
             </div>
 
-            <Link
-              href={`/vault/${record.id}/edit`}
-              className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-xs font-semibold text-white/60 transition hover:bg-white/[0.06] hover:text-white"
-            >
-              Edit record
-            </Link>
+            <div className="flex flex-wrap items-center gap-2">
+  <Link
+    href={`/vault/${record.id}/edit`}
+    className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-xs font-semibold text-white/60 transition hover:bg-white/[0.06] hover:text-white"
+  >
+    Edit record
+  </Link>
+
+  <Link
+    href={`/vault/${record.id}/delete`}
+    className="rounded-full border border-red-400/20 bg-red-400/[0.06] px-4 py-2 text-xs font-semibold text-red-100/70 transition hover:bg-red-400/10 hover:text-red-100"
+  >
+    Delete
+  </Link>
+</div>
           </div>
         </div>
 
