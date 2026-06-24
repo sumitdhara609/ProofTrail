@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ProofTrail
 
-## Getting Started
+ProofTrail is an evidence-first achievement verification vault that gives every achievement a verifiable digital identity.
 
-First, run the development server:
+Users can store achievements, attach proof, manage visibility, and generate public proof cards with QR-backed sharing.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Vision
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Modern profiles often show claims, but the evidence behind those claims is scattered across certificates, files, posts, links, publications, screenshots, and project repositories.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+ProofTrail turns achievements into structured, evidence-backed records with context, proof, verification status, audit history, and shareable public identity.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Core Direction
 
-## Learn More
+- Multi-user authentication
+- Private achievement vault
+- Evidence-backed achievement records
+- Public proof cards
+- QR code for every achievement
+- Verification status workflow
+- Audit trail for important actions
+- Admin review foundation
+- Privacy-first sharing controls
 
-To learn more about Next.js, take a look at the following resources:
+## Status
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+ProofTrail is currently in early development.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The project is being built with a focus on product clarity, backend depth, data integrity, and long-term engineering quality.
