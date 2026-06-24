@@ -1,65 +1,174 @@
-import Image from "next/image";
+import Link from "next/link";
+
+const pillars = [
+  {
+    title: "Evidence-first records",
+    description:
+      "Achievements are stored with proof, source links, context, dates, and credibility signals.",
+  },
+  {
+    title: "QR-backed sharing",
+    description:
+      "Each public proof card receives a unique link and QR identity for resumes, portfolios, and profiles.",
+  },
+  {
+    title: "Audit-aware trust",
+    description:
+      "Important actions can be tracked through status changes, visibility updates, and verification events.",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen overflow-hidden bg-[#08090d] text-white">
+      <section className="relative px-6 py-8 sm:px-10 lg:px-16">
+        <div className="absolute left-1/2 top-0 -z-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-cyan-500/10 blur-[120px]" />
+        <div className="absolute right-0 top-32 -z-0 h-[360px] w-[360px] rounded-full bg-blue-500/10 blur-[120px]" />
+
+        <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between rounded-full border border-white/10 bg-white/[0.03] px-5 py-3 backdrop-blur-xl">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/10 text-sm font-semibold">
+              PT
+            </div>
+            <span className="text-sm font-medium tracking-wide text-white/90">
+              ProofTrail
+            </span>
+          </Link>
+
+          <div className="hidden items-center gap-8 text-sm text-white/60 md:flex">
+            <a href="#system">System</a>
+            <a href="#proof">Proof Cards</a>
+            <a href="#trust">Trust Layer</a>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/sign-in"
+              className="hidden rounded-full px-4 py-2 text-sm text-white/70 transition hover:text-white sm:inline-flex"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/sign-up"
+              className="rounded-full border border-white/10 bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-white/90"
+            >
+              Start vault
+            </Link>
+          </div>
+        </nav>
+
+        <div className="relative z-10 mx-auto flex max-w-7xl flex-col items-center py-24 text-center sm:py-32">
+          <div className="mb-6 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.24em] text-cyan-200">
+            Evidence-backed achievement identity
+          </div>
+
+          <h1 className="max-w-5xl text-5xl font-semibold tracking-[-0.05em] text-white sm:text-6xl lg:text-7xl">
+            Give every achievement a verifiable digital identity.
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          <p className="mt-7 max-w-2xl text-base leading-8 text-white/60 sm:text-lg">
+            ProofTrail helps users store achievements, attach evidence, manage
+            visibility, and share public proof cards with QR-backed access.
           </p>
+
+          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
+            <Link
+              href="/sign-up"
+              className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
+            >
+              Create proof vault
+            </Link>
+            <Link
+              href="/proof/demo"
+              className="rounded-full border border-white/10 bg-white/[0.03] px-6 py-3 text-sm font-semibold text-white/80 transition hover:bg-white/[0.06]"
+            >
+              View proof card
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      </section>
+
+      <section
+        id="system"
+        className="relative mx-auto grid max-w-7xl gap-4 px-6 pb-24 sm:px-10 lg:grid-cols-3 lg:px-16"
+      >
+        {pillars.map((pillar) => (
+          <article
+            key={pillar.title}
+            className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-7 shadow-2xl shadow-black/20 backdrop-blur-xl"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <div className="mb-8 h-1.5 w-12 rounded-full bg-cyan-300/70" />
+            <h2 className="text-xl font-semibold tracking-tight text-white">
+              {pillar.title}
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-white/55">
+              {pillar.description}
+            </p>
+          </article>
+        ))}
+      </section>
+
+      <section
+        id="proof"
+        className="mx-auto max-w-7xl px-6 pb-28 sm:px-10 lg:px-16"
+      >
+        <div className="grid overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.035] lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="p-8 sm:p-12 lg:p-16">
+            <p className="text-sm font-medium uppercase tracking-[0.22em] text-cyan-200/80">
+              Public proof card
+            </p>
+            <h2 className="mt-5 max-w-2xl text-3xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">
+              A clean public page for every verified record.
+            </h2>
+            <p className="mt-6 max-w-xl text-sm leading-7 text-white/55 sm:text-base">
+              Each achievement can receive a public proof identity with title,
+              owner, issuer, evidence summary, verification status, and QR
+              sharing.
+            </p>
+          </div>
+
+          <div className="border-t border-white/10 bg-black/20 p-8 lg:border-l lg:border-t-0">
+            <div className="rounded-[2rem] border border-white/10 bg-[#0d1017] p-6">
+              <div className="flex items-start justify-between gap-6">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.22em] text-white/40">
+                    ProofTrail ID
+                  </p>
+                  <h3 className="mt-3 text-2xl font-semibold text-white">
+                    CF-2026-9K2X
+                  </h3>
+                </div>
+                <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-white text-xs font-bold text-black">
+                  QR
+                </div>
+              </div>
+
+              <div className="mt-8">
+                <p className="text-sm text-cyan-200">Evidence Attached</p>
+                <h4 className="mt-2 text-xl font-semibold text-white">
+                  ChronoForge MVP Completion
+                </h4>
+                <p className="mt-4 text-sm leading-7 text-white/50">
+                  Timeline simulation platform with protected dashboard,
+                  custom projection engine, and structured product
+                  documentation.
+                </p>
+              </div>
+
+              <div className="mt-8 grid grid-cols-2 gap-3 text-sm">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <p className="text-white/40">Evidence</p>
+                  <p className="mt-1 font-medium text-white">4 items</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <p className="text-white/40">Visibility</p>
+                  <p className="mt-1 font-medium text-white">Public</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }
