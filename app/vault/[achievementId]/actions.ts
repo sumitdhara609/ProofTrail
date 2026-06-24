@@ -1,9 +1,11 @@
 "use server";
 
+import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createEvidenceSchema } from "@/lib/validation/evidence";
+import { createPublicSlug, generateProofCode } from "@/lib/proof/codes";
 
 type AddEvidenceState = {
   error?: string;
@@ -37,8 +39,7 @@ export async function addEvidence(
 
   if (!parsed.success) {
     return {
-      error:
-        parsed.error.issues[0]?.message || "Invalid evidence information.",
+      error: parsed.error.issues[0]?.message || "Invalid evidence information.",
     };
   }
 
@@ -109,4 +110,99 @@ export async function addEvidence(
   revalidatePath("/dashboard");
 
   return {};
+}
+
+export async function generatePublicProofLink(achievementId: string) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  const { data: achievement, error: achievementError } = await supabase
+    .from("achievements")
+    .select("id, user_id, visibility, title")
+    .eq("id", achievementId)
+    .eq("user_id", user.id)
+    .single();
+
+  if (achievementError || !achievement) {
+    redirect(`/vault/${achievementId}?error=record-not-found`);
+  }
+
+  const { data: existingProofLink } = await supabase
+    .from("public_proof_links")
+    .select("id")
+    .eq("achievement_id", achievementId)
+    .eq("user_id", user.id)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if (existingProofLink) {
+    redirect(`/vault/${achievementId}`);
+  }
+
+  const requestHeaders = await headers();
+  const host = requestHeaders.get("host") || "localhost:3000";
+  const protocol = host.includes("localhost") ? "http" : "https";
+
+  const proofCode = generateProofCode();
+  const publicSlug = createPublicSlug(proofCode);
+  const qrTargetUrl = `${protocol}://${host}/proof/${publicSlug}`;
+
+  const { data: proofLink, error: proofError } = await supabase
+    .from("public_proof_links")
+    .insert({
+      achievement_id: achievementId,
+      user_id: user.id,
+      proof_code: proofCode,
+      public_slug: publicSlug,
+      qr_target_url: qrTargetUrl,
+      is_active: true,
+    })
+    .select("id")
+    .single();
+
+  if (proofError || !proofLink) {
+    redirect(
+      `/vault/${achievementId}?error=${encodeURIComponent(
+        proofError?.message || "Could not generate proof link."
+      )}`
+    );
+  }
+
+  if (achievement.visibility === "private") {
+    await supabase
+      .from("achievements")
+      .update({
+        visibility: "unlisted",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", achievementId)
+      .eq("user_id", user.id);
+  }
+
+  await supabase.from("audit_logs").insert({
+    user_id: user.id,
+    achievement_id: achievementId,
+    action: "proof_link.generated",
+    entity_type: "public_proof_link",
+    entity_id: proofLink.id,
+    metadata: {
+      proof_code: proofCode,
+      public_slug: publicSlug,
+      qr_target_url: qrTargetUrl,
+    },
+  });
+
+  revalidatePath(`/vault/${achievementId}`);
+  revalidatePath("/vault");
+  revalidatePath("/dashboard");
+  revalidatePath(`/proof/${publicSlug}`);
+
+  redirect(`/vault/${achievementId}`);
 }

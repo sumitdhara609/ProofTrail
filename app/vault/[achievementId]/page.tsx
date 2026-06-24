@@ -2,10 +2,13 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AddEvidenceForm } from "@/components/vault/AddEvidenceForm";
+import { generatePublicProofLink } from "@/app/vault/[achievementId]/actions";
+import { generateQrDataUrl } from "@/lib/qr/generate";
 import {
   AchievementRecord,
   AuditLog,
   EvidenceItem,
+  PublicProofLink,
 } from "@/lib/proof/types";
 
 type AchievementPageProps = {
@@ -66,9 +69,22 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
+  const { data: proofLinkData } = await supabase
+    .from("public_proof_links")
+    .select("*")
+    .eq("achievement_id", achievementId)
+    .eq("user_id", user.id)
+    .eq("is_active", true)
+    .maybeSingle();
+
   const record = achievement as AchievementRecord;
   const logs = (auditLogs || []) as AuditLog[];
   const evidence = (evidenceItems || []) as EvidenceItem[];
+  const proofLink = proofLinkData as PublicProofLink | null;
+
+  const qrDataUrl = proofLink?.qr_target_url
+    ? await generateQrDataUrl(proofLink.qr_target_url)
+    : null;
 
   return (
     <main className="min-h-screen bg-[#08090d] px-6 py-10 text-white sm:px-10 lg:px-16">
@@ -133,6 +149,74 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
           </article>
 
           <aside className="space-y-6">
+            <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
+              <p className="text-sm uppercase tracking-[0.22em] text-cyan-200/80">
+                Proof identity
+              </p>
+
+              {proofLink ? (
+                <>
+                  <h2 className="mt-4 text-2xl font-semibold tracking-[-0.03em]">
+                    Public proof is active.
+                  </h2>
+
+                  <p className="mt-4 text-sm leading-7 text-white/50">
+                    This record now has a public proof identity and QR-backed
+                    sharing link.
+                  </p>
+
+                  <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-white/35">
+                      ProofTrail ID
+                    </p>
+                    <p className="mt-2 font-mono text-lg font-semibold text-white">
+                      {proofLink.proof_code}
+                    </p>
+                  </div>
+
+                  {qrDataUrl ? (
+                    <div className="mt-5 flex justify-center rounded-2xl border border-white/10 bg-white p-5">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={qrDataUrl}
+                        alt={`QR code for ${proofLink.proof_code}`}
+                        className="h-40 w-40"
+                      />
+                    </div>
+                  ) : null}
+
+                  <a
+                    href={`/proof/${proofLink.public_slug}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-5 inline-flex w-full justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
+                  >
+                    Open public proof
+                  </a>
+                </>
+              ) : (
+                <>
+                  <h2 className="mt-4 text-2xl font-semibold tracking-[-0.03em]">
+                    No public proof yet.
+                  </h2>
+
+                  <p className="mt-4 text-sm leading-7 text-white/50">
+                    Generate a public proof identity when this record is ready
+                    to be shared through a link or QR code.
+                  </p>
+
+                  <form action={generatePublicProofLink.bind(null, record.id)}>
+                    <button
+                      type="submit"
+                      className="mt-6 w-full rounded-full bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
+                    >
+                      Generate proof link
+                    </button>
+                  </form>
+                </>
+              )}
+            </div>
+
             <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
               <p className="text-sm uppercase tracking-[0.22em] text-cyan-200/80">
                 Evidence layer
