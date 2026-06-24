@@ -316,3 +316,98 @@ export async function updateAchievement(
 
   redirect(`/vault/${achievementId}`);
 }
+export async function deleteEvidenceItem(
+  achievementId: string,
+  evidenceItemId: string
+) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  const { data: evidenceItem, error: evidenceLookupError } = await supabase
+    .from("evidence_items")
+    .select("id, achievement_id, user_id, title, evidence_type, source_url, is_public")
+    .eq("id", evidenceItemId)
+    .eq("achievement_id", achievementId)
+    .eq("user_id", user.id)
+    .single();
+
+  if (evidenceLookupError || !evidenceItem) {
+    redirect(`/vault/${achievementId}?error=evidence-not-found`);
+  }
+
+  const { error: deleteError } = await supabase
+    .from("evidence_items")
+    .delete()
+    .eq("id", evidenceItemId)
+    .eq("achievement_id", achievementId)
+    .eq("user_id", user.id);
+
+  if (deleteError) {
+    redirect(
+      `/vault/${achievementId}?error=${encodeURIComponent(
+        deleteError.message
+      )}`
+    );
+  }
+
+  await supabase.from("audit_logs").insert({
+    user_id: user.id,
+    achievement_id: achievementId,
+    action: "evidence.deleted",
+    entity_type: "evidence_item",
+    entity_id: evidenceItemId,
+    metadata: {
+      title: evidenceItem.title,
+      evidence_type: evidenceItem.evidence_type,
+      source_url: evidenceItem.source_url,
+      was_public: evidenceItem.is_public,
+    },
+  });
+
+  const { data: remainingEvidence } = await supabase
+    .from("evidence_items")
+    .select("id, source_url")
+    .eq("achievement_id", achievementId)
+    .eq("user_id", user.id);
+
+  const remainingItems = remainingEvidence || [];
+
+  if (remainingItems.length === 0) {
+    await supabase
+      .from("achievements")
+      .update({
+        verification_status: "claimed",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", achievementId)
+      .eq("user_id", user.id);
+  } else {
+    const hasSourceLinkedEvidence = remainingItems.some(
+      (item) => Boolean(item.source_url)
+    );
+
+    await supabase
+      .from("achievements")
+      .update({
+        verification_status: hasSourceLinkedEvidence
+          ? "source_linked"
+          : "evidence_attached",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", achievementId)
+      .eq("user_id", user.id);
+  }
+
+  revalidatePath(`/vault/${achievementId}`);
+  revalidatePath("/vault");
+  revalidatePath("/dashboard");
+
+  redirect(`/vault/${achievementId}`);
+}
