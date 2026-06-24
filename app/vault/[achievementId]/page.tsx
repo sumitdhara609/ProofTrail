@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { AchievementRecord, AuditLog } from "@/lib/proof/types";
+import { AddEvidenceForm } from "@/components/vault/AddEvidenceForm";
+import {
+  AchievementRecord,
+  AuditLog,
+  EvidenceItem,
+} from "@/lib/proof/types";
 
 type AchievementPageProps = {
   params: Promise<{
@@ -11,6 +16,13 @@ type AchievementPageProps = {
 
 function formatStatus(status: string) {
   return status
+    .split("_")
+    .map((part) => part[0].toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function formatEvidenceType(type: string) {
+  return type
     .split("_")
     .map((part) => part[0].toUpperCase() + part.slice(1))
     .join(" ");
@@ -47,8 +59,16 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
     .order("created_at", { ascending: false })
     .limit(10);
 
+  const { data: evidenceItems } = await supabase
+    .from("evidence_items")
+    .select("*")
+    .eq("achievement_id", achievementId)
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
   const record = achievement as AchievementRecord;
   const logs = (auditLogs || []) as AuditLog[];
+  const evidence = (evidenceItems || []) as EvidenceItem[];
 
   return (
     <main className="min-h-screen bg-[#08090d] px-6 py-10 text-white sm:px-10 lg:px-16">
@@ -63,9 +83,11 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
               <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-medium text-cyan-100">
                 {formatStatus(record.verification_status)}
               </span>
+
               <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-medium text-white/50">
                 {record.visibility}
               </span>
+
               <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-medium text-white/50">
                 {record.category}
               </span>
@@ -115,13 +137,76 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
               <p className="text-sm uppercase tracking-[0.22em] text-cyan-200/80">
                 Evidence layer
               </p>
+
               <h2 className="mt-4 text-2xl font-semibold tracking-[-0.03em]">
-                No evidence attached yet.
+                Attach proof to this record.
               </h2>
+
               <p className="mt-4 text-sm leading-7 text-white/50">
-                Next, this record will support links, certificates, documents,
-                images, and source references.
+                Add source links, certificate pages, published references,
+                project links, or other evidence that supports this achievement.
               </p>
+
+              <AddEvidenceForm achievementId={record.id} />
+            </div>
+
+            <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
+              <p className="text-sm uppercase tracking-[0.22em] text-cyan-200/80">
+                Evidence attached
+              </p>
+
+              {evidence.length === 0 ? (
+                <p className="mt-4 text-sm leading-7 text-white/50">
+                  No evidence has been attached yet.
+                </p>
+              ) : (
+                <div className="mt-5 space-y-3">
+                  {evidence.map((item) => (
+                    <div
+                      key={item.id}
+                      className="rounded-2xl border border-white/10 bg-black/20 p-4"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="text-sm font-medium text-white">
+                            {item.title}
+                          </p>
+                          <p className="mt-1 text-xs uppercase tracking-[0.16em] text-white/35">
+                            {formatEvidenceType(item.evidence_type)}
+                          </p>
+                        </div>
+
+                        {item.is_public ? (
+                          <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-100">
+                            Public
+                          </span>
+                        ) : (
+                          <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-white/40">
+                            Private
+                          </span>
+                        )}
+                      </div>
+
+                      {item.description ? (
+                        <p className="mt-3 text-sm leading-6 text-white/50">
+                          {item.description}
+                        </p>
+                      ) : null}
+
+                      {item.source_url ? (
+                        <a
+                          href={item.source_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-4 inline-flex text-sm font-medium text-cyan-200"
+                        >
+                          Open source →
+                        </a>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
