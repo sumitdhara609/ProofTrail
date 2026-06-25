@@ -37,7 +37,7 @@ function getUnavailableCopy(reason: ProofUnavailableReason) {
       label: "Proof unavailable",
       title: "This proof identity could not be found.",
       description:
-        "The ProofTrail ID may be incorrect, expired, withdrawn, or no longer connected to an active public record.",
+        "The ProofTrail ID may be incorrect, withdrawn, inactive, or no longer connected to an available public record.",
     },
     withdrawn: {
       label: "Proof withdrawn",
@@ -49,7 +49,7 @@ function getUnavailableCopy(reason: ProofUnavailableReason) {
       label: "Record unavailable",
       title: "The connected record is no longer available.",
       description:
-        "This proof identity exists, but the connected achievement record may have been removed or made unavailable.",
+        "This proof identity exists, but the connected achievement record may have been removed, restricted, or made unavailable.",
     },
     "not-public": {
       label: "Access restricted",
@@ -222,9 +222,10 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
               </h1>
 
               <p className="mt-6 max-w-3xl text-sm leading-8 text-white/55">
-                This public proof card shows the record details and evidence
-                intentionally made visible by the record owner. Private evidence
-                and private vault data are not exposed here.
+                This public proof card presents a selected record, its visible
+                context, and the evidence intentionally made public by the
+                owner. Private evidence and private vault data are not exposed
+                here.
               </p>
 
               <div className="mt-7 flex flex-wrap gap-3">
@@ -266,7 +267,7 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
 
               <div className="mt-12">
                 <p className="text-sm uppercase tracking-[0.22em] text-white/35">
-                  Context
+                  Public context
                 </p>
                 <p className="mt-4 text-sm leading-8 text-white/60">
                   {achievement.description ||
@@ -276,7 +277,7 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
 
               <div className="mt-10">
                 <p className="text-sm uppercase tracking-[0.22em] text-white/35">
-                  Impact
+                  Public impact
                 </p>
                 <p className="mt-4 text-sm leading-8 text-white/60">
                   {achievement.impact_summary ||
@@ -292,13 +293,13 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                 </p>
 
                 <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em]">
-                  Scan to reopen this proof card.
+                  Scan to reopen this public proof card.
                 </h2>
 
                 <p className="mt-4 text-sm leading-7 text-white/50">
-                  This QR code points to this active public ProofTrail card. If
-                  public access is withdrawn later, this link will no longer
-                  display the active proof.
+                  This QR code points to the current public ProofTrail card. If
+                  public access is withdrawn later, the same link will no longer
+                  display an active proof.
                 </p>
 
                 {qrDataUrl ? (
@@ -324,14 +325,13 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
 
               <div className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
                 <p className="text-sm uppercase tracking-[0.22em] text-cyan-200/80">
-                  Proof interpretation
+                  How to read this proof
                 </p>
 
                 <p className="mt-4 text-sm leading-7 text-white/55">
-                  ProofTrail records evidence, context, and public sharing
-                  status. This page does not independently certify a claim; it
-                  presents the record and the public evidence attached to it for
-                  transparent review.
+                  ProofTrail does not independently certify the achievement.
+                  This page presents a structured record and its public evidence
+                  so the viewer can review the context and sources transparently.
                 </p>
               </div>
             </aside>
