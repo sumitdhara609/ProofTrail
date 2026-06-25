@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { generateQrDataUrl } from "@/lib/qr/generate";
 import {
@@ -13,6 +12,12 @@ type PublicProofPageProps = {
     proofId: string;
   }>;
 };
+
+type ProofUnavailableReason =
+  | "invalid"
+  | "withdrawn"
+  | "record-unavailable"
+  | "not-public";
 
 function formatStatus(status: string) {
   return status
@@ -40,35 +45,157 @@ function formatDate(value: string | null) {
   });
 }
 
+function getUnavailableCopy(reason: ProofUnavailableReason) {
+  const copy: Record<
+    ProofUnavailableReason,
+    {
+      label: string;
+      title: string;
+      description: string;
+    }
+  > = {
+    invalid: {
+      label: "Proof unavailable",
+      title: "This proof identity could not be found.",
+      description:
+        "The ProofTrail ID may be incorrect, expired, withdrawn, or no longer connected to an active public record.",
+    },
+    withdrawn: {
+      label: "Proof withdrawn",
+      title: "This public proof is no longer active.",
+      description:
+        "The owner has withdrawn public access to this proof identity. The private record may still exist inside their vault, but this public proof card is no longer available.",
+    },
+    "record-unavailable": {
+      label: "Record unavailable",
+      title: "The connected record is no longer available.",
+      description:
+        "This proof identity exists, but the connected achievement record may have been removed or made unavailable.",
+    },
+    "not-public": {
+      label: "Access restricted",
+      title: "This record is not available for public proof.",
+      description:
+        "The connected record is not currently configured for public or controlled unlisted access.",
+    },
+  };
+
+  return copy[reason];
+}
+
+function ProofUnavailable({
+  reason,
+  proofId,
+}: {
+  reason: ProofUnavailableReason;
+  proofId: string;
+}) {
+  const copy = getUnavailableCopy(reason);
+
+  return (
+    <main className="min-h-screen overflow-hidden bg-[#08090d] px-6 py-8 text-white sm:px-10 lg:px-16">
+      <div className="pointer-events-none fixed left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-red-500/10 blur-[130px]" />
+      <div className="pointer-events-none fixed bottom-0 right-0 h-[420px] w-[420px] rounded-full bg-cyan-500/10 blur-[130px]" />
+
+      <section className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col">
+        <nav className="flex items-center justify-between rounded-full border border-white/10 bg-white/[0.035] px-5 py-3 backdrop-blur-xl">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/10 text-sm font-semibold">
+              PT
+            </div>
+            <span className="text-sm font-medium tracking-wide text-white/90">
+              ProofTrail
+            </span>
+          </Link>
+
+          <p className="hidden text-sm text-white/40 sm:block">
+            Public proof access
+          </p>
+        </nav>
+
+        <div className="flex flex-1 items-center justify-center py-16">
+          <div className="w-full rounded-[2.75rem] border border-red-400/20 bg-red-400/[0.055] p-8 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-10 lg:p-12">
+            <p className="text-sm uppercase tracking-[0.24em] text-red-100/75">
+              {copy.label}
+            </p>
+
+            <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-[-0.055em] sm:text-5xl">
+              {copy.title}
+            </h1>
+
+            <p className="mt-5 max-w-2xl text-sm leading-8 text-white/60">
+              {copy.description}
+            </p>
+
+            <div className="mt-8 rounded-2xl border border-white/10 bg-black/20 p-5">
+              <p className="text-xs uppercase tracking-[0.2em] text-white/35">
+                Requested proof slug
+              </p>
+              <p className="mt-2 break-all font-mono text-sm text-white/70">
+                {proofId}
+              </p>
+            </div>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/"
+                className="inline-flex justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
+              >
+                Return to ProofTrail
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <footer className="py-10 text-center">
+          <p className="text-xs uppercase tracking-[0.24em] text-white/25">
+            ProofTrail — controlled proof identity access.
+          </p>
+        </footer>
+      </section>
+    </main>
+  );
+}
+
 export default async function PublicProofPage({ params }: PublicProofPageProps) {
   const { proofId } = await params;
 
   const supabase = await createClient();
 
-  const { data: proofLinkData, error: proofLinkError } = await supabase
+  const { data: proofLinkData } = await supabase
     .from("public_proof_links")
     .select("*")
     .eq("public_slug", proofId)
-    .eq("is_active", true)
-    .single();
+    .maybeSingle();
 
-  if (proofLinkError || !proofLinkData) {
-    notFound();
+  if (!proofLinkData) {
+    return <ProofUnavailable reason="invalid" proofId={proofId} />;
   }
 
   const proofLink = proofLinkData as PublicProofLink;
 
-  const { data: achievementData, error: achievementError } = await supabase
+  if (!proofLink.is_active) {
+    return <ProofUnavailable reason="withdrawn" proofId={proofId} />;
+  }
+
+  const { data: achievementData } = await supabase
     .from("achievements")
     .select("*")
     .eq("id", proofLink.achievement_id)
-    .single();
+    .maybeSingle();
 
-  if (achievementError || !achievementData) {
-    notFound();
+  if (!achievementData) {
+    return <ProofUnavailable reason="record-unavailable" proofId={proofId} />;
   }
 
   const achievement = achievementData as AchievementRecord;
+
+  if (
+    achievement.visibility !== "public" &&
+    achievement.visibility !== "unlisted"
+  ) {
+    return <ProofUnavailable reason="not-public" proofId={proofId} />;
+  }
 
   const { data: evidenceItems } = await supabase
     .from("evidence_items")
@@ -100,7 +227,7 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
           </Link>
 
           <p className="hidden text-sm text-white/40 sm:block">
-            Public proof record
+            Public proof card
           </p>
         </nav>
 
@@ -108,12 +235,18 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
           <div className="grid lg:grid-cols-[1.2fr_0.8fr]">
             <article className="p-8 sm:p-10 lg:p-12">
               <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
-                Verified record identity
+                Active proof identity
               </p>
 
               <h1 className="mt-6 max-w-4xl text-4xl font-semibold tracking-[-0.055em] sm:text-5xl lg:text-6xl">
                 {achievement.title}
               </h1>
+
+              <p className="mt-6 max-w-3xl text-sm leading-8 text-white/55">
+                This public proof card shows the record details and evidence
+                intentionally made visible by the record owner. Private evidence
+                and private vault data are not exposed here.
+              </p>
 
               <div className="mt-7 flex flex-wrap gap-3">
                 <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-medium text-cyan-100">
@@ -157,7 +290,8 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                   Context
                 </p>
                 <p className="mt-4 text-sm leading-8 text-white/60">
-                  {achievement.description || "No context has been added."}
+                  {achievement.description ||
+                    "No public context has been added for this record."}
                 </p>
               </div>
 
@@ -167,7 +301,7 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                 </p>
                 <p className="mt-4 text-sm leading-8 text-white/60">
                   {achievement.impact_summary ||
-                    "No impact summary has been added."}
+                    "No public impact summary has been added for this record."}
                 </p>
               </div>
             </article>
@@ -183,8 +317,9 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                 </h2>
 
                 <p className="mt-4 text-sm leading-7 text-white/50">
-                  This QR code points to the public ProofTrail record for this
-                  achievement.
+                  This QR code points to this active public ProofTrail card. If
+                  public access is withdrawn later, this link will no longer
+                  display the active proof.
                 </p>
 
                 {qrDataUrl ? (
@@ -214,9 +349,10 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                 </p>
 
                 <p className="mt-4 text-sm leading-7 text-white/55">
-                  ProofTrail records evidence, context, and sharing status. The
-                  displayed verification level should be interpreted according to
-                  the visible evidence and record history.
+                  ProofTrail records evidence, context, and public sharing
+                  status. This page does not independently certify a claim; it
+                  presents the record and the public evidence attached to it for
+                  transparent review.
                 </p>
               </div>
             </aside>
@@ -241,9 +377,15 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
           </div>
 
           {evidence.length === 0 ? (
-            <p className="mt-6 text-sm leading-7 text-white/50">
-              No public evidence is attached to this proof card yet.
-            </p>
+            <div className="mt-7 rounded-2xl border border-white/10 bg-black/20 p-6">
+              <p className="text-sm font-medium text-white">
+                No public evidence is visible on this proof card.
+              </p>
+              <p className="mt-3 text-sm leading-7 text-white/45">
+                The owner may have kept evidence private, or may not have marked
+                any evidence items as public yet.
+              </p>
+            </div>
           ) : (
             <div className="mt-7 grid gap-3">
               {evidence.map((item, index) => (
@@ -299,7 +441,7 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
 
         <footer className="py-10 text-center">
           <p className="text-xs uppercase tracking-[0.24em] text-white/25">
-            ProofTrail — evidence, context, and proof identity.
+            ProofTrail — evidence, context, and controlled proof identity.
           </p>
         </footer>
       </section>
