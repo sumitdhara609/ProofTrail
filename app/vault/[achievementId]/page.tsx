@@ -280,8 +280,8 @@ export default async function AchievementPage({
                     </h2>
 
                     <p className="mt-4 text-sm leading-7 text-white/50">
-                      This record has a public ProofTrail ID and QR-backed
-                      access link.
+                      This record currently has an active ProofTrail ID and QR-backed public access.
+You can withdraw public access without deleting the private record.
                     </p>
 
                     <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-4">
@@ -324,7 +324,7 @@ export default async function AchievementPage({
                           type="submit"
                           className="w-full rounded-full border border-red-400/20 bg-red-400/[0.06] px-5 py-3 text-sm font-semibold text-red-100/80 transition hover:bg-red-400/10 hover:text-red-100"
                         >
-                          Deactivate public proof
+                          Withdraw public proof
                         </button>
                       </form>
                     </div>
@@ -336,8 +336,9 @@ export default async function AchievementPage({
                     </h2>
 
                     <p className="mt-4 text-sm leading-7 text-white/50">
-                      Generate a proof identity when this record is ready for
-                      controlled public sharing.
+                      Keep this record private while you refine it. Generate a
+                      ProofTrail ID only when the evidence, context, and
+                      visibility are ready for controlled public sharing.
                     </p>
 
                     <form action={generatePublicProofLink.bind(null, record.id)}>
@@ -432,9 +433,16 @@ export default async function AchievementPage({
             </h2>
 
             {evidence.length === 0 ? (
-              <p className="mt-6 text-sm leading-7 text-white/50">
-                No evidence has been attached yet.
-              </p>
+              <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-6">
+                <p className="text-sm font-medium text-white">
+                  No evidence has been attached yet.
+                </p>
+                <p className="mt-3 text-sm leading-7 text-white/45">
+                  Add a certificate link, project page, publication, source
+                  reference, or supporting note to strengthen this achievement
+                  record.
+                </p>
+              </div>
             ) : (
               <div className="mt-6 space-y-3">
                 {evidence.map((item, index) => (
@@ -503,7 +511,7 @@ export default async function AchievementPage({
                               type="submit"
                               className="text-sm font-medium text-red-200/70 transition hover:text-red-100"
                             >
-                              Delete evidence
+                              Remove evidence
                             </button>
                           </form>
                         </div>
@@ -525,9 +533,16 @@ export default async function AchievementPage({
             </h2>
 
             {logs.length === 0 ? (
-              <p className="mt-6 text-sm leading-7 text-white/50">
-                No audit events found.
-              </p>
+              <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-6">
+                <p className="text-sm font-medium text-white">
+                  No trust activity recorded yet.
+                </p>
+                <p className="mt-3 text-sm leading-7 text-white/45">
+                  Important actions such as adding evidence, generating proof
+                  links, editing records, or deactivating public proof will
+                  appear here.
+                </p>
+              </div>
             ) : (
               <div className="mt-6 space-y-3">
                 {logs.map((log, index) => (
