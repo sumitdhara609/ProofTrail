@@ -7,23 +7,7 @@ import {
   getAuditActionDescription,
   getAuditActionLabel,
 } from "@/lib/proof/audit-labels";
-
-function formatStatus(status: string) {
-  return status
-    .split("_")
-    .map((part) => part[0].toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
-function formatDateTime(value: string) {
-  return new Date(value).toLocaleString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
+import { formatDateTime, formatStatus } from "@/lib/proof/format";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -356,16 +340,16 @@ export default async function DashboardPage() {
                     className="rounded-2xl border border-white/10 bg-black/20 p-5"
                   >
                     <p className="text-sm font-medium text-white">
-  {getAuditActionLabel(log.action)}
-</p>
+                      {getAuditActionLabel(log.action)}
+                    </p>
 
-<p className="mt-2 text-sm leading-6 text-white/45">
-  {getAuditActionDescription(log.action)}
-</p>
+                    <p className="mt-2 text-sm leading-6 text-white/45">
+                      {getAuditActionDescription(log.action)}
+                    </p>
 
-<p className="mt-3 text-xs text-white/30">
-  {formatDateTime(log.created_at)}
-</p>
+                    <p className="mt-3 text-xs text-white/30">
+                      {formatDateTime(log.created_at)}
+                    </p>
                   </div>
                 ))}
               </div>
