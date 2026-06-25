@@ -92,13 +92,22 @@ export default async function DashboardPage() {
   const recentRecords = records.slice(0, 3);
   const recentLogs = (auditLogs || []) as AuditLog[];
 
+  const vaultHealth =
+    totalRecords === 0
+      ? "Waiting"
+      : recordsWaitingForEvidence.length > 0
+        ? "Needs evidence"
+        : recordsReadyForProof.length > 0
+          ? "Ready for proof"
+          : "Healthy";
+
   return (
     <main className="min-h-screen bg-[#08090d] px-6 py-10 text-white sm:px-10 lg:px-16">
       <section className="mx-auto max-w-7xl">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
-              Vault Overview
+              Trust Command Center
             </p>
 
             <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-[-0.05em] sm:text-5xl">
@@ -106,9 +115,9 @@ export default async function DashboardPage() {
             </h1>
 
             <p className="mt-5 max-w-2xl text-sm leading-7 text-white/55">
-              This is the control room for your proof records — a place to
-              preserve achievements, strengthen evidence, and prepare selected
-              records for public proof identity.
+              Monitor your proof vault, strengthen incomplete records, review
+              evidence coverage, and control which achievements receive public
+              proof identities.
             </p>
           </div>
 
@@ -117,14 +126,14 @@ export default async function DashboardPage() {
               href="/vault/new"
               className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
             >
-              New record
+              Create record
             </Link>
 
             <Link
               href="/vault"
               className="rounded-full border border-white/10 bg-white/[0.03] px-6 py-3 text-sm font-semibold text-white/75 transition hover:bg-white/[0.06] hover:text-white"
             >
-              Open archive
+              Open vault
             </Link>
 
             <form action={signOut}>
@@ -142,20 +151,23 @@ export default async function DashboardPage() {
           <div className="grid lg:grid-cols-[1fr_1.2fr]">
             <div className="border-b border-white/10 p-8 lg:border-b-0 lg:border-r lg:p-10">
               <p className="text-sm uppercase tracking-[0.24em] text-white/35">
-                Vault state
+                Vault health
               </p>
 
-              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
-                {totalRecords === 0
-                  ? "Your archive is waiting for its first record."
-                  : `${totalRecords} record${
-                      totalRecords === 1 ? "" : "s"
-                    } preserved so far.`}
-              </h2>
+              <div className="mt-5 flex flex-wrap items-center gap-3">
+                <h2 className="text-3xl font-semibold tracking-[-0.04em]">
+                  {vaultHealth}
+                </h2>
+
+                <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-medium text-cyan-100">
+                  {totalRecords} record{totalRecords === 1 ? "" : "s"}
+                </span>
+              </div>
 
               <p className="mt-5 text-sm leading-7 text-white/50">
-                A strong ProofTrail record is not only written. It is supported
-                by evidence, given a clear status, and shared only when ready.
+                A healthy ProofTrail vault has structured records, supporting
+                evidence, clear audit activity, and public proof links only for
+                records that are ready to be shared.
               </p>
 
               <div className="mt-8 grid grid-cols-3 gap-3">
@@ -180,17 +192,17 @@ export default async function DashboardPage() {
 
             <div className="p-8 lg:p-10">
               <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
-                Suggested next action
+                Recommended action
               </p>
 
               {totalRecords === 0 ? (
                 <>
                   <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
-                    Create the first record in your proof archive.
+                    Create the first record in your proof vault.
                   </h2>
                   <p className="mt-5 text-sm leading-7 text-white/50">
-                    Begin with one achievement that has clear context and at
-                    least one piece of evidence you can attach later.
+                    Start with one achievement that has a clear story and can
+                    later be supported with evidence.
                   </p>
                   <Link
                     href="/vault/new"
@@ -214,39 +226,40 @@ export default async function DashboardPage() {
                     href={`/vault/${recordsWaitingForEvidence[0].id}`}
                     className="mt-8 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
                   >
-                    Add evidence
+                    Attach evidence
                   </Link>
                 </>
               ) : recordsReadyForProof.length > 0 ? (
                 <>
                   <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
-                    Some records are ready for proof identity.
+                    Evidence-backed records are ready for proof identity.
                   </h2>
                   <p className="mt-5 text-sm leading-7 text-white/50">
                     These records already contain evidence and can now receive a
-                    public ProofTrail ID with QR-backed sharing.
+                    controlled ProofTrail ID with QR-backed public access.
                   </p>
                   <Link
                     href={`/vault/${recordsReadyForProof[0].id}`}
                     className="mt-8 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
                   >
-                    Generate proof identity
+                    Review proof readiness
                   </Link>
                 </>
               ) : (
                 <>
                   <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
-                    Your proof archive is in good shape.
+                    Your proof vault is in good shape.
                   </h2>
                   <p className="mt-5 text-sm leading-7 text-white/50">
                     Continue preserving new achievements or review existing
-                    public proof cards for clarity and evidence quality.
+                    proof identities for clarity, evidence quality, and public
+                    visibility.
                   </p>
                   <Link
                     href="/vault"
                     className="mt-8 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
                   >
-                    Review archive
+                    Review vault
                   </Link>
                 </>
               )}
@@ -262,7 +275,7 @@ export default async function DashboardPage() {
                   Recent records
                 </p>
                 <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em]">
-                  Latest archive entries
+                  Latest vault entries
                 </h2>
               </div>
 
@@ -275,9 +288,15 @@ export default async function DashboardPage() {
             </div>
 
             {recentRecords.length === 0 ? (
-              <p className="mt-6 text-sm leading-7 text-white/50">
-                No records have been created yet.
-              </p>
+              <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-6">
+                <p className="text-sm font-medium text-white">
+                  No records have been created yet.
+                </p>
+                <p className="mt-3 text-sm leading-7 text-white/45">
+                  Your first record will appear here after you create an
+                  achievement inside the vault.
+                </p>
+              </div>
             ) : (
               <div className="mt-6 space-y-3">
                 {recentRecords.map((record) => (
@@ -296,7 +315,7 @@ export default async function DashboardPage() {
                         </p>
                       </div>
 
-                      <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-100">
+                      <span className="w-fit rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-100">
                         {formatStatus(record.verification_status)}
                       </span>
                     </div>
@@ -316,9 +335,15 @@ export default async function DashboardPage() {
             </h2>
 
             {recentLogs.length === 0 ? (
-              <p className="mt-6 text-sm leading-7 text-white/50">
-                No trust events have been recorded yet.
-              </p>
+              <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-6">
+                <p className="text-sm font-medium text-white">
+                  No trust events recorded yet.
+                </p>
+                <p className="mt-3 text-sm leading-7 text-white/45">
+                  Actions like creating records, adding evidence, generating
+                  proof links, and withdrawing public proof will appear here.
+                </p>
+              </div>
             ) : (
               <div className="mt-6 space-y-3">
                 {recentLogs.map((log) => (
