@@ -53,10 +53,10 @@ export type PublicProofLink = {
   user_id: string;
   proof_code: string;
   public_slug: string;
-  qr_target_url: string | null;
+  qr_target_url: string;
   is_active: boolean;
   created_at: string;
-  updated_at: string;
+  revoked_at: string | null;
 };
 
 export type AuditLog = {

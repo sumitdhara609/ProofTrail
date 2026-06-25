@@ -19,6 +19,9 @@ type AchievementPageProps = {
   params: Promise<{
     achievementId: string;
   }>;
+  searchParams: Promise<{
+    error?: string;
+  }>;
 };
 
 function formatStatus(status: string) {
@@ -61,8 +64,26 @@ function formatDateTime(value: string | null) {
   });
 }
 
-export default async function AchievementPage({ params }: AchievementPageProps) {
+function formatErrorMessage(error: string) {
+  const messages: Record<string, string> = {
+    "record-not-found": "This achievement record could not be found.",
+    "evidence-not-found": "The selected evidence item could not be found.",
+    "active-proof-link-not-found":
+      "No active public proof link was found for this record.",
+  };
+
+  return (
+    messages[error] ||
+    error.replaceAll("-", " ").replace(/^./, (char) => char.toUpperCase())
+  );
+}
+
+export default async function AchievementPage({
+  params,
+  searchParams,
+}: AchievementPageProps) {
   const { achievementId } = await params;
+  const { error: pageError } = await searchParams;
 
   const supabase = await createClient();
 
@@ -153,6 +174,15 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
             </div>
           </div>
         </div>
+
+        {pageError ? (
+          <div className="mt-8 rounded-2xl border border-red-400/20 bg-red-400/[0.07] p-5 text-sm text-red-100">
+            <p className="font-medium">Action could not be completed.</p>
+            <p className="mt-2 leading-7 text-red-100/70">
+              {formatErrorMessage(pageError)}
+            </p>
+          </div>
+        ) : null}
 
         <div className="mt-10 overflow-hidden rounded-[2.75rem] border border-white/10 bg-white/[0.032] shadow-2xl shadow-black/30">
           <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
@@ -322,7 +352,7 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
                 )}
               </div>
 
-              {proofLinks.length > 0 ? (
+              {proofLinks.length > 0 && (
                 <div className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
                   <p className="text-sm uppercase tracking-[0.22em] text-cyan-200/80">
                     Proof history
@@ -347,6 +377,12 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
                             <p className="mt-2 text-xs text-white/35">
                               Created {formatDateTime(link.created_at)}
                             </p>
+
+                            {link.revoked_at ? (
+                              <p className="mt-1 text-xs text-red-100/45">
+                                Deactivated {formatDateTime(link.revoked_at)}
+                              </p>
+                            ) : null}
                           </div>
 
                           <span
@@ -363,7 +399,7 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
                     ))}
                   </div>
                 </div>
-              ) : null}
+              )}
 
               <div className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
                 <p className="text-sm uppercase tracking-[0.22em] text-cyan-200/80">
