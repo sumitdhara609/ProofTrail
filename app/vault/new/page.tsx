@@ -37,23 +37,28 @@ export default async function NewAchievementPage({
           </p>
 
           <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em]">
-            Create an achievement record.
+            Create a structured proof record.
           </h1>
 
           <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55">
-            Start with the core claim. Evidence, QR identity, and public proof
-            controls will be added after the record exists.
+            Start with the core achievement details. Evidence, audit history,
+            proof identity, and QR-backed public access can be managed after the
+            record is created.
           </p>
 
           {error ? (
-            <div className="mt-8 rounded-2xl border border-red-400/20 bg-red-400/10 p-4 text-sm text-red-100">
-              {error}
+            <div className="mt-8 rounded-2xl border border-red-400/20 bg-red-400/10 p-5 text-sm text-red-100">
+              <p className="font-medium">Record could not be created.</p>
+              <p className="mt-2 leading-7 text-red-100/70">{error}</p>
             </div>
           ) : null}
 
           <form action={createAchievement} className="mt-10 space-y-7">
             <div>
-              <label htmlFor="title" className="text-sm font-medium text-white/70">
+              <label
+                htmlFor="title"
+                className="text-sm font-medium text-white/70"
+              >
                 Achievement title
               </label>
               <input
@@ -61,7 +66,7 @@ export default async function NewAchievementPage({
                 name="title"
                 type="text"
                 required
-                placeholder="ChronoForge MVP Completion"
+                placeholder="Product build milestone"
                 className="mt-2 w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/40"
               />
             </div>
@@ -109,6 +114,9 @@ export default async function NewAchievementPage({
                   <option value="unlisted">Unlisted</option>
                   <option value="public">Public</option>
                 </select>
+                <p className="mt-2 text-xs leading-5 text-white/35">
+                  Private is safest while the record is still being prepared.
+                </p>
               </div>
             </div>
 
@@ -118,13 +126,13 @@ export default async function NewAchievementPage({
                   htmlFor="issuer"
                   className="text-sm font-medium text-white/70"
                 >
-                  Issuer / organization
+                  Issuer / origin
                 </label>
                 <input
                   id="issuer"
                   name="issuer"
                   type="text"
-                  placeholder="Self-built / KIIT / School / Event name"
+                  placeholder="Self-built / school / event / organization"
                   className="mt-2 w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/40"
                 />
               </div>
@@ -156,7 +164,7 @@ export default async function NewAchievementPage({
                 id="description"
                 name="description"
                 rows={5}
-                placeholder="Describe what this achievement represents and why it matters."
+                placeholder="Describe what this record represents, how it happened, and why it matters."
                 className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm leading-7 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/40"
               />
             </div>
@@ -172,7 +180,7 @@ export default async function NewAchievementPage({
                 id="impactSummary"
                 name="impactSummary"
                 rows={3}
-                placeholder="Summarize the outcome, effort, responsibility, or measurable impact."
+                placeholder="Summarize the outcome, effort, responsibility, contribution, or visible result."
                 className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm leading-7 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/40"
               />
             </div>
