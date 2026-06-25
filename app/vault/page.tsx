@@ -6,31 +6,13 @@ import {
   EvidenceItem,
   PublicProofLink,
 } from "@/lib/proof/types";
+import { formatDate, formatStatus } from "@/lib/proof/format";
 
 type ArchiveRecord = AchievementRecord & {
   evidenceCount: number;
   publicEvidenceCount: number;
   proofLink: PublicProofLink | null;
 };
-
-function formatStatus(status: string) {
-  return status
-    .split("_")
-    .map((part) => part[0].toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
-function formatDate(value: string | null) {
-  if (!value) {
-    return "Not dated";
-  }
-
-  return new Date(value).toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-}
 
 export default async function VaultPage() {
   const supabase = await createClient();
@@ -112,7 +94,7 @@ export default async function VaultPage() {
             </p>
 
             <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.05em] sm:text-5xl">
-              Your private archive of evidence-backed records.
+              Your private archive of structured proof records.
             </h1>
 
             <p className="mt-5 max-w-2xl text-sm leading-7 text-white/55">
@@ -131,12 +113,12 @@ export default async function VaultPage() {
 
         <div className="mt-12 grid gap-4 lg:grid-cols-3">
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
-            <p className="text-sm text-white/40">Archived records</p>
+            <p className="text-sm text-white/40">Private records</p>
             <p className="mt-3 text-4xl font-semibold tracking-[-0.04em]">
               {totalRecords}
             </p>
             <p className="mt-3 text-sm leading-6 text-white/40">
-              Achievement records preserved inside your private vault.
+              Achievement records preserved inside your vault.
             </p>
           </div>
 
@@ -156,7 +138,7 @@ export default async function VaultPage() {
               {recordsWithProof}
             </p>
             <p className="mt-3 text-sm leading-6 text-white/40">
-              Records currently available through controlled public proof links.
+              Records currently exposed through controlled public proof links.
             </p>
           </div>
         </div>
@@ -170,13 +152,13 @@ export default async function VaultPage() {
                 </p>
 
                 <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em]">
-                  Start with one achievement worth preserving properly.
+                  Start with one achievement worth preserving carefully.
                 </h2>
 
                 <p className="mt-4 max-w-xl text-sm leading-7 text-white/50">
                   A project, certificate, publication, competition, leadership
                   role, award, or course can become a structured record with
-                  evidence, context, and a controlled proof identity.
+                  evidence, context, and controlled proof access.
                 </p>
 
                 <Link
@@ -194,7 +176,7 @@ export default async function VaultPage() {
 
                 <div className="mt-6 space-y-4">
                   {[
-                    "Claim created",
+                    "Record created",
                     "Evidence attached",
                     "Source linked",
                     "Proof identity generated",
@@ -209,9 +191,8 @@ export default async function VaultPage() {
                 </div>
 
                 <p className="mt-6 text-sm leading-7 text-white/40">
-                  ProofTrail is designed to keep your records private by
-                  default and public only when you deliberately create a proof
-                  identity.
+                  ProofTrail keeps records private by default. Public access
+                  begins only when you intentionally generate a proof identity.
                 </p>
               </div>
             </div>
@@ -238,7 +219,7 @@ export default async function VaultPage() {
                     <div className="flex flex-col justify-between border-b border-white/10 bg-black/20 p-6 lg:border-b-0 lg:border-r">
                       <div>
                         <p className="text-xs uppercase tracking-[0.24em] text-white/30">
-                          Archive ID
+                          Vault index
                         </p>
                         <p className="mt-3 font-mono text-2xl font-semibold text-white/80">
                           #{String(index + 1).padStart(3, "0")}
