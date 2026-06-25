@@ -103,9 +103,9 @@ export default async function DashboardPage() {
             </h1>
 
             <p className="mt-5 max-w-2xl text-sm leading-7 text-white/55">
-              Monitor your proof vault, strengthen incomplete records, review
-              evidence coverage, and control which achievements receive public
-              proof identities.
+              Review your private proof vault, identify records that need
+              stronger evidence, and control which achievements receive active
+              public proof identities.
             </p>
           </div>
 
@@ -153,8 +153,8 @@ export default async function DashboardPage() {
               </div>
 
               <p className="mt-5 text-sm leading-7 text-white/50">
-                A healthy ProofTrail vault has structured records, supporting
-                evidence, clear audit activity, and public proof links only for
+                A strong ProofTrail vault keeps records structured, evidence
+                attached, proof links intentional, and public access limited to
                 records that are ready to be shared.
               </p>
 
@@ -170,7 +170,7 @@ export default async function DashboardPage() {
                 </div>
 
                 <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <p className="text-xs text-white/35">Proof IDs</p>
+                  <p className="text-xs text-white/35">Active proof IDs</p>
                   <p className="mt-2 text-2xl font-semibold">
                     {proofIdentityCount}
                   </p>
@@ -186,11 +186,11 @@ export default async function DashboardPage() {
               {totalRecords === 0 ? (
                 <>
                   <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
-                    Create the first record in your proof vault.
+                    Start your vault with one meaningful record.
                   </h2>
                   <p className="mt-5 text-sm leading-7 text-white/50">
-                    Start with one achievement that has a clear story and can
-                    later be supported with evidence.
+                    Create an achievement record with a clear title, context,
+                    date, and enough detail to support evidence later.
                   </p>
                   <Link
                     href="/vault/new"
@@ -202,13 +202,13 @@ export default async function DashboardPage() {
               ) : recordsWaitingForEvidence.length > 0 ? (
                 <>
                   <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
-                    Strengthen records that still have no evidence.
+                    Strengthen records that have no evidence yet.
                   </h2>
                   <p className="mt-5 text-sm leading-7 text-white/50">
                     {recordsWaitingForEvidence.length} record
                     {recordsWaitingForEvidence.length === 1 ? "" : "s"} still
-                    need supporting evidence before they become meaningful proof
-                    entries.
+                    need supporting evidence before they can become meaningful
+                    proof entries.
                   </p>
                   <Link
                     href={`/vault/${recordsWaitingForEvidence[0].id}`}
@@ -220,11 +220,12 @@ export default async function DashboardPage() {
               ) : recordsReadyForProof.length > 0 ? (
                 <>
                   <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
-                    Evidence-backed records are ready for proof identity.
+                    Evidence-backed records are ready for controlled sharing.
                   </h2>
                   <p className="mt-5 text-sm leading-7 text-white/50">
                     These records already contain evidence and can now receive a
-                    controlled ProofTrail ID with QR-backed public access.
+                    ProofTrail ID with QR-backed public access when you are
+                    ready.
                   </p>
                   <Link
                     href={`/vault/${recordsReadyForProof[0].id}`}
@@ -240,8 +241,8 @@ export default async function DashboardPage() {
                   </h2>
                   <p className="mt-5 text-sm leading-7 text-white/50">
                     Continue preserving new achievements or review existing
-                    proof identities for clarity, evidence quality, and public
-                    visibility.
+                    proof identities for clarity, public evidence, and access
+                    control.
                   </p>
                   <Link
                     href="/vault"
@@ -281,8 +282,8 @@ export default async function DashboardPage() {
                   No records have been created yet.
                 </p>
                 <p className="mt-3 text-sm leading-7 text-white/45">
-                  Your first record will appear here after you create an
-                  achievement inside the vault.
+                  Once you create an achievement record, it will appear here as
+                  part of your private proof vault.
                 </p>
               </div>
             ) : (
@@ -328,8 +329,8 @@ export default async function DashboardPage() {
                   No trust events recorded yet.
                 </p>
                 <p className="mt-3 text-sm leading-7 text-white/45">
-                  Actions like creating records, adding evidence, generating
-                  proof links, and withdrawing public proof will appear here.
+                  Record creation, evidence changes, proof generation, and proof
+                  withdrawal events will appear here.
                 </p>
               </div>
             ) : (
