@@ -6,6 +6,11 @@ import {
   EvidenceItem,
   PublicProofLink,
 } from "@/lib/proof/types";
+import {
+  formatDate,
+  formatEvidenceType,
+  formatStatus,
+} from "@/lib/proof/format";
 
 type PublicProofPageProps = {
   params: Promise<{
@@ -18,32 +23,6 @@ type ProofUnavailableReason =
   | "withdrawn"
   | "record-unavailable"
   | "not-public";
-
-function formatStatus(status: string) {
-  return status
-    .split("_")
-    .map((part) => part[0].toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
-function formatEvidenceType(type: string) {
-  return type
-    .split("_")
-    .map((part) => part[0].toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
-function formatDate(value: string | null) {
-  if (!value) {
-    return "Not dated";
-  }
-
-  return new Date(value).toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-}
 
 function getUnavailableCopy(reason: ProofUnavailableReason) {
   const copy: Record<
