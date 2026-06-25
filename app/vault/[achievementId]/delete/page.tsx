@@ -83,20 +83,21 @@ export default async function DeleteAchievementPage({
           </h1>
 
           <p className="mt-4 max-w-2xl text-sm leading-7 text-white/60">
-  This action will permanently remove the achievement record from your
-  private vault. Any attached evidence and active public proof identity will
-  also be removed from active access.
-</p>
+            This will permanently remove the achievement record from your
+            private vault. Attached evidence and any active public proof access
+            connected to this record will also be removed.
+          </p>
 
           {error ? (
-            <div className="mt-8 rounded-2xl border border-red-400/30 bg-red-400/10 p-4 text-sm text-red-100">
-              {error}
+            <div className="mt-8 rounded-2xl border border-red-400/30 bg-red-400/10 p-5 text-sm text-red-100">
+              <p className="font-medium">Record could not be removed.</p>
+              <p className="mt-2 leading-7 text-red-100/70">{error}</p>
             </div>
           ) : null}
 
           <div className="mt-8 rounded-[2rem] border border-white/10 bg-black/20 p-6">
             <p className="text-xs uppercase tracking-[0.22em] text-white/35">
-              Record scheduled for removal
+              Record selected for removal
             </p>
 
             <h2 className="mt-4 text-2xl font-semibold tracking-[-0.03em]">
@@ -114,7 +115,7 @@ export default async function DeleteAchievementPage({
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                 <p className="text-xs text-white/35">Proof identity</p>
                 <p className="mt-2 text-sm font-semibold">
-                  {proofLink ? proofLink.proof_code : "Not generated"}
+                  {proofLink ? proofLink.proof_code : "Private only"}
                 </p>
               </div>
 
@@ -128,14 +129,15 @@ export default async function DeleteAchievementPage({
           </div>
 
           <div className="mt-8 rounded-2xl border border-red-400/20 bg-black/20 p-5">
-  <p className="text-sm font-medium text-red-100">
-    This is a permanent vault action.
-  </p>
-  <p className="mt-2 text-sm leading-7 text-white/45">
-    Continue only if this record was created by mistake, duplicated, or no
-    longer belongs in your proof archive. This does not affect your account.
-  </p>
-</div>
+            <p className="text-sm font-medium text-red-100">
+              This action cannot be undone from the app.
+            </p>
+            <p className="mt-2 text-sm leading-7 text-white/45">
+              Continue only if this record was created by mistake, duplicated,
+              or no longer belongs in your proof archive. Your account and other
+              vault records will not be affected.
+            </p>
+          </div>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <form action={deleteAchievement.bind(null, record.id)}>
