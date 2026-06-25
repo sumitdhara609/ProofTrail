@@ -4,17 +4,17 @@ const pillars = [
   {
     title: "Evidence-first records",
     description:
-      "Achievements are stored with proof, source links, context, dates, and credibility signals.",
+      "Preserve achievements with supporting links, context, dates, visibility, and proof status in one structured vault.",
   },
   {
-    title: "QR-backed sharing",
+    title: "Controlled proof cards",
     description:
-      "Each public proof card receives a unique link and QR identity for resumes, portfolios, and profiles.",
+      "Share selected records through active public proof identities without exposing the rest of your private vault.",
   },
   {
     title: "Audit-aware trust",
     description:
-      "Important actions can be tracked through status changes, visibility updates, and verification events.",
+      "Important actions such as evidence changes, proof generation, and proof withdrawal are recorded in a clear trust timeline.",
   },
 ];
 
@@ -36,9 +36,15 @@ export default function Home() {
           </Link>
 
           <div className="hidden items-center gap-8 text-sm text-white/60 md:flex">
-            <a href="#system">System</a>
-            <a href="#proof">Proof Cards</a>
-            <a href="#trust">Trust Layer</a>
+            <a href="#system" className="transition hover:text-white">
+              System
+            </a>
+            <a href="#proof" className="transition hover:text-white">
+              Proof Cards
+            </a>
+            <a href="#trust" className="transition hover:text-white">
+              Trust Layer
+            </a>
           </div>
 
           <div className="flex items-center gap-3">
@@ -59,16 +65,17 @@ export default function Home() {
 
         <div className="relative z-10 mx-auto flex max-w-7xl flex-col items-center py-24 text-center sm:py-32">
           <div className="mb-6 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.24em] text-cyan-200">
-            Evidence-backed achievement identity
+            Evidence-backed achievement vault
           </div>
 
           <h1 className="max-w-5xl text-5xl font-semibold tracking-[-0.05em] text-white sm:text-6xl lg:text-7xl">
-            Give every achievement a verifiable digital identity.
+            Give every achievement a structured proof identity.
           </h1>
 
           <p className="mt-7 max-w-2xl text-base leading-8 text-white/60 sm:text-lg">
-            ProofTrail helps users store achievements, attach evidence, manage
-            visibility, and share public proof cards with QR-backed access.
+            ProofTrail helps users preserve achievements, attach evidence,
+            control visibility, and share selected records through QR-backed
+            public proof cards.
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
@@ -79,10 +86,10 @@ export default function Home() {
               Create proof vault
             </Link>
             <Link
-              href="/proof/demo"
+              href="/sign-in"
               className="rounded-full border border-white/10 bg-white/[0.03] px-6 py-3 text-sm font-semibold text-white/80 transition hover:bg-white/[0.06]"
             >
-              View proof card
+              Open existing vault
             </Link>
           </div>
         </div>
@@ -118,12 +125,12 @@ export default function Home() {
               Public proof card
             </p>
             <h2 className="mt-5 max-w-2xl text-3xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">
-              A clean public page for every verified record.
+              A focused public page for selected evidence-backed records.
             </h2>
             <p className="mt-6 max-w-xl text-sm leading-7 text-white/55 sm:text-base">
-              Each achievement can receive a public proof identity with title,
-              owner, issuer, evidence summary, verification status, and QR
-              sharing.
+              Each shared record can receive a ProofTrail ID, public slug, QR
+              access, record context, and only the evidence intentionally marked
+              as public.
             </p>
           </div>
 
@@ -135,7 +142,7 @@ export default function Home() {
                     ProofTrail ID
                   </p>
                   <h3 className="mt-3 text-2xl font-semibold text-white">
-                    CF-2026-9K2X
+                    PT-2026-9K2X
                   </h3>
                 </div>
                 <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-white text-xs font-bold text-black">
@@ -146,25 +153,78 @@ export default function Home() {
               <div className="mt-8">
                 <p className="text-sm text-cyan-200">Evidence Attached</p>
                 <h4 className="mt-2 text-xl font-semibold text-white">
-                  ChronoForge MVP Completion
+                  Product Build Milestone
                 </h4>
                 <p className="mt-4 text-sm leading-7 text-white/50">
-                  Timeline simulation platform with protected dashboard,
-                  custom projection engine, and structured product
-                  documentation.
+                  A structured record containing context, source references,
+                  public evidence status, and a controlled proof identity.
                 </p>
               </div>
 
               <div className="mt-8 grid grid-cols-2 gap-3 text-sm">
                 <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                  <p className="text-white/40">Evidence</p>
+                  <p className="text-white/40">Public evidence</p>
                   <p className="mt-1 font-medium text-white">4 items</p>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                  <p className="text-white/40">Visibility</p>
-                  <p className="mt-1 font-medium text-white">Public</p>
+                  <p className="text-white/40">Access</p>
+                  <p className="mt-1 font-medium text-white">Unlisted</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="trust"
+        className="mx-auto max-w-7xl px-6 pb-28 sm:px-10 lg:px-16"
+      >
+        <div className="rounded-[2.5rem] border border-white/10 bg-white/[0.035] p-8 sm:p-12 lg:p-16">
+          <p className="text-sm font-medium uppercase tracking-[0.22em] text-cyan-200/80">
+            Trust layer
+          </p>
+
+          <h2 className="mt-5 max-w-3xl text-3xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">
+            ProofTrail is designed around controlled access, audit history, and
+            evidence boundaries.
+          </h2>
+
+          <p className="mt-6 max-w-2xl text-sm leading-7 text-white/55 sm:text-base">
+            Public proof cards do not expose the full private vault. They show
+            only the selected record data and evidence marked public by the
+            owner, while important lifecycle actions remain traceable inside the
+            vault.
+          </p>
+
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
+              <p className="text-sm font-medium text-white">
+                Private by default
+              </p>
+              <p className="mt-3 text-sm leading-7 text-white/45">
+                Records stay private until a proof identity is intentionally
+                generated.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
+              <p className="text-sm font-medium text-white">
+                Withdrawable access
+              </p>
+              <p className="mt-3 text-sm leading-7 text-white/45">
+                Public proof access can be withdrawn without deleting the
+                private record.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
+              <p className="text-sm font-medium text-white">
+                Public evidence only
+              </p>
+              <p className="mt-3 text-sm leading-7 text-white/45">
+                Private evidence remains hidden from the public proof page.
+              </p>
             </div>
           </div>
         </div>
