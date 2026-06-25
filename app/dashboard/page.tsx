@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/auth/actions";
 import { AchievementRecord, AuditLog } from "@/lib/proof/types";
@@ -110,6 +111,8 @@ export default async function DashboardPage() {
           </div>
 
           <div className="flex flex-wrap gap-3">
+            <ThemeToggle />
+
             <Link
               href="/vault/new"
               className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
