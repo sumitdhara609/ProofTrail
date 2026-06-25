@@ -18,16 +18,18 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
         </p>
 
         <h1 className="mt-4 text-3xl font-semibold tracking-tight">
-          Sign in to your vault
+          Sign in to your proof vault.
         </h1>
 
         <p className="mt-4 text-sm leading-7 text-white/55">
-          Continue building your record of evidence-backed achievements.
+          Continue managing your private records, evidence, proof identities,
+          and public access controls.
         </p>
 
         {error ? (
-          <div className="mt-6 rounded-2xl border border-red-400/20 bg-red-400/10 p-4 text-sm text-red-100">
-            {error}
+          <div className="mt-6 rounded-2xl border border-red-400/20 bg-red-400/10 p-5 text-sm text-red-100">
+            <p className="font-medium">Sign-in failed.</p>
+            <p className="mt-2 leading-7 text-red-100/70">{error}</p>
           </div>
         ) : null}
 
@@ -58,7 +60,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
               name="password"
               type="password"
               required
-              placeholder="Your password"
+              placeholder="Enter your password"
               className="mt-2 w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/40"
             />
           </div>
@@ -74,7 +76,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
         <p className="mt-6 text-sm text-white/45">
           New to ProofTrail?{" "}
           <Link href="/sign-up" className="font-medium text-cyan-200">
-            Create vault
+            Create a vault
           </Link>
         </p>
 
