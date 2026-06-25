@@ -47,7 +47,11 @@ function formatDate(value: string | null) {
   });
 }
 
-function formatDateTime(value: string) {
+function formatDateTime(value: string | null) {
+  if (!value) {
+    return "Not available";
+  }
+
   return new Date(value).toLocaleString("en-IN", {
     day: "2-digit",
     month: "short",
@@ -95,17 +99,20 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
-  const { data: proofLinkData } = await supabase
+  const { data: proofLinksData } = await supabase
     .from("public_proof_links")
     .select("*")
     .eq("achievement_id", achievementId)
     .eq("user_id", user.id)
-    .eq("is_active", true)
-    .maybeSingle();
+    .order("created_at", { ascending: false });
+
+  const proofLinkData =
+    proofLinksData?.find((link) => link.is_active === true) || null;
 
   const record = achievement as AchievementRecord;
   const logs = (auditLogs || []) as AuditLog[];
   const evidence = (evidenceItems || []) as EvidenceItem[];
+  const proofLinks = (proofLinksData || []) as PublicProofLink[];
   const proofLink = proofLinkData as PublicProofLink | null;
 
   const publicEvidenceCount = evidence.filter((item) => item.is_public).length;
@@ -130,20 +137,20 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-  <Link
-    href={`/vault/${record.id}/edit`}
-    className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-xs font-semibold text-white/60 transition hover:bg-white/[0.06] hover:text-white"
-  >
-    Edit record
-  </Link>
+              <Link
+                href={`/vault/${record.id}/edit`}
+                className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-xs font-semibold text-white/60 transition hover:bg-white/[0.06] hover:text-white"
+              >
+                Edit record
+              </Link>
 
-  <Link
-    href={`/vault/${record.id}/delete`}
-    className="rounded-full border border-red-400/20 bg-red-400/[0.06] px-4 py-2 text-xs font-semibold text-red-100/70 transition hover:bg-red-400/10 hover:text-red-100"
-  >
-    Delete
-  </Link>
-</div>
+              <Link
+                href={`/vault/${record.id}/delete`}
+                className="rounded-full border border-red-400/20 bg-red-400/[0.06] px-4 py-2 text-xs font-semibold text-red-100/70 transition hover:bg-red-400/10 hover:text-red-100"
+              >
+                Delete
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -268,24 +275,29 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
                     ) : null}
 
                     <div className="mt-5 space-y-3">
-  <a
-    href={`/proof/${proofLink.public_slug}`}
-    target="_blank"
-    rel="noreferrer"
-    className="inline-flex w-full justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
-  >
-    Open public proof
-  </a>
+                      <a
+                        href={`/proof/${proofLink.public_slug}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex w-full justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
+                      >
+                        Open public proof
+                      </a>
 
-  <form action={deactivatePublicProofLink.bind(null, record.id)}>
-    <button
-      type="submit"
-      className="w-full rounded-full border border-red-400/20 bg-red-400/[0.06] px-5 py-3 text-sm font-semibold text-red-100/80 transition hover:bg-red-400/10 hover:text-red-100"
-    >
-      Deactivate public proof
-    </button>
-  </form>
-</div>
+                      <form
+                        action={deactivatePublicProofLink.bind(
+                          null,
+                          record.id
+                        )}
+                      >
+                        <button
+                          type="submit"
+                          className="w-full rounded-full border border-red-400/20 bg-red-400/[0.06] px-5 py-3 text-sm font-semibold text-red-100/80 transition hover:bg-red-400/10 hover:text-red-100"
+                        >
+                          Deactivate public proof
+                        </button>
+                      </form>
+                    </div>
                   </>
                 ) : (
                   <>
@@ -309,6 +321,49 @@ export default async function AchievementPage({ params }: AchievementPageProps) 
                   </>
                 )}
               </div>
+
+              {proofLinks.length > 0 ? (
+                <div className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
+                  <p className="text-sm uppercase tracking-[0.22em] text-cyan-200/80">
+                    Proof history
+                  </p>
+
+                  <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em]">
+                    Previous proof identities.
+                  </h2>
+
+                  <div className="mt-6 space-y-3">
+                    {proofLinks.map((link) => (
+                      <div
+                        key={link.id}
+                        className="rounded-2xl border border-white/10 bg-black/20 p-4"
+                      >
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                          <div>
+                            <p className="font-mono text-sm font-semibold text-white">
+                              {link.proof_code}
+                            </p>
+
+                            <p className="mt-2 text-xs text-white/35">
+                              Created {formatDateTime(link.created_at)}
+                            </p>
+                          </div>
+
+                          <span
+                            className={
+                              link.is_active
+                                ? "w-fit rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-medium text-cyan-100"
+                                : "w-fit rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-medium text-white/40"
+                            }
+                          >
+                            {link.is_active ? "Active" : "Deactivated"}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
 
               <div className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
                 <p className="text-sm uppercase tracking-[0.22em] text-cyan-200/80">
