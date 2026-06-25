@@ -117,7 +117,7 @@ export default async function AchievementPage({
       <section className="mx-auto max-w-7xl">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <Link href="/vault" className="text-sm font-medium text-cyan-200">
-            ← Back to archive
+            ← Back to vault
           </Link>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -158,7 +158,7 @@ export default async function AchievementPage({
           <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
             <article className="p-8 sm:p-10 lg:p-12">
               <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
-                Record Dossier
+                Record dossier
               </p>
 
               <div className="mt-7 flex flex-wrap gap-3">
@@ -213,7 +213,7 @@ export default async function AchievementPage({
                 <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
                   <p className="text-xs text-white/35">Proof identity</p>
                   <p className="mt-2 text-sm font-semibold text-white">
-                    {proofLink ? proofLink.proof_code : "Not generated"}
+                    {proofLink ? proofLink.proof_code : "Private only"}
                   </p>
                 </div>
               </div>
@@ -223,7 +223,8 @@ export default async function AchievementPage({
                   Context
                 </p>
                 <p className="mt-4 text-sm leading-8 text-white/60">
-                  {record.description || "No context added yet."}
+                  {record.description ||
+                    "No context has been added yet. Add the background, effort, and circumstances behind this record."}
                 </p>
               </div>
 
@@ -232,7 +233,8 @@ export default async function AchievementPage({
                   Impact
                 </p>
                 <p className="mt-4 text-sm leading-8 text-white/60">
-                  {record.impact_summary || "No impact summary added yet."}
+                  {record.impact_summary ||
+                    "No impact summary has been added yet. Add what this achievement changed, demonstrated, or contributed."}
                 </p>
               </div>
             </article>
@@ -246,13 +248,13 @@ export default async function AchievementPage({
                 {proofLink ? (
                   <>
                     <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em]">
-                      Public proof is active.
+                      Public proof access is active.
                     </h2>
 
                     <p className="mt-4 text-sm leading-7 text-white/50">
                       This record currently has an active ProofTrail ID and
-                      QR-backed public access. You can withdraw public access
-                      without deleting the private record.
+                      QR-backed public proof card. You can withdraw public
+                      access without deleting the private record.
                     </p>
 
                     <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-4">
@@ -303,13 +305,13 @@ export default async function AchievementPage({
                 ) : (
                   <>
                     <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em]">
-                      No public proof yet.
+                      No public proof identity yet.
                     </h2>
 
                     <p className="mt-4 text-sm leading-7 text-white/50">
-                      Keep this record private while you refine it. Generate a
-                      ProofTrail ID only when the evidence, context, and
-                      visibility are ready for controlled public sharing.
+                      Keep this record private while you refine its context and
+                      evidence. Generate a ProofTrail ID only when the record is
+                      ready for controlled public sharing.
                     </p>
 
                     <form action={generatePublicProofLink.bind(null, record.id)}>
@@ -317,7 +319,7 @@ export default async function AchievementPage({
                         type="submit"
                         className="mt-6 w-full rounded-full bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
                       >
-                        Generate proof link
+                        Generate proof identity
                       </button>
                     </form>
                   </>
@@ -352,7 +354,7 @@ export default async function AchievementPage({
 
                             {link.revoked_at ? (
                               <p className="mt-1 text-xs text-red-100/45">
-                                Deactivated {formatDateTime(link.revoked_at)}
+                                Withdrawn {formatDateTime(link.revoked_at)}
                               </p>
                             ) : null}
                           </div>
@@ -364,7 +366,7 @@ export default async function AchievementPage({
                                 : "w-fit rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-medium text-white/40"
                             }
                           >
-                            {link.is_active ? "Active" : "Deactivated"}
+                            {link.is_active ? "Active" : "Withdrawn"}
                           </span>
                         </div>
                       </div>
@@ -379,12 +381,12 @@ export default async function AchievementPage({
                 </p>
 
                 <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em]">
-                  Attach proof.
+                  Attach supporting evidence.
                 </h2>
 
                 <p className="mt-4 text-sm leading-7 text-white/50">
-                  Add links, source pages, certificates, publications, or other
-                  references that support this record.
+                  Add source links, certificates, publications, project pages,
+                  or supporting references that strengthen this record.
                 </p>
 
                 <AddEvidenceForm achievementId={record.id} />
@@ -400,7 +402,7 @@ export default async function AchievementPage({
             </p>
 
             <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em]">
-              Attached proof items.
+              Attached evidence items.
             </h2>
 
             {evidence.length === 0 ? (
@@ -409,9 +411,8 @@ export default async function AchievementPage({
                   No evidence has been attached yet.
                 </p>
                 <p className="mt-3 text-sm leading-7 text-white/45">
-                  Add a certificate link, project page, publication, source
-                  reference, or supporting note to strengthen this achievement
-                  record.
+                  Add a source link, project page, publication, certificate, or
+                  supporting note to strengthen this record before sharing it.
                 </p>
               </div>
             ) : (
@@ -509,9 +510,8 @@ export default async function AchievementPage({
                   No trust activity recorded yet.
                 </p>
                 <p className="mt-3 text-sm leading-7 text-white/45">
-                  Important actions such as adding evidence, generating proof
-                  links, editing records, or deactivating public proof will
-                  appear here.
+                  Evidence changes, record edits, proof generation, and proof
+                  withdrawal events will appear here.
                 </p>
               </div>
             ) : (
