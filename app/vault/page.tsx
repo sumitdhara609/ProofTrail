@@ -108,16 +108,16 @@ export default async function VaultPage() {
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
-              Record Archive
+              Proof Vault
             </p>
 
             <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.05em] sm:text-5xl">
-              A private ledger for achievements worth preserving.
+              Your private archive of evidence-backed records.
             </h1>
 
             <p className="mt-5 max-w-2xl text-sm leading-7 text-white/55">
-              Each record begins as a claim, grows through evidence, and can be
-              turned into a public proof identity when it is ready to be shared.
+              Preserve achievements with context, supporting evidence, audit
+              activity, and optional QR-backed public proof identities.
             </p>
           </div>
 
@@ -125,18 +125,18 @@ export default async function VaultPage() {
             href="/vault/new"
             className="inline-flex w-fit rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
           >
-            New record
+            Create record
           </Link>
         </div>
 
         <div className="mt-12 grid gap-4 lg:grid-cols-3">
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
-            <p className="text-sm text-white/40">Total records</p>
+            <p className="text-sm text-white/40">Archived records</p>
             <p className="mt-3 text-4xl font-semibold tracking-[-0.04em]">
               {totalRecords}
             </p>
             <p className="mt-3 text-sm leading-6 text-white/40">
-              Structured achievements stored inside your vault.
+              Achievement records preserved inside your private vault.
             </p>
           </div>
 
@@ -146,17 +146,17 @@ export default async function VaultPage() {
               {recordsWithEvidence}
             </p>
             <p className="mt-3 text-sm leading-6 text-white/40">
-              Records with at least one supporting evidence item.
+              Records strengthened with at least one supporting evidence item.
             </p>
           </div>
 
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
-            <p className="text-sm text-white/40">Proof identities</p>
+            <p className="text-sm text-white/40">Active proof identities</p>
             <p className="mt-3 text-4xl font-semibold tracking-[-0.04em]">
               {recordsWithProof}
             </p>
             <p className="mt-3 text-sm leading-6 text-white/40">
-              Records with active public proof links and QR access.
+              Records currently available through controlled public proof links.
             </p>
           </div>
         </div>
@@ -166,16 +166,17 @@ export default async function VaultPage() {
             <div className="grid gap-8 p-10 lg:grid-cols-[0.9fr_1.1fr] lg:p-12">
               <div>
                 <p className="text-sm uppercase tracking-[0.24em] text-white/35">
-                  Empty archive
+                  Empty vault
                 </p>
 
                 <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em]">
-                  Begin with one record that deserves a trail.
+                  Start with one achievement worth preserving properly.
                 </h2>
 
                 <p className="mt-4 max-w-xl text-sm leading-7 text-white/50">
                   A project, certificate, publication, competition, leadership
-                  role, award, or course can become a structured proof record.
+                  role, award, or course can become a structured record with
+                  evidence, context, and a controlled proof identity.
                 </p>
 
                 <Link
@@ -206,17 +207,23 @@ export default async function VaultPage() {
                     </div>
                   ))}
                 </div>
+
+                <p className="mt-6 text-sm leading-7 text-white/40">
+                  ProofTrail is designed to keep your records private by
+                  default and public only when you deliberately create a proof
+                  identity.
+                </p>
               </div>
             </div>
           </div>
         ) : (
           <div className="mt-14">
-            <div className="mb-5 flex items-center justify-between">
+            <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm uppercase tracking-[0.22em] text-white/35">
                 Archive entries
               </p>
               <p className="text-sm text-white/35">
-                Ordered by latest update
+                Ordered by latest record activity
               </p>
             </div>
 
@@ -227,11 +234,11 @@ export default async function VaultPage() {
                   href={`/vault/${record.id}`}
                   className="group block overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.032] transition hover:border-cyan-300/25 hover:bg-white/[0.052]"
                 >
-                  <div className="grid gap-0 lg:grid-cols-[180px_1fr_260px]">
+                  <div className="grid gap-0 lg:grid-cols-[180px_1fr_270px]">
                     <div className="flex flex-col justify-between border-b border-white/10 bg-black/20 p-6 lg:border-b-0 lg:border-r">
                       <div>
                         <p className="text-xs uppercase tracking-[0.24em] text-white/30">
-                          Record
+                          Archive ID
                         </p>
                         <p className="mt-3 font-mono text-2xl font-semibold text-white/80">
                           #{String(index + 1).padStart(3, "0")}
@@ -263,7 +270,8 @@ export default async function VaultPage() {
                       </h2>
 
                       <p className="mt-3 max-w-3xl text-sm leading-7 text-white/50">
-                        {record.description || "No context added yet."}
+                        {record.description ||
+                          "No context has been added yet. Open this record to document the story, effort, and proof behind it."}
                       </p>
 
                       <div className="mt-5 flex flex-wrap gap-4 text-xs text-white/35">
@@ -282,7 +290,7 @@ export default async function VaultPage() {
                         </div>
 
                         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                          <p className="text-xs text-white/35">Public</p>
+                          <p className="text-xs text-white/35">Public items</p>
                           <p className="mt-2 text-xl font-semibold text-white">
                             {record.publicEvidenceCount}
                           </p>
@@ -294,12 +302,12 @@ export default async function VaultPage() {
                         <p className="mt-2 text-sm font-medium text-white">
                           {record.proofLink
                             ? record.proofLink.proof_code
-                            : "Not generated"}
+                            : "Private only"}
                         </p>
                       </div>
 
                       <p className="mt-5 text-sm font-medium text-white/35 transition group-hover:text-cyan-200">
-                        Open record →
+                        Open dossier →
                       </p>
                     </div>
                   </div>
