@@ -3,6 +3,10 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/auth/actions";
 import { AchievementRecord, AuditLog } from "@/lib/proof/types";
+import {
+  getAuditActionDescription,
+  getAuditActionLabel,
+} from "@/lib/proof/audit-labels";
 
 function formatStatus(status: string) {
   return status
@@ -352,11 +356,16 @@ export default async function DashboardPage() {
                     className="rounded-2xl border border-white/10 bg-black/20 p-5"
                   >
                     <p className="text-sm font-medium text-white">
-                      {log.action}
-                    </p>
-                    <p className="mt-2 text-xs text-white/35">
-                      {formatDateTime(log.created_at)}
-                    </p>
+  {getAuditActionLabel(log.action)}
+</p>
+
+<p className="mt-2 text-sm leading-6 text-white/45">
+  {getAuditActionDescription(log.action)}
+</p>
+
+<p className="mt-3 text-xs text-white/30">
+  {formatDateTime(log.created_at)}
+</p>
                   </div>
                 ))}
               </div>
