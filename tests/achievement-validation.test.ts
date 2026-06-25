@@ -5,12 +5,12 @@ describe("achievement validation", () => {
   it("accepts a valid achievement payload", () => {
     const result = createAchievementSchema.safeParse({
       title: "Won inter-school debate competition",
-      category: "Competition",
+      category: "other",
       issuer: "St. Teresa School",
-      achievement_date: "2026-06-25",
+      achievementDate: "2026-06-25",
       description:
         "Participated in a structured debate competition and secured a winning position.",
-      impact_summary:
+      impactSummary:
         "Improved public speaking, argument structure, and communication confidence.",
       visibility: "private",
     });
@@ -21,11 +21,11 @@ describe("achievement validation", () => {
   it("rejects an empty title", () => {
     const result = createAchievementSchema.safeParse({
       title: "",
-      category: "Competition",
+      category: "other",
       issuer: "St. Teresa School",
-      achievement_date: "2026-06-25",
+      achievementDate: "2026-06-25",
       description: "Valid description",
-      impact_summary: "Valid impact summary",
+      impactSummary: "Valid impact summary",
       visibility: "private",
     });
 
@@ -37,9 +37,9 @@ describe("achievement validation", () => {
       title: "Published a project",
       category: "",
       issuer: "Personal",
-      achievement_date: "2026-06-25",
+      achievementDate: "2026-06-25",
       description: "Valid description",
-      impact_summary: "Valid impact summary",
+      impactSummary: "Valid impact summary",
       visibility: "private",
     });
 
@@ -49,11 +49,11 @@ describe("achievement validation", () => {
   it("accepts optional issuer, description, impact summary, and date as empty strings", () => {
     const result = createAchievementSchema.safeParse({
       title: "Built ProofTrail MVP",
-      category: "Project",
+      category: "other",
       issuer: "",
-      achievement_date: "",
+      achievementDate: "",
       description: "",
-      impact_summary: "",
+      impactSummary: "",
       visibility: "private",
     });
 
@@ -63,11 +63,11 @@ describe("achievement validation", () => {
   it("rejects invalid visibility values", () => {
     const result = createAchievementSchema.safeParse({
       title: "Built ProofTrail MVP",
-      category: "Project",
+      category: "other",
       issuer: "",
-      achievement_date: "",
+      achievementDate: "",
       description: "",
-      impact_summary: "",
+      impactSummary: "",
       visibility: "hidden",
     });
 

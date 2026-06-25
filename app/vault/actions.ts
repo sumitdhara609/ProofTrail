@@ -1,9 +1,18 @@
 "use server";
 
+import type { ZodError } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAchievementSchema } from "@/lib/validation/achievement";
+
+function getFirstValidationMessage(error: ZodError) {
+  return error.issues[0]?.message || "Invalid achievement data.";
+}
+
+function redirectWithNewRecordError(message: string): never {
+  redirect(`/vault/new?error=${encodeURIComponent(message)}`);
+}
 
 export async function createAchievement(formData: FormData) {
   const supabase = await createClient();
@@ -29,8 +38,7 @@ export async function createAchievement(formData: FormData) {
   const parsed = createAchievementSchema.safeParse(rawInput);
 
   if (!parsed.success) {
-    const message = parsed.error.issues[0]?.message || "Invalid achievement data.";
-    redirect(`/vault/new?error=${encodeURIComponent(message)}`);
+    redirectWithNewRecordError(getFirstValidationMessage(parsed.error));
   }
 
   const input = parsed.data;
@@ -52,7 +60,9 @@ export async function createAchievement(formData: FormData) {
     .single();
 
   if (error || !achievement) {
-    redirect(`/vault/new?error=${encodeURIComponent(error?.message || "Could not create achievement.")}`);
+    redirectWithNewRecordError(
+      error?.message || "Could not create achievement."
+    );
   }
 
   await supabase.from("audit_logs").insert({
