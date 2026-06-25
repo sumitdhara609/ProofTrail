@@ -1,5 +1,6 @@
 "use server";
 
+import type { ZodError } from "zod";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -11,6 +12,33 @@ import { createPublicSlug, generateProofCode } from "@/lib/proof/codes";
 type AddEvidenceState = {
   error?: string;
 };
+
+function getFirstValidationMessage(
+  error: ZodError,
+  fallback = "Invalid form data."
+) {
+  return error.issues[0]?.message || fallback;
+}
+
+function redirectToRecord(achievementId: string): never {
+  redirect(`/vault/${achievementId}`);
+}
+
+function redirectToRecordError(achievementId: string, message: string): never {
+  redirect(`/vault/${achievementId}?error=${encodeURIComponent(message)}`);
+}
+
+function redirectToEditError(achievementId: string, message: string): never {
+  redirect(
+    `/vault/${achievementId}/edit?error=${encodeURIComponent(message)}`
+  );
+}
+
+function redirectToDeleteError(achievementId: string, message: string): never {
+  redirect(
+    `/vault/${achievementId}/delete?error=${encodeURIComponent(message)}`
+  );
+}
 
 export async function addEvidence(
   achievementId: string,
@@ -40,7 +68,10 @@ export async function addEvidence(
 
   if (!parsed.success) {
     return {
-      error: parsed.error.issues[0]?.message || "Invalid evidence information.",
+      error: getFirstValidationMessage(
+        parsed.error,
+        "Invalid evidence information."
+      ),
     };
   }
 
@@ -132,7 +163,7 @@ export async function generatePublicProofLink(achievementId: string) {
     .single();
 
   if (achievementError || !achievement) {
-    redirect(`/vault/${achievementId}?error=record-not-found`);
+    redirectToRecordError(achievementId, "record-not-found");
   }
 
   const { data: existingProofLink } = await supabase
@@ -144,7 +175,7 @@ export async function generatePublicProofLink(achievementId: string) {
     .maybeSingle();
 
   if (existingProofLink) {
-    redirect(`/vault/${achievementId}`);
+    redirectToRecord(achievementId);
   }
 
   const requestHeaders = await headers();
@@ -169,10 +200,9 @@ export async function generatePublicProofLink(achievementId: string) {
     .single();
 
   if (proofError || !proofLink) {
-    redirect(
-      `/vault/${achievementId}?error=${encodeURIComponent(
-        proofError?.message || "Could not generate proof link."
-      )}`
+    redirectToRecordError(
+      achievementId,
+      proofError?.message || "Could not generate proof link."
     );
   }
 
@@ -205,7 +235,7 @@ export async function generatePublicProofLink(achievementId: string) {
   revalidatePath("/dashboard");
   revalidatePath(`/proof/${publicSlug}`);
 
-  redirect(`/vault/${achievementId}`);
+  redirectToRecord(achievementId);
 }
 
 export async function updateAchievement(
@@ -235,10 +265,10 @@ export async function updateAchievement(
   const parsed = createAchievementSchema.safeParse(rawInput);
 
   if (!parsed.success) {
-    const message =
-      parsed.error.issues[0]?.message || "Invalid achievement data.";
-
-    redirect(`/vault/${achievementId}/edit?error=${encodeURIComponent(message)}`);
+    redirectToEditError(
+      achievementId,
+      getFirstValidationMessage(parsed.error, "Invalid achievement data.")
+    );
   }
 
   const input = parsed.data;
@@ -253,7 +283,7 @@ export async function updateAchievement(
     .single();
 
   if (existingRecordError || !existingRecord) {
-    redirect(`/vault/${achievementId}/edit?error=record-not-found`);
+    redirectToEditError(achievementId, "record-not-found");
   }
 
   const updatedRecord = {
@@ -274,11 +304,7 @@ export async function updateAchievement(
     .eq("user_id", user.id);
 
   if (updateError) {
-    redirect(
-      `/vault/${achievementId}/edit?error=${encodeURIComponent(
-        updateError.message
-      )}`
-    );
+    redirectToEditError(achievementId, updateError.message);
   }
 
   await supabase.from("audit_logs").insert({
@@ -314,7 +340,7 @@ export async function updateAchievement(
   revalidatePath("/vault");
   revalidatePath("/dashboard");
 
-  redirect(`/vault/${achievementId}`);
+  redirectToRecord(achievementId);
 }
 
 export async function deleteEvidenceItem(
@@ -342,7 +368,7 @@ export async function deleteEvidenceItem(
     .single();
 
   if (evidenceLookupError || !evidenceItem) {
-    redirect(`/vault/${achievementId}?error=evidence-not-found`);
+    redirectToRecordError(achievementId, "evidence-not-found");
   }
 
   const { error: deleteError } = await supabase
@@ -353,11 +379,7 @@ export async function deleteEvidenceItem(
     .eq("user_id", user.id);
 
   if (deleteError) {
-    redirect(
-      `/vault/${achievementId}?error=${encodeURIComponent(
-        deleteError.message
-      )}`
-    );
+    redirectToRecordError(achievementId, deleteError.message);
   }
 
   await supabase.from("audit_logs").insert({
@@ -412,7 +434,7 @@ export async function deleteEvidenceItem(
   revalidatePath("/vault");
   revalidatePath("/dashboard");
 
-  redirect(`/vault/${achievementId}`);
+  redirectToRecord(achievementId);
 }
 
 export async function deleteAchievement(achievementId: string) {
@@ -434,7 +456,7 @@ export async function deleteAchievement(achievementId: string) {
     .single();
 
   if (achievementError || !achievement) {
-    redirect(`/vault/${achievementId}/delete?error=record-not-found`);
+    redirectToDeleteError(achievementId, "record-not-found");
   }
 
   const { count: evidenceCount } = await supabase
@@ -480,11 +502,11 @@ export async function deleteAchievement(achievementId: string) {
     .eq("user_id", user.id);
 
   if (deleteError) {
-    redirect(
-      `/vault/${achievementId}/delete?error=${encodeURIComponent(
-        deleteError.message
-      )}`
-    );
+    redirectToDeleteError(achievementId, deleteError.message);
+  }
+
+  if (proofLink?.public_slug) {
+    revalidatePath(`/proof/${proofLink.public_slug}`);
   }
 
   revalidatePath("/vault");
@@ -492,6 +514,7 @@ export async function deleteAchievement(achievementId: string) {
 
   redirect("/vault");
 }
+
 export async function deactivatePublicProofLink(achievementId: string) {
   const supabase = await createClient();
 
@@ -512,7 +535,7 @@ export async function deactivatePublicProofLink(achievementId: string) {
     .single();
 
   if (proofLinkError || !proofLink) {
-    redirect(`/vault/${achievementId}?error=active-proof-link-not-found`);
+    redirectToRecordError(achievementId, "active-proof-link-not-found");
   }
 
   const { error: updateError } = await supabase
@@ -526,11 +549,7 @@ export async function deactivatePublicProofLink(achievementId: string) {
     .eq("user_id", user.id);
 
   if (updateError) {
-    redirect(
-      `/vault/${achievementId}?error=${encodeURIComponent(
-        updateError.message
-      )}`
-    );
+    redirectToRecordError(achievementId, updateError.message);
   }
 
   await supabase.from("audit_logs").insert({
@@ -551,5 +570,5 @@ export async function deactivatePublicProofLink(achievementId: string) {
   revalidatePath("/dashboard");
   revalidatePath(`/proof/${proofLink.public_slug}`);
 
-  redirect(`/vault/${achievementId}`);
+  redirectToRecord(achievementId);
 }
