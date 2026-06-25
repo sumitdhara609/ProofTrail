@@ -65,17 +65,18 @@ export default async function EditAchievementPage({
           </p>
 
           <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em]">
-            Refine this achievement record.
+            Refine this proof record.
           </h1>
 
           <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55">
-            Update the record carefully. ProofTrail keeps an audit event whenever
-            important record details are changed.
+            Update the record carefully. ProofTrail records an audit event when
+            important achievement details are changed.
           </p>
 
           {error ? (
-            <div className="mt-8 rounded-2xl border border-red-400/20 bg-red-400/10 p-4 text-sm text-red-100">
-              {error}
+            <div className="mt-8 rounded-2xl border border-red-400/20 bg-red-400/10 p-5 text-sm text-red-100">
+              <p className="font-medium">Record could not be updated.</p>
+              <p className="mt-2 leading-7 text-red-100/70">{error}</p>
             </div>
           ) : null}
 
@@ -143,6 +144,10 @@ export default async function EditAchievementPage({
                   <option value="unlisted">Unlisted</option>
                   <option value="public">Public</option>
                 </select>
+                <p className="mt-2 text-xs leading-5 text-white/35">
+                  Public proof cards only expose selected public evidence, but
+                  private is safest while refining a record.
+                </p>
               </div>
             </div>
 
@@ -152,14 +157,14 @@ export default async function EditAchievementPage({
                   htmlFor="issuer"
                   className="text-sm font-medium text-white/70"
                 >
-                  Issuer / organization
+                  Issuer / origin
                 </label>
                 <input
                   id="issuer"
                   name="issuer"
                   type="text"
                   defaultValue={record.issuer || ""}
-                  placeholder="Self-built / School / Event name"
+                  placeholder="Self-built / school / event / organization"
                   className="mt-2 w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/40"
                 />
               </div>
@@ -193,7 +198,7 @@ export default async function EditAchievementPage({
                 name="description"
                 rows={5}
                 defaultValue={record.description || ""}
-                placeholder="Describe what this achievement represents."
+                placeholder="Describe what this record represents, how it happened, and why it matters."
                 className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm leading-7 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/40"
               />
             </div>
@@ -210,7 +215,7 @@ export default async function EditAchievementPage({
                 name="impactSummary"
                 rows={3}
                 defaultValue={record.impact_summary || ""}
-                placeholder="Summarize outcome, effort, responsibility, or impact."
+                placeholder="Summarize the outcome, effort, responsibility, contribution, or visible result."
                 className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm leading-7 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/40"
               />
             </div>
