@@ -18,17 +18,18 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
         </p>
 
         <h1 className="mt-4 text-3xl font-semibold tracking-tight">
-          Create your proof vault
+          Create your proof vault.
         </h1>
 
         <p className="mt-4 text-sm leading-7 text-white/55">
-          Start preserving achievements with evidence, context, and controlled
-          proof sharing.
+          Start a private vault for preserving achievement records, attaching
+          evidence, and controlling what becomes publicly shareable.
         </p>
 
         {error ? (
-          <div className="mt-6 rounded-2xl border border-red-400/20 bg-red-400/10 p-4 text-sm text-red-100">
-            {error}
+          <div className="mt-6 rounded-2xl border border-red-400/20 bg-red-400/10 p-5 text-sm text-red-100">
+            <p className="font-medium">Vault could not be created.</p>
+            <p className="mt-2 leading-7 text-red-100/70">{error}</p>
           </div>
         ) : null}
 
@@ -45,7 +46,7 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
               name="fullName"
               type="text"
               required
-              placeholder="Sumit Dhara"
+              placeholder="Your name"
               className="mt-2 w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/40"
             />
           </div>
@@ -80,6 +81,9 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
               placeholder="At least 8 characters"
               className="mt-2 w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/40"
             />
+            <p className="mt-2 text-xs leading-5 text-white/35">
+              Use a password that is unique to this account.
+            </p>
           </div>
 
           <button
