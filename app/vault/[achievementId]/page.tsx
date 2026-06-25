@@ -18,6 +18,13 @@ import {
   getAuditActionDescription,
   getAuditActionLabel,
 } from "@/lib/proof/audit-labels";
+import {
+  formatDate,
+  formatDateTime,
+  formatEvidenceType,
+  formatStatus,
+} from "@/lib/proof/format";
+
 type AchievementPageProps = {
   params: Promise<{
     achievementId: string;
@@ -26,46 +33,6 @@ type AchievementPageProps = {
     error?: string;
   }>;
 };
-
-function formatStatus(status: string) {
-  return status
-    .split("_")
-    .map((part) => part[0].toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
-function formatEvidenceType(type: string) {
-  return type
-    .split("_")
-    .map((part) => part[0].toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
-function formatDate(value: string | null) {
-  if (!value) {
-    return "Not dated";
-  }
-
-  return new Date(value).toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-}
-
-function formatDateTime(value: string | null) {
-  if (!value) {
-    return "Not available";
-  }
-
-  return new Date(value).toLocaleString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 function formatErrorMessage(error: string) {
   const messages: Record<string, string> = {
@@ -283,8 +250,9 @@ export default async function AchievementPage({
                     </h2>
 
                     <p className="mt-4 text-sm leading-7 text-white/50">
-                      This record currently has an active ProofTrail ID and QR-backed public access.
-You can withdraw public access without deleting the private record.
+                      This record currently has an active ProofTrail ID and
+                      QR-backed public access. You can withdraw public access
+                      without deleting the private record.
                     </p>
 
                     <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-4">
@@ -560,16 +528,16 @@ You can withdraw public access without deleting the private record.
 
                       <div>
                         <p className="text-sm font-medium text-white">
-  {getAuditActionLabel(log.action)}
-</p>
+                          {getAuditActionLabel(log.action)}
+                        </p>
 
-<p className="mt-2 text-sm leading-6 text-white/45">
-  {getAuditActionDescription(log.action)}
-</p>
+                        <p className="mt-2 text-sm leading-6 text-white/45">
+                          {getAuditActionDescription(log.action)}
+                        </p>
 
-<p className="mt-3 text-xs text-white/30">
-  {formatDateTime(log.created_at)}
-</p>
+                        <p className="mt-3 text-xs text-white/30">
+                          {formatDateTime(log.created_at)}
+                        </p>
                       </div>
                     </div>
                   </div>
