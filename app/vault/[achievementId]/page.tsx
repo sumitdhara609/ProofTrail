@@ -14,7 +14,10 @@ import {
   EvidenceItem,
   PublicProofLink,
 } from "@/lib/proof/types";
-
+import {
+  getAuditActionDescription,
+  getAuditActionLabel,
+} from "@/lib/proof/audit-labels";
 type AchievementPageProps = {
   params: Promise<{
     achievementId: string;
@@ -557,11 +560,16 @@ You can withdraw public access without deleting the private record.
 
                       <div>
                         <p className="text-sm font-medium text-white">
-                          {log.action}
-                        </p>
-                        <p className="mt-2 text-xs text-white/35">
-                          {formatDateTime(log.created_at)}
-                        </p>
+  {getAuditActionLabel(log.action)}
+</p>
+
+<p className="mt-2 text-sm leading-6 text-white/45">
+  {getAuditActionDescription(log.action)}
+</p>
+
+<p className="mt-3 text-xs text-white/30">
+  {formatDateTime(log.created_at)}
+</p>
                       </div>
                     </div>
                   </div>
