@@ -79,14 +79,14 @@ export default async function DeleteAchievementPage({
           </p>
 
           <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em]">
-            Delete this achievement record?
+            Permanently remove this record?
           </h1>
 
           <p className="mt-4 max-w-2xl text-sm leading-7 text-white/60">
-            This will permanently remove the achievement record from your vault.
-            Attached evidence and active public proof identity will also be
-            removed.
-          </p>
+  This action will permanently remove the achievement record from your
+  private vault. Any attached evidence and active public proof identity will
+  also be removed from active access.
+</p>
 
           {error ? (
             <div className="mt-8 rounded-2xl border border-red-400/30 bg-red-400/10 p-4 text-sm text-red-100">
@@ -96,7 +96,7 @@ export default async function DeleteAchievementPage({
 
           <div className="mt-8 rounded-[2rem] border border-white/10 bg-black/20 p-6">
             <p className="text-xs uppercase tracking-[0.22em] text-white/35">
-              Record selected
+              Record scheduled for removal
             </p>
 
             <h2 className="mt-4 text-2xl font-semibold tracking-[-0.03em]">
@@ -128,14 +128,14 @@ export default async function DeleteAchievementPage({
           </div>
 
           <div className="mt-8 rounded-2xl border border-red-400/20 bg-black/20 p-5">
-            <p className="text-sm font-medium text-red-100">
-              This action cannot be undone.
-            </p>
-            <p className="mt-2 text-sm leading-7 text-white/45">
-              Delete only if this record was created by mistake or no longer
-              belongs in your proof archive.
-            </p>
-          </div>
+  <p className="text-sm font-medium text-red-100">
+    This is a permanent vault action.
+  </p>
+  <p className="mt-2 text-sm leading-7 text-white/45">
+    Continue only if this record was created by mistake, duplicated, or no
+    longer belongs in your proof archive. This does not affect your account.
+  </p>
+</div>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <form action={deleteAchievement.bind(null, record.id)}>
@@ -143,7 +143,7 @@ export default async function DeleteAchievementPage({
                 type="submit"
                 className="w-full rounded-full bg-red-200 px-6 py-3 text-sm font-semibold text-black transition hover:bg-red-100 sm:w-auto"
               >
-                Delete permanently
+                Remove record permanently
               </button>
             </form>
 
@@ -151,7 +151,7 @@ export default async function DeleteAchievementPage({
               href={`/vault/${record.id}`}
               className="inline-flex justify-center rounded-full border border-white/10 bg-white/[0.03] px-6 py-3 text-sm font-semibold text-white/70 transition hover:bg-white/[0.06] hover:text-white"
             >
-              Cancel
+              Keep record
             </Link>
           </div>
         </div>
