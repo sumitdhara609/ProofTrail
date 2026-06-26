@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { GlassCard } from "@/components/ui/GlassCard";
 import { createAchievement } from "@/app/vault/actions";
 import { createClient } from "@/lib/supabase/server";
 
@@ -25,31 +26,34 @@ export default async function NewAchievementPage({
   }
 
   return (
-    <main className="min-h-screen bg-[#08090d] px-6 py-10 text-white sm:px-10 lg:px-16">
+    <main className="min-h-screen bg-[var(--background)] px-6 py-10 text-[var(--text-primary)] sm:px-10 lg:px-16">
       <section className="mx-auto max-w-4xl">
-        <Link href="/vault" className="text-sm font-medium text-cyan-200">
+        <Link
+          href="/vault"
+          className="text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+        >
           ← Back to vault
         </Link>
 
-        <div className="mt-10 rounded-[2.5rem] border border-white/10 bg-white/[0.035] p-8 shadow-2xl shadow-black/30 sm:p-10">
-          <p className="text-sm uppercase tracking-[0.22em] text-cyan-200/80">
+        <GlassCard className="mt-10 p-8 sm:p-10">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
             New record
           </p>
 
-          <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em]">
+          <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
             Create a structured proof record.
           </h1>
 
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55">
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
             Start with the core achievement details. Evidence, audit history,
             proof identity, and QR-backed public access can be managed after the
             record is created.
           </p>
 
           {error ? (
-            <div className="mt-8 rounded-2xl border border-red-400/20 bg-red-400/10 p-5 text-sm text-red-100">
-              <p className="font-medium">Record could not be created.</p>
-              <p className="mt-2 leading-7 text-red-100/70">{error}</p>
+            <div className="mt-8 rounded-2xl border border-[var(--danger-border)] bg-[var(--danger-soft)] p-5 text-sm text-[var(--danger)]">
+              <p className="font-semibold">Record could not be created.</p>
+              <p className="mt-2 leading-7">{error}</p>
             </div>
           ) : null}
 
@@ -57,7 +61,7 @@ export default async function NewAchievementPage({
             <div>
               <label
                 htmlFor="title"
-                className="text-sm font-medium text-white/70"
+                className="text-sm font-semibold text-[var(--text-secondary)]"
               >
                 Achievement title
               </label>
@@ -67,7 +71,7 @@ export default async function NewAchievementPage({
                 type="text"
                 required
                 placeholder="Product build milestone"
-                className="mt-2 w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/40"
+                className="mt-2 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
               />
             </div>
 
@@ -75,7 +79,7 @@ export default async function NewAchievementPage({
               <div>
                 <label
                   htmlFor="category"
-                  className="text-sm font-medium text-white/70"
+                  className="text-sm font-semibold text-[var(--text-secondary)]"
                 >
                   Category
                 </label>
@@ -83,7 +87,7 @@ export default async function NewAchievementPage({
                   id="category"
                   name="category"
                   defaultValue="project"
-                  className="mt-2 w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/40"
+                  className="mt-2 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)]"
                 >
                   <option value="certificate">Certificate</option>
                   <option value="competition">Competition</option>
@@ -100,7 +104,7 @@ export default async function NewAchievementPage({
               <div>
                 <label
                   htmlFor="visibility"
-                  className="text-sm font-medium text-white/70"
+                  className="text-sm font-semibold text-[var(--text-secondary)]"
                 >
                   Visibility
                 </label>
@@ -108,13 +112,13 @@ export default async function NewAchievementPage({
                   id="visibility"
                   name="visibility"
                   defaultValue="private"
-                  className="mt-2 w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/40"
+                  className="mt-2 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)]"
                 >
                   <option value="private">Private</option>
                   <option value="unlisted">Unlisted</option>
                   <option value="public">Public</option>
                 </select>
-                <p className="mt-2 text-xs leading-5 text-white/35">
+                <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">
                   Private is safest while the record is still being prepared.
                 </p>
               </div>
@@ -124,7 +128,7 @@ export default async function NewAchievementPage({
               <div>
                 <label
                   htmlFor="issuer"
-                  className="text-sm font-medium text-white/70"
+                  className="text-sm font-semibold text-[var(--text-secondary)]"
                 >
                   Issuer / origin
                 </label>
@@ -133,14 +137,14 @@ export default async function NewAchievementPage({
                   name="issuer"
                   type="text"
                   placeholder="Self-built / school / event / organization"
-                  className="mt-2 w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/40"
+                  className="mt-2 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="achievementDate"
-                  className="text-sm font-medium text-white/70"
+                  className="text-sm font-semibold text-[var(--text-secondary)]"
                 >
                   Achievement date
                 </label>
@@ -148,7 +152,7 @@ export default async function NewAchievementPage({
                   id="achievementDate"
                   name="achievementDate"
                   type="date"
-                  className="mt-2 w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/40"
+                  className="mt-2 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)]"
                 />
               </div>
             </div>
@@ -156,7 +160,7 @@ export default async function NewAchievementPage({
             <div>
               <label
                 htmlFor="description"
-                className="text-sm font-medium text-white/70"
+                className="text-sm font-semibold text-[var(--text-secondary)]"
               >
                 Context
               </label>
@@ -165,14 +169,14 @@ export default async function NewAchievementPage({
                 name="description"
                 rows={5}
                 placeholder="Describe what this record represents, how it happened, and why it matters."
-                className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm leading-7 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/40"
+                className="mt-2 w-full resize-none rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-7 text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
               />
             </div>
 
             <div>
               <label
                 htmlFor="impactSummary"
-                className="text-sm font-medium text-white/70"
+                className="text-sm font-semibold text-[var(--text-secondary)]"
               >
                 Impact summary
               </label>
@@ -181,18 +185,27 @@ export default async function NewAchievementPage({
                 name="impactSummary"
                 rows={3}
                 placeholder="Summarize the outcome, effort, responsibility, contribution, or visible result."
-                className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm leading-7 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/40"
+                className="mt-2 w-full resize-none rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-7 text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
               />
             </div>
 
-            <button
-              type="submit"
-              className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
-            >
-              Create record
-            </button>
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <button
+                type="submit"
+                className="rounded-full bg-[var(--text-primary)] px-6 py-3 text-sm font-semibold text-[var(--background)] shadow-[var(--shadow-soft)] transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+              >
+                Create record
+              </button>
+
+              <Link
+                href="/vault"
+                className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text-secondary)] shadow-[var(--shadow-soft)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+              >
+                Cancel
+              </Link>
+            </div>
           </form>
-        </div>
+        </GlassCard>
       </section>
     </main>
   );
