@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { GlassCard } from "@/components/ui/GlassCard";
 import { deleteAchievement } from "@/app/vault/[achievementId]/actions";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -64,75 +65,79 @@ export default async function DeleteAchievementPage({
   const proofLink = proofLinkData as PublicProofLink | null;
 
   return (
-    <main className="min-h-screen bg-[#08090d] px-6 py-10 text-white sm:px-10 lg:px-16">
+    <main className="min-h-screen bg-[var(--background)] px-6 py-10 text-[var(--text-primary)] sm:px-10 lg:px-16">
       <section className="mx-auto max-w-3xl">
         <Link
           href={`/vault/${record.id}`}
-          className="text-sm font-medium text-cyan-200"
+          className="text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
         >
           ← Back to dossier
         </Link>
 
-        <div className="mt-10 rounded-[2.5rem] border border-red-400/20 bg-red-400/[0.06] p-8 shadow-2xl shadow-black/30 sm:p-10">
-          <p className="text-sm uppercase tracking-[0.22em] text-red-200/80">
+        <GlassCard className="mt-10 border-[var(--danger-border)] bg-[var(--surface)] p-8 sm:p-10">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--danger)]">
             Destructive action
           </p>
 
-          <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em]">
+          <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
             Permanently remove this record?
           </h1>
 
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/60">
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
             This will permanently remove the achievement record from your
             private vault. Attached evidence and any active public proof access
             connected to this record will also be removed.
           </p>
 
           {error ? (
-            <div className="mt-8 rounded-2xl border border-red-400/30 bg-red-400/10 p-5 text-sm text-red-100">
-              <p className="font-medium">Record could not be removed.</p>
-              <p className="mt-2 leading-7 text-red-100/70">{error}</p>
+            <div className="mt-8 rounded-2xl border border-[var(--danger-border)] bg-[var(--danger-soft)] p-5 text-sm text-[var(--danger)]">
+              <p className="font-semibold">Record could not be removed.</p>
+              <p className="mt-2 leading-7">{error}</p>
             </div>
           ) : null}
 
-          <div className="mt-8 rounded-[2rem] border border-white/10 bg-black/20 p-6">
-            <p className="text-xs uppercase tracking-[0.22em] text-white/35">
+          <div className="mt-8 rounded-[2rem] border border-[var(--border)] bg-[var(--surface-soft)] p-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">
               Record selected for removal
             </p>
 
-            <h2 className="mt-4 text-2xl font-semibold tracking-[-0.03em]">
+            <h2 className="mt-4 text-2xl font-semibold tracking-[-0.03em] text-[var(--text-primary)]">
               {record.title}
             </h2>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                <p className="text-xs text-white/35">Evidence items</p>
-                <p className="mt-2 text-2xl font-semibold">
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+                <p className="text-xs text-[var(--text-muted)]">
+                  Evidence items
+                </p>
+                <p className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">
                   {evidence.length}
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                <p className="text-xs text-white/35">Proof identity</p>
-                <p className="mt-2 text-sm font-semibold">
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+                <p className="text-xs text-[var(--text-muted)]">
+                  Proof identity
+                </p>
+                <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
                   {proofLink ? proofLink.proof_code : "Private only"}
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                <p className="text-xs text-white/35">Visibility</p>
-                <p className="mt-2 text-sm font-semibold">
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+                <p className="text-xs text-[var(--text-muted)]">Visibility</p>
+                <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
                   {record.visibility}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="mt-8 rounded-2xl border border-red-400/20 bg-black/20 p-5">
-            <p className="text-sm font-medium text-red-100">
+          <div className="mt-8 rounded-2xl border border-[var(--danger-border)] bg-[var(--danger-soft)] p-5">
+            <p className="text-sm font-semibold text-[var(--danger)]">
               This action cannot be undone from the app.
             </p>
-            <p className="mt-2 text-sm leading-7 text-white/45">
+            <p className="mt-2 text-sm leading-7 text-[var(--text-secondary)]">
               Continue only if this record was created by mistake, duplicated,
               or no longer belongs in your proof archive. Your account and other
               vault records will not be affected.
@@ -143,7 +148,7 @@ export default async function DeleteAchievementPage({
             <form action={deleteAchievement.bind(null, record.id)}>
               <button
                 type="submit"
-                className="w-full rounded-full bg-red-200 px-6 py-3 text-sm font-semibold text-black transition hover:bg-red-100 sm:w-auto"
+                className="w-full rounded-full border border-[var(--danger-border)] bg-[var(--danger)] px-6 py-3 text-sm font-semibold text-white shadow-[var(--shadow-soft)] transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--danger)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] sm:w-auto"
               >
                 Remove record permanently
               </button>
@@ -151,12 +156,12 @@ export default async function DeleteAchievementPage({
 
             <Link
               href={`/vault/${record.id}`}
-              className="inline-flex justify-center rounded-full border border-white/10 bg-white/[0.03] px-6 py-3 text-sm font-semibold text-white/70 transition hover:bg-white/[0.06] hover:text-white"
+              className="inline-flex justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text-secondary)] shadow-[var(--shadow-soft)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
             >
               Keep record
             </Link>
           </div>
-        </div>
+        </GlassCard>
       </section>
     </main>
   );
