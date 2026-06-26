@@ -83,6 +83,26 @@ export function AddEvidenceForm({ achievementId }: AddEvidenceFormProps) {
 
       <div>
         <label
+          htmlFor="mediaFile"
+          className="text-sm font-semibold text-[var(--text-secondary)]"
+        >
+          Media evidence
+        </label>
+        <input
+          id="mediaFile"
+          name="mediaFile"
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"
+          className="mt-2 w-full rounded-2xl border border-dashed border-[var(--border-strong)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-secondary)] outline-none transition file:mr-4 file:rounded-full file:border-0 file:bg-[var(--text-primary)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-[var(--background)] hover:border-[var(--accent)] focus:border-[var(--accent)]"
+        />
+        <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">
+          Optional. Upload a certificate, screenshot, proof image, moment photo,
+          or PDF. Maximum size: 5 MB.
+        </p>
+      </div>
+
+      <div>
+        <label
           htmlFor="description"
           className="text-sm font-semibold text-[var(--text-secondary)]"
         >
