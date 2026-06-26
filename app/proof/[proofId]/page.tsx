@@ -26,6 +26,12 @@ type ProofUnavailableReason =
   | "record-unavailable"
   | "not-public";
 
+type PublicEvidenceWithMediaPreview = EvidenceItem & {
+  mediaPreviewUrl: string | null;
+  mediaPreviewKind: "image" | "pdf" | "file" | null;
+  mediaSizeLabel: string | null;
+};
+
 function getUnavailableCopy(reason: ProofUnavailableReason) {
   const copy: Record<
     ProofUnavailableReason,
@@ -62,6 +68,38 @@ function getUnavailableCopy(reason: ProofUnavailableReason) {
   };
 
   return copy[reason];
+}
+
+function getMediaPreviewKind(mimeType: string | null) {
+  if (!mimeType) {
+    return null;
+  }
+
+  if (mimeType.startsWith("image/")) {
+    return "image";
+  }
+
+  if (mimeType === "application/pdf") {
+    return "pdf";
+  }
+
+  return "file";
+}
+
+function formatFileSize(bytes: number | null) {
+  if (!bytes) {
+    return null;
+  }
+
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  }
+
+  if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  }
+
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function ProofUnavailable({
@@ -180,7 +218,38 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
     .eq("is_public", true)
     .order("created_at", { ascending: false });
 
-  const evidence = (evidenceItems || []) as EvidenceItem[];
+  const rawEvidence = (evidenceItems || []) as EvidenceItem[];
+
+  const evidence: PublicEvidenceWithMediaPreview[] = await Promise.all(
+    rawEvidence.map(async (item) => {
+      const mediaPreviewKind = getMediaPreviewKind(item.file_mime_type);
+      const mediaSizeLabel = formatFileSize(item.file_size_bytes);
+
+      if (!item.file_path || !item.storage_bucket) {
+        return {
+          ...item,
+          mediaPreviewUrl: null,
+          mediaPreviewKind,
+          mediaSizeLabel,
+        };
+      }
+
+      const { data: signedUrlData } = await supabase.storage
+        .from(item.storage_bucket)
+        .createSignedUrl(item.file_path, 60 * 10);
+
+      return {
+        ...item,
+        mediaPreviewUrl: signedUrlData?.signedUrl || null,
+        mediaPreviewKind,
+        mediaSizeLabel,
+      };
+    })
+  );
+
+  const publicMediaCount = evidence.filter((item) =>
+    Boolean(item.file_path)
+  ).length;
 
   const qrDataUrl = proofLink.qr_target_url
     ? await generateQrDataUrl(proofLink.qr_target_url)
@@ -353,9 +422,16 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
               </h2>
             </div>
 
-            <p className="text-sm text-[var(--text-muted)]">
-              {evidence.length} public item{evidence.length === 1 ? "" : "s"}
-            </p>
+            <div className="text-sm text-[var(--text-muted)] sm:text-right">
+              <p>
+                {evidence.length} public item
+                {evidence.length === 1 ? "" : "s"}
+              </p>
+              <p className="mt-1">
+                {publicMediaCount} media item
+                {publicMediaCount === 1 ? "" : "s"}
+              </p>
+            </div>
           </div>
 
           {evidence.length === 0 ? (
@@ -412,6 +488,88 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                         <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
                           {item.description}
                         </p>
+                      ) : null}
+
+                      {item.file_path ? (
+                        <div className="mt-5 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
+                          <div className="border-b border-[var(--border)] p-4">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                              <div>
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
+                                  Public media evidence
+                                </p>
+                                <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                                  {item.file_name || "Published evidence file"}
+                                </p>
+                                <p className="mt-1 text-xs text-[var(--text-muted)]">
+                                  {[item.file_mime_type, item.mediaSizeLabel]
+                                    .filter(Boolean)
+                                    .join(" • ")}
+                                </p>
+                              </div>
+
+                              <span className="w-fit rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-1 text-xs font-semibold text-[var(--text-muted)]">
+                                Public selection
+                              </span>
+                            </div>
+                          </div>
+
+                          {item.mediaPreviewUrl &&
+                          item.mediaPreviewKind === "image" ? (
+                            <a
+                              href={item.mediaPreviewUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="block bg-[var(--surface-soft)] p-4"
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={item.mediaPreviewUrl}
+                                alt={item.file_name || item.title}
+                                className="max-h-[420px] w-full rounded-xl object-contain"
+                              />
+                            </a>
+                          ) : null}
+
+                          {item.mediaPreviewUrl &&
+                          item.mediaPreviewKind === "pdf" ? (
+                            <div className="bg-[var(--surface-soft)] p-4">
+                              <a
+                                href={item.mediaPreviewUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+                              >
+                                <span>Open public PDF evidence</span>
+                                <span aria-hidden="true">→</span>
+                              </a>
+                            </div>
+                          ) : null}
+
+                          {item.mediaPreviewUrl &&
+                          item.mediaPreviewKind === "file" ? (
+                            <div className="bg-[var(--surface-soft)] p-4">
+                              <a
+                                href={item.mediaPreviewUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+                              >
+                                <span>Open public evidence file</span>
+                                <span aria-hidden="true">→</span>
+                              </a>
+                            </div>
+                          ) : null}
+
+                          {!item.mediaPreviewUrl ? (
+                            <div className="bg-[var(--surface-soft)] p-4">
+                              <p className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--text-muted)]">
+                                This public media file is listed, but its
+                                preview link could not be generated.
+                              </p>
+                            </div>
+                          ) : null}
+                        </div>
                       ) : null}
                     </div>
                   </div>
