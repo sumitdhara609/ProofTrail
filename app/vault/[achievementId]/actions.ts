@@ -8,6 +8,11 @@ import { createClient } from "@/lib/supabase/server";
 import { createEvidenceSchema } from "@/lib/validation/evidence";
 import { createAchievementSchema } from "@/lib/validation/achievement";
 import { createPublicSlug, generateProofCode } from "@/lib/proof/codes";
+import {
+  getSafeEvidenceFileName,
+  hasMediaEvidenceFile,
+  validateMediaEvidenceFile,
+} from "@/lib/validation/media-evidence";
 
 type AddEvidenceState = {
   error?: string;
@@ -55,6 +60,9 @@ export async function addEvidence(
     redirect("/sign-in");
   }
 
+  const mediaFileEntry = formData.get("mediaFile");
+  const hasMediaFile = hasMediaEvidenceFile(mediaFileEntry);
+
   const rawInput = {
     achievementId,
     evidenceType: String(formData.get("evidenceType") || "other"),
@@ -90,6 +98,55 @@ export async function addEvidence(
     };
   }
 
+  let uploadedMedia:
+    | {
+        storageBucket: string;
+        filePath: string;
+        fileName: string;
+        mimeType: string;
+        fileSizeBytes: number;
+      }
+    | null = null;
+
+  if (hasMediaFile) {
+    const validation = validateMediaEvidenceFile(
+      mediaFileEntry instanceof File ? mediaFileEntry : null
+    );
+
+    if (!validation.valid) {
+      return {
+        error: validation.error,
+      };
+    }
+
+    const file = validation.file;
+    const storageBucket = "proof-evidence";
+    const safeFileName = getSafeEvidenceFileName(file);
+    const filePath = `${user.id}/${achievementId}/${safeFileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from(storageBucket)
+      .upload(filePath, file, {
+        contentType: file.type,
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (uploadError) {
+      return {
+        error: uploadError.message || "Could not upload media evidence.",
+      };
+    }
+
+    uploadedMedia = {
+      storageBucket,
+      filePath,
+      fileName: file.name,
+      mimeType: file.type,
+      fileSizeBytes: file.size,
+    };
+  }
+
   const { data: evidence, error: evidenceError } = await supabase
     .from("evidence_items")
     .insert({
@@ -99,12 +156,23 @@ export async function addEvidence(
       title: input.title,
       description: input.description || null,
       source_url: input.sourceUrl || null,
+      file_path: uploadedMedia?.filePath || null,
+      file_name: uploadedMedia?.fileName || null,
+      file_mime_type: uploadedMedia?.mimeType || null,
+      file_size_bytes: uploadedMedia?.fileSizeBytes || null,
+      storage_bucket: uploadedMedia?.storageBucket || null,
       is_public: input.isPublic,
     })
     .select("id")
     .single();
 
   if (evidenceError || !evidence) {
+    if (uploadedMedia) {
+      await supabase.storage
+        .from(uploadedMedia.storageBucket)
+        .remove([uploadedMedia.filePath]);
+    }
+
     return {
       error: evidenceError?.message || "Could not add evidence.",
     };
@@ -114,9 +182,10 @@ export async function addEvidence(
     await supabase
       .from("achievements")
       .update({
-        verification_status: input.sourceUrl
-          ? "source_linked"
-          : "evidence_attached",
+        verification_status:
+          input.sourceUrl || uploadedMedia
+            ? "source_linked"
+            : "evidence_attached",
         updated_at: new Date().toISOString(),
       })
       .eq("id", achievementId)
@@ -134,6 +203,10 @@ export async function addEvidence(
       title: input.title,
       is_public: input.isPublic,
       has_source_url: Boolean(input.sourceUrl),
+      has_media_file: Boolean(uploadedMedia),
+      media_file_name: uploadedMedia?.fileName || null,
+      media_mime_type: uploadedMedia?.mimeType || null,
+      media_file_size_bytes: uploadedMedia?.fileSizeBytes || null,
     },
   });
 
@@ -360,7 +433,7 @@ export async function deleteEvidenceItem(
   const { data: evidenceItem, error: evidenceLookupError } = await supabase
     .from("evidence_items")
     .select(
-      "id, achievement_id, user_id, title, evidence_type, source_url, is_public"
+      "id, achievement_id, user_id, title, evidence_type, source_url, file_path, file_name, file_mime_type, file_size_bytes, storage_bucket, is_public"
     )
     .eq("id", evidenceItemId)
     .eq("achievement_id", achievementId)
@@ -382,6 +455,12 @@ export async function deleteEvidenceItem(
     redirectToRecordError(achievementId, deleteError.message);
   }
 
+  if (evidenceItem.file_path && evidenceItem.storage_bucket) {
+    await supabase.storage
+      .from(evidenceItem.storage_bucket)
+      .remove([evidenceItem.file_path]);
+  }
+
   await supabase.from("audit_logs").insert({
     user_id: user.id,
     achievement_id: achievementId,
@@ -392,13 +471,19 @@ export async function deleteEvidenceItem(
       title: evidenceItem.title,
       evidence_type: evidenceItem.evidence_type,
       source_url: evidenceItem.source_url,
+      file_path: evidenceItem.file_path,
+      file_name: evidenceItem.file_name,
+      file_mime_type: evidenceItem.file_mime_type,
+      file_size_bytes: evidenceItem.file_size_bytes,
+      storage_bucket: evidenceItem.storage_bucket,
+      had_media_file: Boolean(evidenceItem.file_path),
       was_public: evidenceItem.is_public,
     },
   });
 
   const { data: remainingEvidence } = await supabase
     .from("evidence_items")
-    .select("id, source_url")
+    .select("id, source_url, file_path")
     .eq("achievement_id", achievementId)
     .eq("user_id", user.id);
 
@@ -414,14 +499,14 @@ export async function deleteEvidenceItem(
       .eq("id", achievementId)
       .eq("user_id", user.id);
   } else {
-    const hasSourceLinkedEvidence = remainingItems.some((item) =>
-      Boolean(item.source_url)
+    const hasStrongEvidence = remainingItems.some(
+      (item) => Boolean(item.source_url) || Boolean(item.file_path)
     );
 
     await supabase
       .from("achievements")
       .update({
-        verification_status: hasSourceLinkedEvidence
+        verification_status: hasStrongEvidence
           ? "source_linked"
           : "evidence_attached",
         updated_at: new Date().toISOString(),
