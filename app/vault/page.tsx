@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { GlassCard } from "@/components/ui/GlassCard";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { createClient } from "@/lib/supabase/server";
 import {
   AchievementRecord,
@@ -85,92 +87,88 @@ export default async function VaultPage() {
   const recordsWithProof = records.filter((record) => record.proofLink).length;
 
   return (
-    <main className="min-h-screen bg-[#08090d] px-6 py-10 text-white sm:px-10 lg:px-16">
+    <main className="min-h-screen bg-[var(--background)] px-6 py-10 text-[var(--text-primary)] sm:px-10 lg:px-16">
       <section className="mx-auto max-w-7xl">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
               Proof Vault
             </p>
 
-            <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.05em] sm:text-5xl">
+            <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.05em] text-[var(--text-primary)] sm:text-5xl">
               Your private archive of structured proof records.
             </h1>
 
-            <p className="mt-5 max-w-2xl text-sm leading-7 text-white/55">
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
               Preserve achievements with context, supporting evidence, audit
               activity, and optional QR-backed public proof identities.
             </p>
           </div>
 
-          <Link
-            href="/vault/new"
-            className="inline-flex w-fit rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
-          >
+          <PrimaryButton href="/vault/new" className="w-fit">
             Create record
-          </Link>
+          </PrimaryButton>
         </div>
 
         <div className="mt-12 grid gap-4 lg:grid-cols-3">
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
-            <p className="text-sm text-white/40">Private records</p>
-            <p className="mt-3 text-4xl font-semibold tracking-[-0.04em]">
+          <GlassCard className="p-6">
+            <p className="text-sm text-[var(--text-muted)]">Private records</p>
+            <p className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
               {totalRecords}
             </p>
-            <p className="mt-3 text-sm leading-6 text-white/40">
+            <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
               Achievement records preserved inside your vault.
             </p>
-          </div>
+          </GlassCard>
 
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
-            <p className="text-sm text-white/40">Evidence-backed</p>
-            <p className="mt-3 text-4xl font-semibold tracking-[-0.04em]">
+          <GlassCard className="p-6">
+            <p className="text-sm text-[var(--text-muted)]">Evidence-backed</p>
+            <p className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
               {recordsWithEvidence}
             </p>
-            <p className="mt-3 text-sm leading-6 text-white/40">
+            <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
               Records strengthened with at least one supporting evidence item.
             </p>
-          </div>
+          </GlassCard>
 
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
-            <p className="text-sm text-white/40">Active proof identities</p>
-            <p className="mt-3 text-4xl font-semibold tracking-[-0.04em]">
+          <GlassCard className="p-6">
+            <p className="text-sm text-[var(--text-muted)]">
+              Active proof identities
+            </p>
+            <p className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
               {recordsWithProof}
             </p>
-            <p className="mt-3 text-sm leading-6 text-white/40">
+            <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
               Records currently exposed through controlled public proof links.
             </p>
-          </div>
+          </GlassCard>
         </div>
 
         {records.length === 0 ? (
-          <div className="mt-14 overflow-hidden rounded-[2.5rem] border border-dashed border-white/15 bg-white/[0.025]">
+          <div className="mt-14 overflow-hidden rounded-[var(--radius-panel)] border border-dashed border-[var(--border-strong)] bg-[var(--surface)] shadow-[var(--shadow-card)]">
             <div className="grid gap-8 p-10 lg:grid-cols-[0.9fr_1.1fr] lg:p-12">
               <div>
-                <p className="text-sm uppercase tracking-[0.24em] text-white/35">
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">
                   Empty vault
                 </p>
 
-                <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em]">
+                <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
                   Start with one achievement worth preserving carefully.
                 </h2>
 
-                <p className="mt-4 max-w-xl text-sm leading-7 text-white/50">
+                <p className="mt-4 max-w-xl text-sm leading-7 text-[var(--text-secondary)]">
                   A project, certificate, publication, competition, leadership
                   role, award, or course can become a structured record with
                   evidence, context, and controlled proof access.
                 </p>
 
-                <Link
-                  href="/vault/new"
-                  className="mt-8 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
-                >
+                <PrimaryButton href="/vault/new" className="mt-8">
                   Create first record
-                </Link>
+                </PrimaryButton>
               </div>
 
-              <div className="rounded-[2rem] border border-white/10 bg-black/20 p-6">
-                <p className="text-xs uppercase tracking-[0.24em] text-cyan-200/70">
+              <div className="rounded-[2rem] border border-[var(--border)] bg-[var(--surface-soft)] p-6">
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
                   Record lifecycle
                 </p>
 
@@ -182,15 +180,17 @@ export default async function VaultPage() {
                     "Proof identity generated",
                   ].map((step, index) => (
                     <div key={step} className="flex items-center gap-4">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-xs text-white/50">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-xs font-semibold text-[var(--text-muted)]">
                         0{index + 1}
                       </div>
-                      <p className="text-sm text-white/60">{step}</p>
+                      <p className="text-sm text-[var(--text-secondary)]">
+                        {step}
+                      </p>
                     </div>
                   ))}
                 </div>
 
-                <p className="mt-6 text-sm leading-7 text-white/40">
+                <p className="mt-6 text-sm leading-7 text-[var(--text-secondary)]">
                   ProofTrail keeps records private by default. Public access
                   begins only when you intentionally generate a proof identity.
                 </p>
@@ -200,10 +200,10 @@ export default async function VaultPage() {
         ) : (
           <div className="mt-14">
             <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm uppercase tracking-[0.22em] text-white/35">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">
                 Archive entries
               </p>
-              <p className="text-sm text-white/35">
+              <p className="text-sm text-[var(--text-muted)]">
                 Ordered by latest record activity
               </p>
             </div>
@@ -213,81 +213,87 @@ export default async function VaultPage() {
                 <Link
                   key={record.id}
                   href={`/vault/${record.id}`}
-                  className="group block overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.032] transition hover:border-cyan-300/25 hover:bg-white/[0.052]"
+                  className="group block overflow-hidden rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-card)] transition duration-200 hover:-translate-y-0.5 hover:border-[var(--border-strong)]"
                 >
                   <div className="grid gap-0 lg:grid-cols-[180px_1fr_270px]">
-                    <div className="flex flex-col justify-between border-b border-white/10 bg-black/20 p-6 lg:border-b-0 lg:border-r">
+                    <div className="flex flex-col justify-between border-b border-[var(--border)] bg-[var(--surface-soft)] p-6 lg:border-b-0 lg:border-r">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.24em] text-white/30">
+                        <p className="text-xs uppercase tracking-[0.24em] text-[var(--text-muted)]">
                           Vault index
                         </p>
-                        <p className="mt-3 font-mono text-2xl font-semibold text-white/80">
+                        <p className="mt-3 font-mono text-2xl font-semibold text-[var(--text-primary)]">
                           #{String(index + 1).padStart(3, "0")}
                         </p>
                       </div>
 
-                      <p className="mt-6 text-xs leading-6 text-white/35">
+                      <p className="mt-6 text-xs leading-6 text-[var(--text-muted)]">
                         Updated {formatDate(record.updated_at)}
                       </p>
                     </div>
 
                     <div className="p-6">
                       <div className="flex flex-wrap gap-3">
-                        <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-medium text-cyan-100">
+                        <span className="rounded-full border border-[var(--border)] bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent)]">
                           {formatStatus(record.verification_status)}
                         </span>
 
-                        <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-medium text-white/50">
+                        <span className="rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-1 text-xs font-semibold text-[var(--text-secondary)]">
                           {record.visibility}
                         </span>
 
-                        <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-medium text-white/50">
+                        <span className="rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-1 text-xs font-semibold text-[var(--text-secondary)]">
                           {record.category}
                         </span>
                       </div>
 
-                      <h2 className="mt-5 text-2xl font-semibold tracking-[-0.035em] text-white">
+                      <h2 className="mt-5 text-2xl font-semibold tracking-[-0.035em] text-[var(--text-primary)]">
                         {record.title}
                       </h2>
 
-                      <p className="mt-3 max-w-3xl text-sm leading-7 text-white/50">
+                      <p className="mt-3 max-w-3xl text-sm leading-7 text-[var(--text-secondary)]">
                         {record.description ||
                           "No context has been added yet. Open this record to document the story, effort, and proof behind it."}
                       </p>
 
-                      <div className="mt-5 flex flex-wrap gap-4 text-xs text-white/35">
+                      <div className="mt-5 flex flex-wrap gap-4 text-xs text-[var(--text-muted)]">
                         <span>Issuer: {record.issuer || "Not added"}</span>
                         <span>Date: {formatDate(record.achievement_date)}</span>
                       </div>
                     </div>
 
-                    <div className="border-t border-white/10 bg-black/10 p-6 lg:border-l lg:border-t-0">
+                    <div className="border-t border-[var(--border)] bg-[var(--surface-soft)] p-6 lg:border-l lg:border-t-0">
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                          <p className="text-xs text-white/35">Evidence</p>
-                          <p className="mt-2 text-xl font-semibold text-white">
+                        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+                          <p className="text-xs text-[var(--text-muted)]">
+                            Evidence
+                          </p>
+                          <p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">
                             {record.evidenceCount}
                           </p>
                         </div>
 
-                        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                          <p className="text-xs text-white/35">Public items</p>
-                          <p className="mt-2 text-xl font-semibold text-white">
+                        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+                          <p className="text-xs text-[var(--text-muted)]">
+                            Public items
+                          </p>
+                          <p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">
                             {record.publicEvidenceCount}
                           </p>
                         </div>
                       </div>
 
-                      <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                        <p className="text-xs text-white/35">Proof identity</p>
-                        <p className="mt-2 text-sm font-medium text-white">
+                      <div className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+                        <p className="text-xs text-[var(--text-muted)]">
+                          Proof identity
+                        </p>
+                        <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
                           {record.proofLink
                             ? record.proofLink.proof_code
                             : "Private only"}
                         </p>
                       </div>
 
-                      <p className="mt-5 text-sm font-medium text-white/35 transition group-hover:text-cyan-200">
+                      <p className="mt-5 text-sm font-semibold text-[var(--text-muted)] transition group-hover:text-[var(--accent)]">
                         Open dossier →
                       </p>
                     </div>
