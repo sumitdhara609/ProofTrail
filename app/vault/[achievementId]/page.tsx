@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { createClient } from "@/lib/supabase/server";
 import { AddEvidenceForm } from "@/components/vault/AddEvidenceForm";
@@ -460,8 +459,8 @@ export default async function AchievementPage({
                           <span
                             className={
                               item.is_public
-                                ? "rounded-full border border-[var(--border)] bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent)]"
-                                : "rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs font-semibold text-[var(--text-muted)]"
+                                ? "w-fit rounded-full border border-[var(--border)] bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent)]"
+                                : "w-fit rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs font-semibold text-[var(--text-muted)]"
                             }
                           >
                             {item.is_public ? "Public" : "Private"}
@@ -474,7 +473,25 @@ export default async function AchievementPage({
                           </p>
                         ) : null}
 
+                        {item.file_name ? (
+                          <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+                            <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                              Media evidence
+                            </p>
+                            <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                              {item.file_name}
+                            </p>
+                          </div>
+                        ) : null}
+
                         <div className="mt-4 flex flex-wrap items-center gap-4">
+                          <Link
+                            href={`/vault/${record.id}/evidence/${item.id}/edit`}
+                            className="inline-flex text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+                          >
+                            Edit evidence →
+                          </Link>
+
                           {item.source_url ? (
                             <a
                               href={item.source_url}
