@@ -21,9 +21,11 @@ function PrimaryAction({
   return (
     <Link
       href={href}
-      className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#171512] bg-[#171512] px-6 py-3 text-sm font-semibold text-[#fffaf1] shadow-[var(--shadow-button)] transition hover:-translate-y-0.5 hover:bg-[#2a251f] dark:border-[#fffaf1] dark:bg-[#fffaf1] dark:text-[#171512] dark:hover:bg-[#eadfce]"
+      className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#171512] bg-[#171512] px-6 py-3 text-sm font-semibold shadow-[var(--shadow-button)] transition hover:-translate-y-0.5 hover:bg-[#2a251f] dark:border-[#fffaf1] dark:bg-[#fffaf1] dark:hover:bg-[#eadfce]"
     >
-      {children}
+      <span className="!text-[#fffaf1] dark:!text-[#171512]">
+        {children}
+      </span>
     </Link>
   );
 }
@@ -213,9 +215,11 @@ export default async function DashboardPage() {
               </span>
             </div>
 
-            <PrimaryAction href={recommendedHref}>
-              {recommendedLabel}
-            </PrimaryAction>
+            <div className="mt-6">
+              <PrimaryAction href={recommendedHref}>
+                {recommendedLabel}
+              </PrimaryAction>
+            </div>
           </GlassCard>
         </header>
 
