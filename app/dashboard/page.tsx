@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { GlassCard } from "@/components/ui/GlassCard";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
+import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/auth/actions";
 import { AchievementRecord, AuditLog } from "@/lib/proof/types";
@@ -91,19 +94,19 @@ export default async function DashboardPage() {
           : "Healthy";
 
   return (
-    <main className="min-h-screen bg-[#08090d] px-6 py-10 text-white sm:px-10 lg:px-16">
+    <main className="min-h-screen bg-[var(--background)] px-6 py-10 text-[var(--text-primary)] sm:px-10 lg:px-16">
       <section className="mx-auto max-w-7xl">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
               Trust Command Center
             </p>
 
-            <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-[-0.05em] sm:text-5xl">
+            <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-[-0.05em] text-[var(--text-primary)] sm:text-5xl">
               Welcome back, {fullName}.
             </h1>
 
-            <p className="mt-5 max-w-2xl text-sm leading-7 text-white/55">
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
               Review your private proof vault, identify records that need
               stronger evidence, and control which achievements receive active
               public proof identities.
@@ -113,24 +116,14 @@ export default async function DashboardPage() {
           <div className="flex flex-wrap gap-3">
             <ThemeToggle />
 
-            <Link
-              href="/vault/new"
-              className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
-            >
-              Create record
-            </Link>
+            <PrimaryButton href="/vault/new">Create record</PrimaryButton>
 
-            <Link
-              href="/vault"
-              className="rounded-full border border-white/10 bg-white/[0.03] px-6 py-3 text-sm font-semibold text-white/75 transition hover:bg-white/[0.06] hover:text-white"
-            >
-              Open vault
-            </Link>
+            <SecondaryButton href="/vault">Open vault</SecondaryButton>
 
             <form action={signOut}>
               <button
                 type="submit"
-                className="rounded-full border border-white/10 bg-white/[0.03] px-6 py-3 text-sm font-semibold text-white/55 transition hover:bg-white/[0.06] hover:text-white"
+                className="inline-flex items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text-muted)] shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-0.5 hover:border-[var(--border-strong)] hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
               >
                 Sign out
               </button>
@@ -138,43 +131,49 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="mt-12 overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.035]">
+        <GlassCard className="mt-12 overflow-hidden">
           <div className="grid lg:grid-cols-[1fr_1.2fr]">
-            <div className="border-b border-white/10 p-8 lg:border-b-0 lg:border-r lg:p-10">
-              <p className="text-sm uppercase tracking-[0.24em] text-white/35">
+            <div className="border-b border-[var(--border)] p-8 lg:border-b-0 lg:border-r lg:p-10">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">
                 Vault health
               </p>
 
               <div className="mt-5 flex flex-wrap items-center gap-3">
-                <h2 className="text-3xl font-semibold tracking-[-0.04em]">
+                <h2 className="text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
                   {vaultHealth}
                 </h2>
 
-                <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-medium text-cyan-100">
+                <span className="rounded-full border border-[var(--border)] bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent)]">
                   {totalRecords} record{totalRecords === 1 ? "" : "s"}
                 </span>
               </div>
 
-              <p className="mt-5 text-sm leading-7 text-white/50">
+              <p className="mt-5 text-sm leading-7 text-[var(--text-secondary)]">
                 A strong ProofTrail vault keeps records structured, evidence
                 attached, proof links intentional, and public access limited to
                 records that are ready to be shared.
               </p>
 
               <div className="mt-8 grid grid-cols-3 gap-3">
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <p className="text-xs text-white/35">Records</p>
-                  <p className="mt-2 text-2xl font-semibold">{totalRecords}</p>
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+                  <p className="text-xs text-[var(--text-muted)]">Records</p>
+                  <p className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">
+                    {totalRecords}
+                  </p>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <p className="text-xs text-white/35">Evidence</p>
-                  <p className="mt-2 text-2xl font-semibold">{evidenceCount}</p>
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+                  <p className="text-xs text-[var(--text-muted)]">Evidence</p>
+                  <p className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">
+                    {evidenceCount}
+                  </p>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <p className="text-xs text-white/35">Active proof IDs</p>
-                  <p className="mt-2 text-2xl font-semibold">
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+                  <p className="text-xs text-[var(--text-muted)]">
+                    Active proof IDs
+                  </p>
+                  <p className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">
                     {proofIdentityCount}
                   </p>
                 </div>
@@ -182,109 +181,103 @@ export default async function DashboardPage() {
             </div>
 
             <div className="p-8 lg:p-10">
-              <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
                 Recommended action
               </p>
 
               {totalRecords === 0 ? (
                 <>
-                  <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
+                  <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
                     Start your vault with one meaningful record.
                   </h2>
-                  <p className="mt-5 text-sm leading-7 text-white/50">
+                  <p className="mt-5 text-sm leading-7 text-[var(--text-secondary)]">
                     Create an achievement record with a clear title, context,
                     date, and enough detail to support evidence later.
                   </p>
-                  <Link
-                    href="/vault/new"
-                    className="mt-8 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
-                  >
+                  <PrimaryButton href="/vault/new" className="mt-8">
                     Create first record
-                  </Link>
+                  </PrimaryButton>
                 </>
               ) : recordsWaitingForEvidence.length > 0 ? (
                 <>
-                  <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
+                  <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
                     Strengthen records that have no evidence yet.
                   </h2>
-                  <p className="mt-5 text-sm leading-7 text-white/50">
+                  <p className="mt-5 text-sm leading-7 text-[var(--text-secondary)]">
                     {recordsWaitingForEvidence.length} record
                     {recordsWaitingForEvidence.length === 1 ? "" : "s"} still
                     need supporting evidence before they can become meaningful
                     proof entries.
                   </p>
-                  <Link
+                  <PrimaryButton
                     href={`/vault/${recordsWaitingForEvidence[0].id}`}
-                    className="mt-8 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
+                    className="mt-8"
                   >
                     Attach evidence
-                  </Link>
+                  </PrimaryButton>
                 </>
               ) : recordsReadyForProof.length > 0 ? (
                 <>
-                  <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
+                  <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
                     Evidence-backed records are ready for controlled sharing.
                   </h2>
-                  <p className="mt-5 text-sm leading-7 text-white/50">
+                  <p className="mt-5 text-sm leading-7 text-[var(--text-secondary)]">
                     These records already contain evidence and can now receive a
                     ProofTrail ID with QR-backed public access when you are
                     ready.
                   </p>
-                  <Link
+                  <PrimaryButton
                     href={`/vault/${recordsReadyForProof[0].id}`}
-                    className="mt-8 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
+                    className="mt-8"
                   >
                     Review proof readiness
-                  </Link>
+                  </PrimaryButton>
                 </>
               ) : (
                 <>
-                  <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">
+                  <h2 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
                     Your proof vault is in good shape.
                   </h2>
-                  <p className="mt-5 text-sm leading-7 text-white/50">
+                  <p className="mt-5 text-sm leading-7 text-[var(--text-secondary)]">
                     Continue preserving new achievements or review existing
                     proof identities for clarity, public evidence, and access
                     control.
                   </p>
-                  <Link
-                    href="/vault"
-                    className="mt-8 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
-                  >
+                  <PrimaryButton href="/vault" className="mt-8">
                     Review vault
-                  </Link>
+                  </PrimaryButton>
                 </>
               )}
             </div>
           </div>
-        </div>
+        </GlassCard>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-[2.5rem] border border-white/10 bg-white/[0.035] p-8">
+          <GlassCard className="p-8">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
                   Recent records
                 </p>
-                <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em]">
+                <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em] text-[var(--text-primary)]">
                   Latest vault entries
                 </h2>
               </div>
 
               <Link
                 href="/vault"
-                className="text-sm font-medium text-white/40 transition hover:text-cyan-200"
+                className="text-sm font-semibold text-[var(--text-muted)] transition hover:text-[var(--accent)]"
               >
                 View all →
               </Link>
             </div>
 
             {recentRecords.length === 0 ? (
-              <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-6">
-                <p className="text-sm font-medium text-white">
+              <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-6">
+                <p className="text-sm font-semibold text-[var(--text-primary)]">
                   No records have been created yet.
                 </p>
-                <p className="mt-3 text-sm leading-7 text-white/45">
+                <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
                   Once you create an achievement record, it will appear here as
                   part of your private proof vault.
                 </p>
@@ -295,19 +288,19 @@ export default async function DashboardPage() {
                   <Link
                     key={record.id}
                     href={`/vault/${record.id}`}
-                    className="block rounded-2xl border border-white/10 bg-black/20 p-5 transition hover:border-cyan-300/25 hover:bg-white/[0.045]"
+                    className="block rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5 transition duration-200 hover:-translate-y-0.5 hover:border-[var(--border-strong)] hover:bg-[var(--surface-muted)]"
                   >
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div>
-                        <p className="text-sm font-medium text-white">
+                        <p className="text-sm font-semibold text-[var(--text-primary)]">
                           {record.title}
                         </p>
-                        <p className="mt-2 text-xs uppercase tracking-[0.16em] text-white/35">
+                        <p className="mt-2 text-xs uppercase tracking-[0.16em] text-[var(--text-muted)]">
                           {record.category}
                         </p>
                       </div>
 
-                      <span className="w-fit rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-100">
+                      <span className="w-fit rounded-full border border-[var(--border)] bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent)]">
                         {formatStatus(record.verification_status)}
                       </span>
                     </div>
@@ -315,23 +308,23 @@ export default async function DashboardPage() {
                 ))}
               </div>
             )}
-          </div>
+          </GlassCard>
 
-          <div className="rounded-[2.5rem] border border-white/10 bg-white/[0.035] p-8">
-            <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
+          <GlassCard className="p-8">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
               Trust events
             </p>
 
-            <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em]">
+            <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em] text-[var(--text-primary)]">
               Recent audit trail
             </h2>
 
             {recentLogs.length === 0 ? (
-              <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-6">
-                <p className="text-sm font-medium text-white">
+              <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-6">
+                <p className="text-sm font-semibold text-[var(--text-primary)]">
                   No trust events recorded yet.
                 </p>
-                <p className="mt-3 text-sm leading-7 text-white/45">
+                <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
                   Record creation, evidence changes, proof generation, and proof
                   withdrawal events will appear here.
                 </p>
@@ -341,24 +334,24 @@ export default async function DashboardPage() {
                 {recentLogs.map((log) => (
                   <div
                     key={log.id}
-                    className="rounded-2xl border border-white/10 bg-black/20 p-5"
+                    className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5"
                   >
-                    <p className="text-sm font-medium text-white">
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {getAuditActionLabel(log.action)}
                     </p>
 
-                    <p className="mt-2 text-sm leading-6 text-white/45">
+                    <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
                       {getAuditActionDescription(log.action)}
                     </p>
 
-                    <p className="mt-3 text-xs text-white/30">
+                    <p className="mt-3 text-xs text-[var(--text-muted)]">
                       {formatDateTime(log.created_at)}
                     </p>
                   </div>
                 ))}
               </div>
             )}
-          </div>
+          </GlassCard>
         </div>
       </section>
     </main>
