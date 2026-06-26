@@ -52,7 +52,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f7f4ee",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f6f1e8" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e0d0b" },
+  ],
   colorScheme: "light dark",
 };
 
@@ -70,7 +73,7 @@ export default function RootLayout({
       <head>
         <ThemeScript />
       </head>
-      <body className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)]">
+      <body className="min-h-full bg-[var(--background)] text-[var(--foreground)]">
         {children}
       </body>
     </html>

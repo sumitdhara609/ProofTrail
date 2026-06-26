@@ -3,16 +3,18 @@ export function ThemeScript() {
     (function () {
       try {
         var storedTheme = localStorage.getItem("prooftrail-theme");
-        var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        var theme = storedTheme || "light";
+        var theme = storedTheme === "dark" ? "dark" : "light";
 
-        if (theme === "dark" || (!storedTheme && prefersDark === false && false)) {
+        if (theme === "dark") {
           document.documentElement.classList.add("dark");
         } else {
           document.documentElement.classList.remove("dark");
         }
+
+        document.documentElement.dataset.theme = theme;
       } catch (error) {
         document.documentElement.classList.remove("dark");
+        document.documentElement.dataset.theme = "light";
       }
     })();
   `;
