@@ -416,6 +416,150 @@ export async function updateAchievement(
   redirectToRecord(achievementId);
 }
 
+export async function updateEvidenceItem(
+  achievementId: string,
+  evidenceItemId: string,
+  formData: FormData
+) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  const rawInput = {
+    achievementId,
+    evidenceType: String(formData.get("evidenceType") || "other"),
+    title: String(formData.get("title") || ""),
+    description: String(formData.get("description") || ""),
+    sourceUrl: String(formData.get("sourceUrl") || ""),
+    isPublic: formData.get("isPublic") === "on",
+  };
+
+  const parsed = createEvidenceSchema.safeParse(rawInput);
+
+  if (!parsed.success) {
+    redirectToRecordError(
+      achievementId,
+      getFirstValidationMessage(
+        parsed.error,
+        "Invalid evidence information."
+      )
+    );
+  }
+
+  const input = parsed.data;
+
+  const { data: existingEvidence, error: existingEvidenceError } =
+    await supabase
+      .from("evidence_items")
+      .select(
+        "id, achievement_id, user_id, evidence_type, title, description, source_url, file_path, file_name, file_mime_type, file_size_bytes, storage_bucket, is_public"
+      )
+      .eq("id", evidenceItemId)
+      .eq("achievement_id", achievementId)
+      .eq("user_id", user.id)
+      .single();
+
+  if (existingEvidenceError || !existingEvidence) {
+    redirectToRecordError(achievementId, "evidence-not-found");
+  }
+
+  const { error: updateError } = await supabase
+    .from("evidence_items")
+    .update({
+      evidence_type: input.evidenceType,
+      title: input.title,
+      description: input.description || null,
+      source_url: input.sourceUrl || null,
+      is_public: input.isPublic,
+    })
+    .eq("id", evidenceItemId)
+    .eq("achievement_id", achievementId)
+    .eq("user_id", user.id);
+
+  if (updateError) {
+    redirectToRecordError(achievementId, updateError.message);
+  }
+
+  await supabase.from("audit_logs").insert({
+    user_id: user.id,
+    achievement_id: achievementId,
+    action: "evidence.updated",
+    entity_type: "evidence_item",
+    entity_id: evidenceItemId,
+    metadata: {
+      previous: {
+        evidence_type: existingEvidence.evidence_type,
+        title: existingEvidence.title,
+        description: existingEvidence.description,
+        source_url: existingEvidence.source_url,
+        is_public: existingEvidence.is_public,
+      },
+      updated: {
+        evidence_type: input.evidenceType,
+        title: input.title,
+        description: input.description || null,
+        source_url: input.sourceUrl || null,
+        is_public: input.isPublic,
+      },
+      has_media_file: Boolean(existingEvidence.file_path),
+      media_file_name: existingEvidence.file_name,
+      media_mime_type: existingEvidence.file_mime_type,
+      media_file_size_bytes: existingEvidence.file_size_bytes,
+      public_visibility_changed: existingEvidence.is_public !== input.isPublic,
+      became_public: existingEvidence.is_public === false && input.isPublic,
+      became_private: existingEvidence.is_public === true && !input.isPublic,
+    },
+  });
+
+  const { data: remainingEvidence } = await supabase
+    .from("evidence_items")
+    .select("id, source_url, file_path")
+    .eq("achievement_id", achievementId)
+    .eq("user_id", user.id);
+
+  const remainingItems = remainingEvidence || [];
+  const hasStrongEvidence = remainingItems.some(
+    (item) => Boolean(item.source_url) || Boolean(item.file_path)
+  );
+
+  await supabase
+    .from("achievements")
+    .update({
+      verification_status: hasStrongEvidence
+        ? "source_linked"
+        : remainingItems.length > 0
+          ? "evidence_attached"
+          : "claimed",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", achievementId)
+    .eq("user_id", user.id);
+
+  const { data: activeProofLink } = await supabase
+    .from("public_proof_links")
+    .select("public_slug")
+    .eq("achievement_id", achievementId)
+    .eq("user_id", user.id)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  revalidatePath(`/vault/${achievementId}`);
+  revalidatePath("/vault");
+  revalidatePath("/dashboard");
+
+  if (activeProofLink?.public_slug) {
+    revalidatePath(`/proof/${activeProofLink.public_slug}`);
+  }
+
+  redirectToRecord(achievementId);
+}
+
 export async function deleteEvidenceItem(
   achievementId: string,
   evidenceItemId: string
