@@ -4,13 +4,18 @@ import { ReactNode } from "react";
 type SecondaryButtonProps = {
   href: string;
   children: ReactNode;
+  className?: string;
 };
 
-export function SecondaryButton({ href, children }: SecondaryButtonProps) {
+export function SecondaryButton({
+  href,
+  children,
+  className = "",
+}: SecondaryButtonProps) {
   return (
     <Link
       href={href}
-      className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[0.03] px-6 py-3 text-sm font-semibold text-white/80 transition hover:bg-white/[0.06]"
+      className={`inline-flex items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text-secondary)] shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-0.5 hover:border-[var(--border-strong)] hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] ${className}`}
     >
       {children}
     </Link>

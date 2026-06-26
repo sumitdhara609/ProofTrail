@@ -8,7 +8,7 @@ type GlassCardProps = {
 export function GlassCard({ children, className = "" }: GlassCardProps) {
   return (
     <div
-      className={`rounded-[2rem] border border-white/10 bg-white/[0.035] shadow-2xl shadow-black/20 backdrop-blur-xl ${className}`}
+      className={`rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-card)] backdrop-blur-xl transition duration-200 ${className}`}
     >
       {children}
     </div>
