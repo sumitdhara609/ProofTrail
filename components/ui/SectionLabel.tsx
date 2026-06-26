@@ -1,10 +1,12 @@
+import { ReactNode } from "react";
+
 type SectionLabelProps = {
-  children: string;
+  children: ReactNode;
 };
 
 export function SectionLabel({ children }: SectionLabelProps) {
   return (
-    <p className="text-sm font-medium uppercase tracking-[0.22em] text-cyan-200/80">
+    <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
       {children}
     </p>
   );
