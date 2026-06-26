@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { GlassCard } from "@/components/ui/GlassCard";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { createClient } from "@/lib/supabase/server";
 import { generateQrDataUrl } from "@/lib/qr/generate";
 import {
@@ -72,62 +74,57 @@ function ProofUnavailable({
   const copy = getUnavailableCopy(reason);
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#08090d] px-6 py-8 text-white sm:px-10 lg:px-16">
-      <div className="pointer-events-none fixed left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-red-500/10 blur-[130px]" />
-      <div className="pointer-events-none fixed bottom-0 right-0 h-[420px] w-[420px] rounded-full bg-cyan-500/10 blur-[130px]" />
+    <main className="min-h-screen overflow-hidden bg-[var(--background)] px-6 py-8 text-[var(--text-primary)] sm:px-10 lg:px-16">
+      <div className="pointer-events-none fixed left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[var(--danger-soft)] blur-[130px]" />
+      <div className="pointer-events-none fixed bottom-0 right-0 h-[420px] w-[420px] rounded-full bg-[var(--accent-soft)] blur-[130px]" />
 
       <section className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col">
-        <nav className="flex items-center justify-between rounded-full border border-white/10 bg-white/[0.035] px-5 py-3 backdrop-blur-xl">
+        <nav className="flex items-center justify-between rounded-full border border-[var(--border)] bg-[var(--surface)]/85 px-5 py-3 shadow-[var(--shadow-soft)] backdrop-blur-xl">
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/10 text-sm font-semibold">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--text-primary)] text-sm font-semibold text-[var(--background)]">
               PT
             </div>
-            <span className="text-sm font-medium tracking-wide text-white/90">
+            <span className="text-sm font-semibold tracking-wide text-[var(--text-primary)]">
               ProofTrail
             </span>
           </Link>
 
-          <p className="hidden text-sm text-white/40 sm:block">
+          <p className="hidden text-sm text-[var(--text-muted)] sm:block">
             Public proof access
           </p>
         </nav>
 
         <div className="flex flex-1 items-center justify-center py-16">
-          <div className="w-full rounded-[2.75rem] border border-red-400/20 bg-red-400/[0.055] p-8 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-10 lg:p-12">
-            <p className="text-sm uppercase tracking-[0.24em] text-red-100/75">
+          <GlassCard className="w-full border-[var(--danger-border)] p-8 sm:p-10 lg:p-12">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--danger)]">
               {copy.label}
             </p>
 
-            <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-[-0.055em] sm:text-5xl">
+            <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-[-0.055em] text-[var(--text-primary)] sm:text-5xl">
               {copy.title}
             </h1>
 
-            <p className="mt-5 max-w-2xl text-sm leading-8 text-white/60">
+            <p className="mt-5 max-w-2xl text-sm leading-8 text-[var(--text-secondary)]">
               {copy.description}
             </p>
 
-            <div className="mt-8 rounded-2xl border border-white/10 bg-black/20 p-5">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/35">
+            <div className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">
                 Requested proof slug
               </p>
-              <p className="mt-2 break-all font-mono text-sm text-white/70">
+              <p className="mt-2 break-all font-mono text-sm text-[var(--text-secondary)]">
                 {proofId}
               </p>
             </div>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/"
-                className="inline-flex justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
-              >
-                Return to ProofTrail
-              </Link>
+              <PrimaryButton href="/">Return to ProofTrail</PrimaryButton>
             </div>
-          </div>
+          </GlassCard>
         </div>
 
         <footer className="py-10 text-center">
-          <p className="text-xs uppercase tracking-[0.24em] text-white/25">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">
             ProofTrail — controlled proof identity access.
           </p>
         </footer>
@@ -190,38 +187,38 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
     : null;
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#08090d] px-6 py-8 text-white sm:px-10 lg:px-16">
-      <div className="pointer-events-none fixed left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-cyan-500/10 blur-[130px]" />
-      <div className="pointer-events-none fixed bottom-0 right-0 h-[420px] w-[420px] rounded-full bg-blue-500/10 blur-[130px]" />
+    <main className="min-h-screen overflow-hidden bg-[var(--background)] px-6 py-8 text-[var(--text-primary)] sm:px-10 lg:px-16">
+      <div className="pointer-events-none fixed left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[var(--accent-soft)] blur-[130px]" />
+      <div className="pointer-events-none fixed bottom-0 right-0 h-[420px] w-[420px] rounded-full bg-[var(--surface-muted)] blur-[130px]" />
 
       <section className="relative z-10 mx-auto max-w-6xl">
-        <nav className="flex items-center justify-between rounded-full border border-white/10 bg-white/[0.035] px-5 py-3 backdrop-blur-xl">
+        <nav className="flex items-center justify-between rounded-full border border-[var(--border)] bg-[var(--surface)]/85 px-5 py-3 shadow-[var(--shadow-soft)] backdrop-blur-xl">
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/10 text-sm font-semibold">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--text-primary)] text-sm font-semibold text-[var(--background)]">
               PT
             </div>
-            <span className="text-sm font-medium tracking-wide text-white/90">
+            <span className="text-sm font-semibold tracking-wide text-[var(--text-primary)]">
               ProofTrail
             </span>
           </Link>
 
-          <p className="hidden text-sm text-white/40 sm:block">
+          <p className="hidden text-sm text-[var(--text-muted)] sm:block">
             Public proof card
           </p>
         </nav>
 
-        <div className="mt-10 overflow-hidden rounded-[2.75rem] border border-white/10 bg-white/[0.035] shadow-2xl shadow-black/30 backdrop-blur-xl">
+        <GlassCard className="mt-10 overflow-hidden rounded-[2.75rem]">
           <div className="grid lg:grid-cols-[1.2fr_0.8fr]">
             <article className="p-8 sm:p-10 lg:p-12">
-              <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
                 Active proof identity
               </p>
 
-              <h1 className="mt-6 max-w-4xl text-4xl font-semibold tracking-[-0.055em] sm:text-5xl lg:text-6xl">
+              <h1 className="mt-6 max-w-4xl text-4xl font-semibold tracking-[-0.055em] text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
                 {achievement.title}
               </h1>
 
-              <p className="mt-6 max-w-3xl text-sm leading-8 text-white/55">
+              <p className="mt-6 max-w-3xl text-sm leading-8 text-[var(--text-secondary)]">
                 This public proof card presents a selected record, its visible
                 context, and the evidence intentionally made public by the
                 owner. Private evidence and private vault data are not exposed
@@ -229,81 +226,87 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
               </p>
 
               <div className="mt-7 flex flex-wrap gap-3">
-                <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-medium text-cyan-100">
+                <span className="rounded-full border border-[var(--border)] bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent)]">
                   {formatStatus(achievement.verification_status)}
                 </span>
 
-                <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-medium text-white/50">
+                <span className="rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-1 text-xs font-semibold text-[var(--text-secondary)]">
                   {achievement.category}
                 </span>
 
-                <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-medium text-white/50">
+                <span className="rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-1 text-xs font-semibold text-[var(--text-secondary)]">
                   {achievement.visibility}
                 </span>
               </div>
 
               <div className="mt-10 grid gap-4 sm:grid-cols-3">
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
-                  <p className="text-sm text-white/40">ProofTrail ID</p>
-                  <p className="mt-2 font-mono text-sm font-semibold text-white">
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                  <p className="text-sm text-[var(--text-muted)]">
+                    ProofTrail ID
+                  </p>
+                  <p className="mt-2 font-mono text-sm font-semibold text-[var(--text-primary)]">
                     {proofLink.proof_code}
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
-                  <p className="text-sm text-white/40">Issuer / origin</p>
-                  <p className="mt-2 text-sm font-medium text-white">
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                  <p className="text-sm text-[var(--text-muted)]">
+                    Issuer / origin
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
                     {achievement.issuer || "Not added"}
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
-                  <p className="text-sm text-white/40">Record date</p>
-                  <p className="mt-2 text-sm font-medium text-white">
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                  <p className="text-sm text-[var(--text-muted)]">
+                    Record date
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
                     {formatDate(achievement.achievement_date)}
                   </p>
                 </div>
               </div>
 
               <div className="mt-12">
-                <p className="text-sm uppercase tracking-[0.22em] text-white/35">
+                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">
                   Public context
                 </p>
-                <p className="mt-4 text-sm leading-8 text-white/60">
+                <p className="mt-4 text-sm leading-8 text-[var(--text-secondary)]">
                   {achievement.description ||
                     "No public context has been added for this record."}
                 </p>
               </div>
 
               <div className="mt-10">
-                <p className="text-sm uppercase tracking-[0.22em] text-white/35">
+                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">
                   Public impact
                 </p>
-                <p className="mt-4 text-sm leading-8 text-white/60">
+                <p className="mt-4 text-sm leading-8 text-[var(--text-secondary)]">
                   {achievement.impact_summary ||
                     "No public impact summary has been added for this record."}
                 </p>
               </div>
             </article>
 
-            <aside className="border-t border-white/10 bg-black/20 p-8 sm:p-10 lg:border-l lg:border-t-0">
-              <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
-                <p className="text-sm uppercase tracking-[0.22em] text-cyan-200/80">
+            <aside className="border-t border-[var(--border)] bg-[var(--surface-soft)] p-8 sm:p-10 lg:border-l lg:border-t-0">
+              <div className="rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-soft)]">
+                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
                   QR proof access
                 </p>
 
-                <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em]">
+                <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em] text-[var(--text-primary)]">
                   Scan to reopen this public proof card.
                 </h2>
 
-                <p className="mt-4 text-sm leading-7 text-white/50">
+                <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
                   This QR code points to the current public ProofTrail card. If
                   public access is withdrawn later, the same link will no longer
                   display an active proof.
                 </p>
 
                 {qrDataUrl ? (
-                  <div className="mt-6 flex justify-center rounded-2xl border border-white/10 bg-white p-5">
+                  <div className="mt-6 flex justify-center rounded-2xl border border-[var(--border)] bg-white p-5">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={qrDataUrl}
@@ -313,22 +316,22 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                   </div>
                 ) : null}
 
-                <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-white/35">
+                <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
                     Public slug
                   </p>
-                  <p className="mt-2 break-all font-mono text-sm text-white/70">
+                  <p className="mt-2 break-all font-mono text-sm text-[var(--text-secondary)]">
                     {proofLink.public_slug}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.035] p-6">
-                <p className="text-sm uppercase tracking-[0.22em] text-cyan-200/80">
+              <div className="mt-6 rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-soft)]">
+                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
                   How to read this proof
                 </p>
 
-                <p className="mt-4 text-sm leading-7 text-white/55">
+                <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
                   ProofTrail does not independently certify the achievement.
                   This page presents a structured record and its public evidence
                   so the viewer can review the context and sources transparently.
@@ -336,31 +339,31 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
               </div>
             </aside>
           </div>
-        </div>
+        </GlassCard>
 
-        <section className="mt-8 rounded-[2.5rem] border border-white/10 bg-white/[0.035] p-8 shadow-2xl shadow-black/20">
+        <GlassCard className="mt-8 p-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-cyan-200/80">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
                 Public evidence
               </p>
 
-              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em]">
+              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
                 Evidence visible on this proof card.
               </h2>
             </div>
 
-            <p className="text-sm text-white/35">
+            <p className="text-sm text-[var(--text-muted)]">
               {evidence.length} public item{evidence.length === 1 ? "" : "s"}
             </p>
           </div>
 
           {evidence.length === 0 ? (
-            <div className="mt-7 rounded-2xl border border-white/10 bg-black/20 p-6">
-              <p className="text-sm font-medium text-white">
+            <div className="mt-7 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-6">
+              <p className="text-sm font-semibold text-[var(--text-primary)]">
                 No public evidence is visible on this proof card.
               </p>
-              <p className="mt-3 text-sm leading-7 text-white/45">
+              <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
                 The owner may have kept evidence private, or may not have marked
                 any evidence items as public yet.
               </p>
@@ -370,14 +373,14 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
               {evidence.map((item, index) => (
                 <div
                   key={item.id}
-                  className="overflow-hidden rounded-2xl border border-white/10 bg-black/20"
+                  className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)]"
                 >
                   <div className="grid gap-0 sm:grid-cols-[90px_1fr]">
-                    <div className="border-b border-white/10 bg-white/[0.025] p-5 sm:border-b-0 sm:border-r">
-                      <p className="text-xs uppercase tracking-[0.2em] text-white/30">
+                    <div className="border-b border-[var(--border)] bg-[var(--surface)] p-5 sm:border-b-0 sm:border-r">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[var(--text-muted)]">
                         Item
                       </p>
-                      <p className="mt-2 font-mono text-xl font-semibold text-white/70">
+                      <p className="mt-2 font-mono text-xl font-semibold text-[var(--text-primary)]">
                         {String(index + 1).padStart(2, "0")}
                       </p>
                     </div>
@@ -385,10 +388,10 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                     <div className="p-5">
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                         <div>
-                          <p className="text-sm font-medium text-white">
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">
                             {item.title}
                           </p>
-                          <p className="mt-1 text-xs uppercase tracking-[0.16em] text-white/35">
+                          <p className="mt-1 text-xs uppercase tracking-[0.16em] text-[var(--text-muted)]">
                             {formatEvidenceType(item.evidence_type)}
                           </p>
                         </div>
@@ -398,7 +401,7 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                             href={item.source_url}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-sm font-medium text-cyan-200"
+                            className="text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
                           >
                             Open source →
                           </a>
@@ -406,7 +409,7 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                       </div>
 
                       {item.description ? (
-                        <p className="mt-4 text-sm leading-7 text-white/50">
+                        <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
                           {item.description}
                         </p>
                       ) : null}
@@ -416,10 +419,10 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
               ))}
             </div>
           )}
-        </section>
+        </GlassCard>
 
         <footer className="py-10 text-center">
-          <p className="text-xs uppercase tracking-[0.24em] text-white/25">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">
             ProofTrail — evidence, context, and controlled proof identity.
           </p>
         </footer>
