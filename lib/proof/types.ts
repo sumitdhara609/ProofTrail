@@ -43,6 +43,8 @@ export type EvidenceItem = {
   file_path: string | null;
   file_name: string | null;
   file_mime_type: string | null;
+  file_size_bytes: number | null;
+  storage_bucket: string | null;
   is_public: boolean;
   created_at: string;
 };
