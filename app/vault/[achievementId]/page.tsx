@@ -42,6 +42,8 @@ function formatErrorMessage(error: string) {
     "evidence-not-found": "The selected evidence item could not be found.",
     "active-proof-link-not-found":
       "No active public proof link was found for this record.",
+      "media-public-review-required":
+  "Please review and confirm the media-public warning before making this evidence public.",
   };
 
   return (

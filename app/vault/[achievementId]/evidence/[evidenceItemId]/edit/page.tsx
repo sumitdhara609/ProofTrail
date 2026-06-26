@@ -64,6 +64,7 @@ export default async function EditEvidencePage({
 
   const evidence = evidenceData as EvidenceItem;
   const hasMediaFile = Boolean(evidence.file_path);
+  const requiresPublicMediaReview = hasMediaFile && !evidence.is_public;
 
   return (
     <main className="min-h-screen bg-[var(--background)] px-6 py-10 text-[var(--text-primary)] sm:px-10 lg:px-16">
@@ -199,11 +200,33 @@ export default async function EditEvidencePage({
                     <p className="font-semibold">
                       Review before making media public.
                     </p>
+
                     <p className="mt-2 leading-6">
                       This evidence has an uploaded file attached. If you mark
                       it public, that media may appear on the public proof page
                       through a temporary signed preview link.
                     </p>
+
+                    {requiresPublicMediaReview ? (
+                      <label className="mt-4 flex items-start gap-3 rounded-xl border border-[var(--danger-border)] bg-[var(--surface)] p-4 text-[var(--danger)]">
+                        <input
+                          name="publicMediaReviewed"
+                          type="checkbox"
+                          className="mt-1 h-4 w-4 rounded border-[var(--danger-border)] accent-[var(--danger)]"
+                        />
+                        <span className="text-sm leading-6">
+                          I have reviewed this media and understand it may
+                          appear on the public proof page if I make this
+                          evidence public.
+                        </span>
+                      </label>
+                    ) : (
+                      <p className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
+                        This media evidence is already public. Keep it checked
+                        only if it should continue appearing on public proof
+                        pages.
+                      </p>
+                    )}
                   </div>
                 ) : (
                   <p className="mt-3 text-xs leading-5 text-[var(--text-muted)]">
@@ -286,12 +309,12 @@ export default async function EditEvidencePage({
                 </div>
               </div>
 
-              <div className="mt-5 rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-soft)]">
-                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
+              <div className="mt-5 rounded-[2rem] border border-[var(--danger-border)] bg-[var(--danger-soft)] p-6 text-[var(--danger)] shadow-[var(--shadow-soft)]">
+                <p className="text-sm font-semibold uppercase tracking-[0.22em]">
                   Public safety
                 </p>
 
-                <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
+                <p className="mt-4 text-sm leading-7">
                   For certificates and award moments, keep evidence private
                   until the certificate frame, description, and public proof
                   presentation are reviewed deliberately.
