@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
+import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { createClient } from "@/lib/supabase/server";
 import {
   AchievementRecord,
@@ -13,6 +15,7 @@ import { formatDate, formatStatus } from "@/lib/proof/format";
 type ArchiveRecord = AchievementRecord & {
   evidenceCount: number;
   publicEvidenceCount: number;
+  mediaEvidenceCount: number;
   proofLink: PublicProofLink | null;
 };
 
@@ -76,6 +79,9 @@ export default async function VaultPage() {
       evidenceCount: recordEvidence.length,
       publicEvidenceCount: recordEvidence.filter((item) => item.is_public)
         .length,
+      mediaEvidenceCount: recordEvidence.filter((item) =>
+        Boolean(item.file_path)
+      ).length,
       proofLink,
     };
   });
@@ -85,124 +91,197 @@ export default async function VaultPage() {
     (record) => record.evidenceCount > 0
   ).length;
   const recordsWithProof = records.filter((record) => record.proofLink).length;
+  const totalEvidence = evidence.length;
+  const totalMediaEvidence = evidence.filter((item) =>
+    Boolean(item.file_path)
+  ).length;
 
   return (
-    <main className="min-h-screen bg-[var(--background)] px-6 py-10 text-[var(--text-primary)] sm:px-10 lg:px-16">
-      <section className="mx-auto max-w-7xl">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+    <main className="premium-noise relative min-h-screen overflow-hidden bg-[var(--background)] px-5 py-6 text-[var(--text-primary)] sm:px-8 lg:px-10">
+      <section className="relative z-10 mx-auto max-w-7xl">
+        <nav className="flex items-center justify-between rounded-[1.75rem] border border-[var(--border)] bg-[var(--surface)]/90 px-4 py-3 shadow-[var(--shadow-soft)] backdrop-blur-xl">
+          <Link href="/dashboard" className="flex items-center gap-3">
+            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[var(--text-primary)] text-xs font-bold tracking-[0.16em] text-[var(--background)]">
+              PT
+            </div>
+
+            <div>
+              <p className="text-sm font-semibold tracking-[-0.02em]">
+                ProofTrail
+              </p>
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">
+                Vault archive
+              </p>
+            </div>
+          </Link>
+
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:block">
+              <ThemeToggle />
+            </div>
+
+            <SecondaryButton href="/dashboard" className="hidden sm:inline-flex">
+              Dashboard
+            </SecondaryButton>
+
+            <PrimaryButton href="/vault/new">Create record</PrimaryButton>
+          </div>
+        </nav>
+
+        <header className="grid gap-8 py-12 lg:grid-cols-[1fr_0.78fr] lg:items-end lg:py-16">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
-              Proof Vault
+              Proof vault
             </p>
 
-            <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.05em] text-[var(--text-primary)] sm:text-5xl">
+            <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
               Your private archive of structured proof records.
             </h1>
 
-            <p className="mt-5 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
+            <p className="mt-6 max-w-2xl text-sm leading-8 text-[var(--text-secondary)] sm:text-base">
               Preserve achievements with context, supporting evidence, audit
               activity, and optional QR-backed public proof identities.
             </p>
           </div>
 
-          <PrimaryButton href="/vault/new" className="w-fit">
-            Create record
-          </PrimaryButton>
-        </div>
-
-        <div className="mt-12 grid gap-4 lg:grid-cols-3">
           <GlassCard className="p-6">
-            <p className="text-sm text-[var(--text-muted)]">Private records</p>
-            <p className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
-              {totalRecords}
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">
+              Archive status
             </p>
-            <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
-              Achievement records preserved inside your vault.
-            </p>
-          </GlassCard>
 
-          <GlassCard className="p-6">
-            <p className="text-sm text-[var(--text-muted)]">Evidence-backed</p>
-            <p className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
-              {recordsWithEvidence}
-            </p>
-            <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
-              Records strengthened with at least one supporting evidence item.
-            </p>
-          </GlassCard>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <p className="text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
+                {totalRecords === 0 ? "Empty vault" : "Active archive"}
+              </p>
 
-          <GlassCard className="p-6">
-            <p className="text-sm text-[var(--text-muted)]">
-              Active proof identities
+              <span className="rounded-full border border-[var(--border)] bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent)]">
+                {totalRecords} record{totalRecords === 1 ? "" : "s"}
+              </span>
+            </div>
+
+            <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
+              Records stay private by default. Public proof identities are only
+              created when you deliberately review and generate them.
             </p>
-            <p className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
-              {recordsWithProof}
-            </p>
-            <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
-              Records currently exposed through controlled public proof links.
-            </p>
+
+            <div className="mt-6">
+              <PrimaryButton href="/vault/new">Create record</PrimaryButton>
+            </div>
           </GlassCard>
-        </div>
+        </header>
+
+        <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["Records", totalRecords, "Achievement records in your vault"],
+            ["Evidence", totalEvidence, "Attached proof and support items"],
+            ["Media", totalMediaEvidence, "Uploaded certificates or files"],
+            ["Proof IDs", recordsWithProof, "Active public proof identities"],
+          ].map(([label, value, detail]) => (
+            <GlassCard key={label} className="p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">
+                {label}
+              </p>
+              <p className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-[var(--text-primary)]">
+                {value}
+              </p>
+              <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+                {detail}
+              </p>
+            </GlassCard>
+          ))}
+        </section>
 
         {records.length === 0 ? (
-          <div className="mt-14 overflow-hidden rounded-[var(--radius-panel)] border border-dashed border-[var(--border-strong)] bg-[var(--surface)] shadow-[var(--shadow-card)]">
-            <div className="grid gap-8 p-10 lg:grid-cols-[0.9fr_1.1fr] lg:p-12">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">
-                  Empty vault
-                </p>
+          <section className="pb-16 pt-6">
+            <GlassCard className="overflow-hidden">
+              <div className="grid gap-0 lg:grid-cols-[0.92fr_1.08fr]">
+                <div className="border-b border-[var(--border)] bg-[var(--surface-soft)] p-8 sm:p-10 lg:border-b-0 lg:border-r">
+                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
+                    Empty vault
+                  </p>
 
-                <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
-                  Start with one achievement worth preserving carefully.
-                </h2>
+                  <h2 className="mt-5 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-[var(--text-primary)] sm:text-4xl">
+                    Start with one achievement worth preserving carefully.
+                  </h2>
 
-                <p className="mt-4 max-w-xl text-sm leading-7 text-[var(--text-secondary)]">
-                  A project, certificate, publication, competition, leadership
-                  role, award, or course can become a structured record with
-                  evidence, context, and controlled proof access.
-                </p>
+                  <p className="mt-5 max-w-xl text-sm leading-8 text-[var(--text-secondary)]">
+                    A project, certificate, publication, competition, leadership
+                    role, award, or course can become a structured record with
+                    evidence, context, and controlled proof access.
+                  </p>
 
-                <PrimaryButton href="/vault/new" className="mt-8">
-                  Create first record
-                </PrimaryButton>
-              </div>
-
-              <div className="rounded-[2rem] border border-[var(--border)] bg-[var(--surface-soft)] p-6">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
-                  Record lifecycle
-                </p>
-
-                <div className="mt-6 space-y-4">
-                  {[
-                    "Record created",
-                    "Evidence attached",
-                    "Source linked",
-                    "Proof identity generated",
-                  ].map((step, index) => (
-                    <div key={step} className="flex items-center gap-4">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-xs font-semibold text-[var(--text-muted)]">
-                        0{index + 1}
-                      </div>
-                      <p className="text-sm text-[var(--text-secondary)]">
-                        {step}
-                      </p>
-                    </div>
-                  ))}
+                  <div className="mt-8">
+                    <PrimaryButton href="/vault/new">
+                      Create first record
+                    </PrimaryButton>
+                  </div>
                 </div>
 
-                <p className="mt-6 text-sm leading-7 text-[var(--text-secondary)]">
-                  ProofTrail keeps records private by default. Public access
-                  begins only when you intentionally generate a proof identity.
-                </p>
+                <div className="p-8 sm:p-10">
+                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
+                    Record lifecycle
+                  </p>
+
+                  <div className="mt-6 space-y-3">
+                    {[
+                      [
+                        "01",
+                        "Record created",
+                        "Preserve the achievement title, issuer, date, and context.",
+                      ],
+                      [
+                        "02",
+                        "Evidence attached",
+                        "Add files, links, notes, certificates, screenshots, or documents.",
+                      ],
+                      [
+                        "03",
+                        "Proof reviewed",
+                        "Decide what can become public and what must remain private.",
+                      ],
+                      [
+                        "04",
+                        "Proof identity generated",
+                        "Create a QR-backed public proof card only when ready.",
+                      ],
+                    ].map(([number, title, description]) => (
+                      <div
+                        key={title}
+                        className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5"
+                      >
+                        <div className="flex gap-4">
+                          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[var(--border)] bg-[var(--surface)] font-mono text-xs font-semibold text-[var(--text-muted)]">
+                            {number}
+                          </div>
+
+                          <div>
+                            <p className="text-sm font-semibold text-[var(--text-primary)]">
+                              {title}
+                            </p>
+                            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+                              {description}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </GlassCard>
+          </section>
         ) : (
-          <div className="mt-14">
-            <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">
-                Archive entries
-              </p>
+          <section className="pb-16 pt-8">
+            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
+                  Archive entries
+                </p>
+                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.045em] text-[var(--text-primary)]">
+                  Record index.
+                </h2>
+              </div>
+
               <p className="text-sm text-[var(--text-muted)]">
                 Ordered by latest record activity
               </p>
@@ -215,10 +294,10 @@ export default async function VaultPage() {
                   href={`/vault/${record.id}`}
                   className="group block overflow-hidden rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-card)] transition duration-200 hover:-translate-y-0.5 hover:border-[var(--border-strong)]"
                 >
-                  <div className="grid gap-0 lg:grid-cols-[180px_1fr_270px]">
+                  <div className="grid gap-0 lg:grid-cols-[11rem_1fr_18rem]">
                     <div className="flex flex-col justify-between border-b border-[var(--border)] bg-[var(--surface-soft)] p-6 lg:border-b-0 lg:border-r">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.24em] text-[var(--text-muted)]">
+                        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">
                           Vault index
                         </p>
                         <p className="mt-3 font-mono text-2xl font-semibold text-[var(--text-primary)]">
@@ -246,9 +325,9 @@ export default async function VaultPage() {
                         </span>
                       </div>
 
-                      <h2 className="mt-5 text-2xl font-semibold tracking-[-0.035em] text-[var(--text-primary)]">
+                      <h3 className="mt-5 text-2xl font-semibold tracking-[-0.035em] text-[var(--text-primary)]">
                         {record.title}
-                      </h2>
+                      </h3>
 
                       <p className="mt-3 max-w-3xl text-sm leading-7 text-[var(--text-secondary)]">
                         {record.description ||
@@ -262,7 +341,7 @@ export default async function VaultPage() {
                     </div>
 
                     <div className="border-t border-[var(--border)] bg-[var(--surface-soft)] p-6 lg:border-l lg:border-t-0">
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-3 gap-3">
                         <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
                           <p className="text-xs text-[var(--text-muted)]">
                             Evidence
@@ -274,7 +353,16 @@ export default async function VaultPage() {
 
                         <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
                           <p className="text-xs text-[var(--text-muted)]">
-                            Public items
+                            Media
+                          </p>
+                          <p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">
+                            {record.mediaEvidenceCount}
+                          </p>
+                        </div>
+
+                        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+                          <p className="text-xs text-[var(--text-muted)]">
+                            Public
                           </p>
                           <p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">
                             {record.publicEvidenceCount}
@@ -301,7 +389,7 @@ export default async function VaultPage() {
                 </Link>
               ))}
             </div>
-          </div>
+          </section>
         )}
       </section>
     </main>
