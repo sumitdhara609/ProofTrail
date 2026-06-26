@@ -1,136 +1,137 @@
 import Link from "next/link";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
-const archiveStats = [
-  ["Vault mode", "Private first"],
-  ["Proof access", "Withdrawable"],
-  ["Media evidence", "Certificate · Image · PDF"],
-];
-
-const principles = [
+const proofLayers = [
   {
-    title: "Archive before display.",
+    label: "01",
+    title: "Private archive",
     description:
-      "Every achievement starts as a preserved record with context, issuer, date, evidence, media, and private notes before anything becomes public.",
+      "Preserve achievements with issuer, date, context, notes, source links, and supporting media before anything becomes public.",
   },
   {
-    title: "Public means selected.",
+    label: "02",
+    title: "Evidence dossier",
     description:
-      "A public proof page shows only the record and evidence intentionally marked public. The private vault remains protected.",
+      "Attach certificates, PDFs, screenshots, project links, publication links, and award moments as structured evidence.",
   },
   {
-    title: "Credibility without noise.",
+    label: "03",
+    title: "Controlled proof",
     description:
-      "ProofTrail is designed to feel like a quiet evidence archive, not a loud portfolio template or social media showcase.",
+      "Generate a QR-backed public proof identity only when a record is ready for selected public sharing.",
   },
 ];
 
-const timeline = [
-  ["01", "Record created", "A structured achievement dossier is preserved."],
-  ["02", "Evidence attached", "Links, certificates, images, PDFs, and notes are connected."],
-  ["03", "Proof identity issued", "A QR-backed public proof card can be generated."],
-  ["04", "Access controlled", "Public proof can be withdrawn without deleting the record."],
+const ledgerRows = [
+  ["Record", "Advanced Programming Certificate"],
+  ["Issuer", "Training Academy"],
+  ["Evidence", "Certificate image · PDF · Source note"],
+  ["Visibility", "Private archive"],
+  ["Public status", "Not shared"],
+];
+
+const auditItems = [
+  "Record created",
+  "Certificate evidence attached",
+  "Media stored privately",
+  "Public proof not generated",
 ];
 
 export default function Home() {
   return (
-    <main className="min-h-screen overflow-hidden bg-[var(--background)] text-[var(--text-primary)]">
-      <section className="relative px-5 py-6 sm:px-8 lg:px-12">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--border-strong)] to-transparent" />
-        <div className="pointer-events-none absolute left-[-14rem] top-20 h-[34rem] w-[34rem] rounded-full bg-[var(--accent-soft)] blur-[150px]" />
-        <div className="pointer-events-none absolute right-[-12rem] top-0 h-[32rem] w-[32rem] rounded-full bg-[var(--surface-muted)] blur-[150px]" />
-
-        <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between rounded-[1.7rem] border border-[var(--border)] bg-[var(--surface)]/90 px-4 py-3 shadow-[var(--shadow-soft)] backdrop-blur-xl">
+    <main className="min-h-screen bg-[#f6f1e8] text-[#171512]">
+      <section className="mx-auto max-w-7xl px-5 py-5 sm:px-8 lg:px-10">
+        <nav className="flex items-center justify-between rounded-3xl border border-[#d8d0c2] bg-[#fffaf1]/85 px-5 py-4 shadow-[0_20px_70px_rgba(65,48,28,0.08)] backdrop-blur-xl">
           <Link href="/" className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-2xl border border-[var(--border-strong)] bg-[var(--text-primary)] text-xs font-bold tracking-[0.16em] text-[var(--background)]">
+            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[#171512] text-xs font-bold tracking-[0.16em] text-[#fffaf1]">
               PT
             </div>
 
             <div>
-              <p className="text-sm font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+              <p className="text-base font-semibold tracking-[-0.02em]">
                 ProofTrail
               </p>
-              <p className="hidden text-[0.65rem] uppercase tracking-[0.2em] text-[var(--text-muted)] sm:block">
-                Evidence vault
+              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-[#8b7d67]">
+                Evidence Vault
               </p>
             </div>
           </Link>
 
-          <div className="hidden items-center gap-7 text-sm font-medium text-[var(--text-secondary)] lg:flex">
-            <a href="#archive" className="transition hover:text-[var(--text-primary)]">
+          <div className="hidden items-center gap-8 text-sm font-semibold text-[#6f6250] md:flex">
+            <a href="#archive" className="transition hover:text-[#171512]">
               Archive
             </a>
-            <a href="#dossier" className="transition hover:text-[var(--text-primary)]">
-              Dossier
+            <a href="#evidence" className="transition hover:text-[#171512]">
+              Evidence
             </a>
-            <a href="#trust" className="transition hover:text-[var(--text-primary)]">
-              Trust
+            <a href="#proof" className="transition hover:text-[#171512]">
+              Proof
             </a>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:block">
-              <ThemeToggle />
-            </div>
-
             <Link
               href="/sign-in"
-              className="hidden rounded-full px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] transition hover:text-[var(--text-primary)] sm:inline-flex"
+              className="hidden rounded-full px-4 py-2 text-sm font-semibold text-[#6f6250] transition hover:text-[#171512] sm:inline-flex"
             >
               Sign in
             </Link>
 
             <Link
               href="/sign-up"
-              className="rounded-full bg-[var(--text-primary)] px-5 py-2.5 text-sm font-semibold text-[var(--background)] shadow-[var(--shadow-soft)] transition hover:-translate-y-0.5 hover:opacity-90"
+              className="rounded-full bg-[#171512] px-5 py-2.5 text-sm font-semibold text-[#fffaf1] shadow-[0_15px_40px_rgba(23,21,18,0.18)] transition hover:-translate-y-0.5 hover:bg-[#2a251f]"
             >
               Start vault
             </Link>
           </div>
         </nav>
 
-        <div className="relative z-10 mx-auto grid max-w-7xl gap-12 pb-20 pt-20 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:pb-28 lg:pt-28">
+        <section className="grid gap-10 pb-20 pt-20 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:pb-28 lg:pt-24">
           <div>
-            <div className="inline-flex rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--accent)] shadow-[var(--shadow-soft)]">
-              Personal proof archive
+            <div className="inline-flex rounded-full border border-[#d8d0c2] bg-[#fffaf1] px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-[#81653b] shadow-[0_14px_40px_rgba(65,48,28,0.07)]">
+              Personal achievement archive
             </div>
 
-            <h1 className="mt-8 max-w-4xl text-5xl font-semibold leading-[0.94] tracking-[-0.07em] text-[var(--text-primary)] sm:text-6xl lg:text-7xl">
-              A quieter, stronger way to preserve what you have earned.
+            <h1 className="mt-8 max-w-3xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] text-[#171512] sm:text-5xl lg:text-6xl">
+              Preserve achievements with the proof, context, and dignity they
+              deserve.
             </h1>
 
-            <p className="mt-7 max-w-2xl text-base leading-8 text-[var(--text-secondary)] sm:text-lg">
-              ProofTrail turns achievements into structured evidence records —
-              with context, files, public proof identities, and controlled
-              visibility built around trust instead of noise.
+            <p className="mt-6 max-w-2xl text-base leading-8 text-[#625748]">
+              ProofTrail is a private evidence vault for certificates, projects,
+              awards, publications, and meaningful milestones — built to store
+              proof carefully before anything becomes public.
             </p>
 
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/sign-up"
-                className="inline-flex items-center justify-center rounded-full bg-[var(--text-primary)] px-7 py-3.5 text-sm font-semibold text-[var(--background)] shadow-[var(--shadow-soft)] transition hover:-translate-y-0.5 hover:opacity-90"
+                className="inline-flex items-center justify-center rounded-full bg-[#171512] px-7 py-3.5 text-sm font-semibold text-[#fffaf1] shadow-[0_18px_50px_rgba(23,21,18,0.18)] transition hover:-translate-y-0.5 hover:bg-[#2a251f]"
               >
                 Create proof vault
               </Link>
 
               <Link
                 href="/sign-in"
-                className="inline-flex items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-7 py-3.5 text-sm font-semibold text-[var(--text-secondary)] shadow-[var(--shadow-soft)] transition hover:-translate-y-0.5 hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+                className="inline-flex items-center justify-center rounded-full border border-[#d8d0c2] bg-[#fffaf1] px-7 py-3.5 text-sm font-semibold text-[#4f463a] shadow-[0_15px_45px_rgba(65,48,28,0.08)] transition hover:-translate-y-0.5 hover:border-[#b9ad9b]"
               >
                 Open existing vault
               </Link>
             </div>
 
-            <div className="mt-12 grid max-w-2xl gap-3 sm:grid-cols-3">
-              {archiveStats.map(([label, value]) => (
+            <div className="mt-10 grid max-w-2xl gap-3 sm:grid-cols-3">
+              {[
+                ["Default", "Private"],
+                ["Media", "Supported"],
+                ["Proof", "Controlled"],
+              ].map(([label, value]) => (
                 <div
                   key={label}
-                  className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/85 p-4 shadow-[var(--shadow-soft)] backdrop-blur-xl"
+                  className="rounded-2xl border border-[#d8d0c2] bg-[#fffaf1] p-4 shadow-[0_14px_40px_rgba(65,48,28,0.06)]"
                 >
-                  <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                  <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#9a8b75]">
                     {label}
                   </p>
-                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                  <p className="mt-2 text-sm font-semibold text-[#171512]">
                     {value}
                   </p>
                 </div>
@@ -138,114 +139,95 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="relative">
-            <div className="absolute -inset-5 rounded-[3rem] border border-[var(--border)] bg-[var(--surface)]/30 blur-2xl" />
+          <div className="rounded-[2.25rem] border border-[#d8d0c2] bg-[#fffaf1] p-5 shadow-[0_30px_90px_rgba(65,48,28,0.13)]">
+            <div className="rounded-[1.75rem] border border-[#ded6c9] bg-[#f8f2e8] p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#81653b]">
+                    Record dossier
+                  </p>
+                  <h2 className="mt-3 max-w-md text-2xl font-semibold tracking-[-0.04em] text-[#171512] sm:text-3xl">
+                    Certificate evidence record
+                  </h2>
+                </div>
 
-            <div className="relative overflow-hidden rounded-[2.6rem] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-card)]">
-              <div className="border-b border-[var(--border)] bg-[var(--surface-soft)] px-6 py-5">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
-                      Proof dossier
-                    </p>
-                    <p className="mt-1 text-sm text-[var(--text-muted)]">
-                      Controlled evidence record
-                    </p>
-                  </div>
-
-                  <div className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs font-semibold text-[var(--text-secondary)]">
-                    PT-2026-9K2X
-                  </div>
+                <div className="rounded-full border border-[#d8d0c2] bg-[#fffaf1] px-3 py-1 text-xs font-bold text-[#625748]">
+                  Private
                 </div>
               </div>
 
-              <div className="grid lg:grid-cols-[1fr_15rem]">
-                <div className="p-6 sm:p-8">
-                  <div className="rounded-[1.8rem] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">
-                      Achievement record
-                    </p>
-
-                    <h2 className="mt-4 text-3xl font-semibold tracking-[-0.055em] text-[var(--text-primary)]">
-                      Product Build Milestone
-                    </h2>
-
-                    <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
-                      A preserved record containing context, proof media,
-                      selected public evidence, and an audit-aware identity.
-                    </p>
+              <div className="mt-6 overflow-hidden rounded-2xl border border-[#d8d0c2] bg-[#fffaf1]">
+                {ledgerRows.map(([label, value]) => (
+                  <div
+                    key={label}
+                    className="grid grid-cols-[8rem_1fr] gap-4 border-b border-[#e5ded1] px-5 py-4 text-sm last:border-b-0"
+                  >
+                    <p className="text-[#8b7d67]">{label}</p>
+                    <p className="font-semibold text-[#171512]">{value}</p>
                   </div>
+                ))}
+              </div>
 
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    {[
-                      ["Record type", "Achievement dossier"],
-                      ["Visibility", "Unlisted proof"],
-                      ["Evidence", "4 public · 9 private"],
-                      ["Media", "Certificate · PDF"],
-                    ].map(([label, value]) => (
-                      <div
-                        key={label}
-                        className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"
-                      >
-                        <p className="text-xs text-[var(--text-muted)]">{label}</p>
-                        <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                          {value}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+              <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_13rem]">
+                <div className="rounded-2xl border border-[#d8d0c2] bg-[#fffaf1] p-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#9a8b75]">
+                    Evidence note
+                  </p>
+                  <p className="mt-3 text-sm leading-7 text-[#625748]">
+                    This certificate is stored with its context, issuer, proof
+                    media, and visibility rules. It can later be framed and
+                    published only after review.
+                  </p>
                 </div>
 
-                <div className="border-t border-[var(--border)] bg-[var(--surface-soft)] p-6 lg:border-l lg:border-t-0">
-                  <div className="grid aspect-square place-items-center rounded-[1.8rem] border border-[var(--border)] bg-white p-5">
-                    <div className="grid h-full w-full grid-cols-5 grid-rows-5 gap-1">
-                      {Array.from({ length: 25 }).map((_, index) => (
-                        <div
-                          key={index}
-                          className={
-                            index % 2 === 0 ||
-                            index === 7 ||
-                            index === 18 ||
-                            index === 21
-                              ? "rounded-sm bg-[#111]"
-                              : "rounded-sm bg-[#eee]"
-                          }
-                        />
-                      ))}
-                    </div>
-                  </div>
+                <div className="rounded-2xl border border-[#d8d0c2] bg-[#171512] p-4 text-[#fffaf1]">
+                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#b8ac99]">
+                    Proof ID
+                  </p>
+                  <p className="mt-3 font-mono text-sm font-semibold">
+                    PT-2026-9K2X
+                  </p>
 
-                  <p className="mt-5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">
-                    QR backed
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-                    A public proof card can be opened, reviewed, and withdrawn.
-                  </p>
+                  <div className="mt-5 grid aspect-square grid-cols-5 grid-rows-5 gap-1 rounded-xl bg-[#fffaf1] p-3">
+                    {Array.from({ length: 25 }).map((_, index) => (
+                      <div
+                        key={index}
+                        className={
+                          index % 2 === 0 ||
+                          index === 6 ||
+                          index === 17 ||
+                          index === 23
+                            ? "rounded-sm bg-[#171512]"
+                            : "rounded-sm bg-[#e8dfd1]"
+                        }
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
       </section>
 
       <section
         id="archive"
-        className="mx-auto max-w-7xl px-5 pb-24 sm:px-8 lg:px-12"
+        className="mx-auto max-w-7xl px-5 pb-20 sm:px-8 lg:px-10"
       >
-        <div className="grid gap-5 lg:grid-cols-3">
-          {principles.map((principle, index) => (
+        <div className="grid gap-4 lg:grid-cols-3">
+          {proofLayers.map((item) => (
             <div
-              key={principle.title}
-              className="rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-7 shadow-[var(--shadow-soft)]"
+              key={item.title}
+              className="rounded-[2rem] border border-[#d8d0c2] bg-[#fffaf1] p-7 shadow-[0_18px_60px_rgba(65,48,28,0.08)]"
             >
-              <p className="font-mono text-sm text-[var(--text-muted)]">
-                {String(index + 1).padStart(2, "0")}
+              <p className="font-mono text-sm font-semibold text-[#9a8b75]">
+                {item.label}
               </p>
-              <h2 className="mt-8 text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
-                {principle.title}
+              <h2 className="mt-7 text-2xl font-semibold tracking-[-0.04em] text-[#171512]">
+                {item.title}
               </h2>
-              <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
-                {principle.description}
+              <p className="mt-4 text-sm leading-7 text-[#625748]">
+                {item.description}
               </p>
             </div>
           ))}
@@ -253,65 +235,47 @@ export default function Home() {
       </section>
 
       <section
-        id="dossier"
-        className="mx-auto max-w-7xl px-5 pb-24 sm:px-8 lg:px-12"
+        id="evidence"
+        className="mx-auto max-w-7xl px-5 pb-20 sm:px-8 lg:px-10"
       >
-        <div className="overflow-hidden rounded-[2.75rem] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-card)]">
+        <div className="overflow-hidden rounded-[2.5rem] border border-[#d8d0c2] bg-[#fffaf1] shadow-[0_28px_90px_rgba(65,48,28,0.12)]">
           <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
-            <div className="p-8 sm:p-12 lg:p-14">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
-                Not a portfolio template
+            <div className="p-8 sm:p-10 lg:p-12">
+              <p className="text-sm font-bold uppercase tracking-[0.24em] text-[#81653b]">
+                Not a public display wall
               </p>
 
-              <h2 className="mt-6 max-w-2xl text-4xl font-semibold leading-[0.98] tracking-[-0.06em] text-[var(--text-primary)] sm:text-5xl">
-                Built to feel like an archive, not a loud display wall.
+              <h2 className="mt-5 max-w-xl text-3xl font-semibold leading-[1.05] tracking-[-0.05em] text-[#171512] sm:text-4xl">
+                Build the archive first. Decide the public presentation later.
               </h2>
 
-              <p className="mt-6 max-w-xl text-sm leading-8 text-[var(--text-secondary)] sm:text-base">
-                Certificates, projects, publications, awards, and moments can
-                live as evidence records first. Public presentation comes later,
-                only when the record is ready and intentionally selected.
+              <p className="mt-5 max-w-xl text-sm leading-8 text-[#625748]">
+                For certificates, ProofTrail should first preserve proof safely:
+                certificate scan, moment image, description, issuer, date, and
+                context. Public framing should be a deliberate later step.
               </p>
-
-              <div className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">
-                  Product principle
-                </p>
-                <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
-                  ProofTrail should make credibility feel calm, documented, and
-                  reviewable — never desperate, flashy, or over-explained.
-                </p>
-              </div>
             </div>
 
-            <div className="border-t border-[var(--border)] bg-[var(--surface-soft)] p-8 sm:p-12 lg:border-l lg:border-t-0">
-              <div className="space-y-4">
-                {timeline.map(([number, action, detail]) => (
+            <div className="border-t border-[#d8d0c2] bg-[#f8f2e8] p-8 sm:p-10 lg:border-l lg:border-t-0">
+              <div className="space-y-3">
+                {auditItems.map((item, index) => (
                   <div
-                    key={action}
-                    className="rounded-[1.75rem] border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-soft)]"
+                    key={item}
+                    className="flex items-center gap-4 rounded-2xl border border-[#d8d0c2] bg-[#fffaf1] p-4 shadow-[0_12px_35px_rgba(65,48,28,0.06)]"
                   >
-                    <div className="flex gap-4">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface-soft)] font-mono text-xs text-[var(--text-muted)]">
-                        {number}
-                      </div>
-
-                      <div>
-                        <p className="text-sm font-semibold text-[var(--text-primary)]">
-                          {action}
-                        </p>
-                        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-                          {detail}
-                        </p>
-                      </div>
+                    <div className="grid h-9 w-9 place-items-center rounded-full bg-[#171512] font-mono text-xs text-[#fffaf1]">
+                      {String(index + 1).padStart(2, "0")}
                     </div>
+                    <p className="text-sm font-semibold text-[#4f463a]">
+                      {item}
+                    </p>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-5 rounded-[1.75rem] border border-[var(--border)] bg-[var(--text-primary)] p-5 text-[var(--background)] shadow-[var(--shadow-soft)]">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">
-                  Final layer
+              <div className="mt-5 rounded-2xl border border-[#171512] bg-[#171512] p-5 text-[#fffaf1]">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#b8ac99]">
+                  Product rule
                 </p>
                 <p className="mt-3 text-lg font-semibold tracking-[-0.03em]">
                   Public proof is a controlled excerpt, not the whole vault.
@@ -323,47 +287,44 @@ export default function Home() {
       </section>
 
       <section
-        id="trust"
-        className="mx-auto max-w-7xl px-5 pb-20 sm:px-8 lg:px-12"
+        id="proof"
+        className="mx-auto max-w-7xl px-5 pb-20 sm:px-8 lg:px-10"
       >
-        <div className="grid gap-5 lg:grid-cols-2">
-          <div className="rounded-[2.5rem] border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[var(--shadow-card)] sm:p-10">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
-              Public boundaries
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className="rounded-[2rem] border border-[#d8d0c2] bg-[#fffaf1] p-8 shadow-[0_18px_60px_rgba(65,48,28,0.08)]">
+            <p className="text-sm font-bold uppercase tracking-[0.24em] text-[#81653b]">
+              Private by default
             </p>
-            <h2 className="mt-6 text-4xl font-semibold leading-[1] tracking-[-0.06em] text-[var(--text-primary)]">
-              Private evidence stays private by design.
+            <h2 className="mt-5 text-3xl font-semibold leading-[1.05] tracking-[-0.05em] text-[#171512]">
+              Your evidence does not become public accidentally.
             </h2>
-            <p className="mt-6 text-sm leading-8 text-[var(--text-secondary)]">
-              A public proof card can show selected context, selected sources,
-              and selected media. Everything else remains inside the vault.
+            <p className="mt-5 text-sm leading-8 text-[#625748]">
+              Uploaded certificates and moment images remain private unless an
+              evidence item is intentionally marked public.
             </p>
           </div>
 
-          <div className="rounded-[2.5rem] border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[var(--shadow-card)] sm:p-10">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
-              Evidence media
+          <div className="rounded-[2rem] border border-[#d8d0c2] bg-[#fffaf1] p-8 shadow-[0_18px_60px_rgba(65,48,28,0.08)]">
+            <p className="text-sm font-bold uppercase tracking-[0.24em] text-[#81653b]">
+              Certificate frame later
             </p>
-            <h2 className="mt-6 text-4xl font-semibold leading-[1] tracking-[-0.06em] text-[var(--text-primary)]">
-              Certificates deserve a dedicated visual system.
+            <h2 className="mt-5 text-3xl font-semibold leading-[1.05] tracking-[-0.05em] text-[#171512]">
+              Premium certificate presentation deserves its own phase.
             </h2>
-            <p className="mt-6 text-sm leading-8 text-[var(--text-secondary)]">
-              Media evidence can include certificate scans, award moments,
-              PDFs, and supporting images. The premium certificate frame system
-              should be designed separately before public use.
+            <p className="mt-5 text-sm leading-8 text-[#625748]">
+              Before public certificate pages, we will design a dedicated frame
+              system for your 50–60 certificates and related award moments.
             </p>
           </div>
         </div>
       </section>
 
-      <footer className="border-t border-[var(--border)] px-5 py-10 sm:px-8 lg:px-12">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 text-sm text-[var(--text-muted)] sm:flex-row sm:items-center sm:justify-between">
+      <footer className="border-t border-[#d8d0c2] px-5 py-9 sm:px-8 lg:px-10">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 text-sm text-[#8b7d67] sm:flex-row sm:items-center sm:justify-between">
           <p>ProofTrail — evidence, context, and controlled proof identity.</p>
           <p>
             Built with care by{" "}
-            <span className="font-semibold text-[var(--text-primary)]">
-              Sumit Dhara
-            </span>
+            <span className="font-semibold text-[#171512]">Sumit Dhara</span>
           </p>
         </div>
       </footer>
