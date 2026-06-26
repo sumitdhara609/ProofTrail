@@ -162,20 +162,12 @@ export default async function DeleteEvidencePage({
               </div>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <form
-                  action={deleteEvidenceItem.bind(
-                    null,
-                    achievementId,
-                    evidenceItemId
-                  )}
+                <Link
+                  href={`/vault/${achievementId}/evidence/${evidenceItemId}/delete`}
+                  className="inline-flex text-sm font-semibold text-[var(--danger)] transition hover:opacity-80"
                 >
-                  <button
-                    type="submit"
-                    className="inline-flex w-full justify-center rounded-full border border-[var(--danger-border)] bg-[var(--danger)] px-6 py-3 text-sm font-semibold text-white shadow-[var(--shadow-soft)] transition hover:opacity-90 sm:w-auto"
-                  >
-                    Yes, delete evidence
-                  </button>
-                </form>
+                  Remove evidence
+                </Link>
 
                 <Link
                   href={`/vault/${achievementId}`}
