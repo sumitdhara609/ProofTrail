@@ -6,8 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import { AddEvidenceForm } from "@/components/vault/AddEvidenceForm";
 import {
   deactivatePublicProofLink,
-  deleteEvidenceItem,
   generatePublicProofLink,
+  deleteEvidenceItem,
 } from "@/app/vault/[achievementId]/actions";
 import { generateQrDataUrl } from "@/lib/qr/generate";
 import {
