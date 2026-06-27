@@ -85,6 +85,13 @@ export async function addEvidence(
 
   const input = parsed.data;
 
+  if (hasMediaFile && input.isPublic) {
+    return {
+      error:
+        "Upload certificate or media evidence privately first. After reviewing the file preview and public proof card, you can edit the evidence and make it public deliberately.",
+    };
+  }
+
   const { data: achievement, error: achievementError } = await supabase
     .from("achievements")
     .select("id, user_id, verification_status")
@@ -469,6 +476,18 @@ export async function updateEvidenceItem(
     redirectToRecordError(achievementId, "evidence-not-found");
   }
 
+  const publicMediaReviewed =
+    formData.get("publicMediaReviewed") === "on";
+
+  if (
+    existingEvidence.file_path &&
+    !existingEvidence.is_public &&
+    input.isPublic &&
+    !publicMediaReviewed
+  ) {
+    redirectToRecordError(achievementId, "media-public-review-required");
+  }
+
   const { error: updateError } = await supabase
     .from("evidence_items")
     .update({
@@ -514,6 +533,12 @@ export async function updateEvidenceItem(
       public_visibility_changed: existingEvidence.is_public !== input.isPublic,
       became_public: existingEvidence.is_public === false && input.isPublic,
       became_private: existingEvidence.is_public === true && !input.isPublic,
+      public_media_review_confirmed:
+        existingEvidence.file_path &&
+        !existingEvidence.is_public &&
+        input.isPublic
+          ? publicMediaReviewed
+          : false,
     },
   });
 
@@ -587,6 +612,14 @@ export async function deleteEvidenceItem(
   if (evidenceLookupError || !evidenceItem) {
     redirectToRecordError(achievementId, "evidence-not-found");
   }
+
+  const { data: activeProofLink } = await supabase
+    .from("public_proof_links")
+    .select("public_slug")
+    .eq("achievement_id", achievementId)
+    .eq("user_id", user.id)
+    .eq("is_active", true)
+    .maybeSingle();
 
   const { error: deleteError } = await supabase
     .from("evidence_items")
@@ -663,6 +696,10 @@ export async function deleteEvidenceItem(
   revalidatePath("/vault");
   revalidatePath("/dashboard");
 
+  if (activeProofLink?.public_slug) {
+    revalidatePath(`/proof/${activeProofLink.public_slug}`);
+  }
+
   redirectToRecord(achievementId);
 }
 
@@ -687,6 +724,17 @@ export async function deleteAchievement(achievementId: string) {
   if (achievementError || !achievement) {
     redirectToDeleteError(achievementId, "record-not-found");
   }
+
+  const { data: evidenceMedia } = await supabase
+    .from("evidence_items")
+    .select(
+      "id, title, evidence_type, file_path, file_name, file_mime_type, file_size_bytes, storage_bucket, is_public"
+    )
+    .eq("achievement_id", achievementId)
+    .eq("user_id", user.id)
+    .not("file_path", "is", null);
+
+  const mediaItems = evidenceMedia || [];
 
   const { count: evidenceCount } = await supabase
     .from("evidence_items")
@@ -714,6 +762,18 @@ export async function deleteAchievement(achievementId: string) {
       visibility: achievement.visibility,
       verification_status: achievement.verification_status,
       evidence_count: evidenceCount || 0,
+      media_file_count: mediaItems.length,
+      deleted_media_files: mediaItems.map((item) => ({
+        id: item.id,
+        title: item.title,
+        evidence_type: item.evidence_type,
+        file_path: item.file_path,
+        file_name: item.file_name,
+        file_mime_type: item.file_mime_type,
+        file_size_bytes: item.file_size_bytes,
+        storage_bucket: item.storage_bucket,
+        was_public: item.is_public,
+      })),
       proof_link: proofLink
         ? {
             id: proofLink.id,
@@ -733,6 +793,28 @@ export async function deleteAchievement(achievementId: string) {
   if (deleteError) {
     redirectToDeleteError(achievementId, deleteError.message);
   }
+
+  const mediaByBucket = mediaItems.reduce<Record<string, string[]>>(
+    (groups, item) => {
+      if (!item.storage_bucket || !item.file_path) {
+        return groups;
+      }
+
+      if (!groups[item.storage_bucket]) {
+        groups[item.storage_bucket] = [];
+      }
+
+      groups[item.storage_bucket].push(item.file_path);
+      return groups;
+    },
+    {}
+  );
+
+  await Promise.all(
+    Object.entries(mediaByBucket).map(([bucket, filePaths]) =>
+      supabase.storage.from(bucket).remove(filePaths)
+    )
+  );
 
   if (proofLink?.public_slug) {
     revalidatePath(`/proof/${proofLink.public_slug}`);
