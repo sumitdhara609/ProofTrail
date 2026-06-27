@@ -37,6 +37,12 @@ type AchievementPageProps = {
   }>;
 };
 
+type EvidenceItemWithPrivatePreview = EvidenceItem & {
+  mediaPreviewUrl: string | null;
+  mediaPreviewKind: "image" | "pdf" | "file" | null;
+  mediaSizeLabel: string | null;
+};
+
 function formatErrorMessage(error: string) {
   const messages: Record<string, string> = {
     "record-not-found": "This achievement record could not be found.",
@@ -51,6 +57,38 @@ function formatErrorMessage(error: string) {
     messages[error] ||
     error.replaceAll("-", " ").replace(/^./, (char) => char.toUpperCase())
   );
+}
+
+function getMediaPreviewKind(mimeType: string | null) {
+  if (!mimeType) {
+    return null;
+  }
+
+  if (mimeType.startsWith("image/")) {
+    return "image";
+  }
+
+  if (mimeType === "application/pdf") {
+    return "pdf";
+  }
+
+  return "file";
+}
+
+function formatFileSize(bytes: number | null) {
+  if (!bytes) {
+    return null;
+  }
+
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  }
+
+  if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  }
+
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function DossierMetric({
@@ -167,9 +205,36 @@ export default async function AchievementPage({
 
   const record = achievement as AchievementRecord;
   const logs = (auditLogs || []) as AuditLog[];
-  const evidence = (evidenceItems || []) as EvidenceItem[];
+  const rawEvidence = (evidenceItems || []) as EvidenceItem[];
   const proofLinks = (proofLinksData || []) as PublicProofLink[];
   const proofLink = proofLinkData as PublicProofLink | null;
+
+  const evidence: EvidenceItemWithPrivatePreview[] = await Promise.all(
+    rawEvidence.map(async (item) => {
+      const mediaPreviewKind = getMediaPreviewKind(item.file_mime_type);
+      const mediaSizeLabel = formatFileSize(item.file_size_bytes);
+
+      if (!item.file_path || !item.storage_bucket) {
+        return {
+          ...item,
+          mediaPreviewUrl: null,
+          mediaPreviewKind,
+          mediaSizeLabel,
+        };
+      }
+
+      const { data: signedUrlData } = await supabase.storage
+        .from(item.storage_bucket)
+        .createSignedUrl(item.file_path, 60 * 10);
+
+      return {
+        ...item,
+        mediaPreviewUrl: signedUrlData?.signedUrl || null,
+        mediaPreviewKind,
+        mediaSizeLabel,
+      };
+    })
+  );
 
   const publicEvidenceCount = evidence.filter((item) => item.is_public).length;
   const mediaEvidenceCount = evidence.filter((item) =>
@@ -526,15 +591,87 @@ export default async function AchievementPage({
                           </p>
                         ) : null}
 
-                        {item.file_name ? (
-                          <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-                            <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                              Media evidence
-                            </p>
+                        {item.file_path ? (
+                          <div className="mt-5 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
+                            <div className="border-b border-[var(--border)] p-4">
+                              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                <div>
+                                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
+                                    Private media evidence
+                                  </p>
 
-                            <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                              {item.file_name}
-                            </p>
+                                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                                    {item.file_name || "Attached evidence file"}
+                                  </p>
+
+                                  <p className="mt-1 text-xs text-[var(--text-muted)]">
+                                    {[item.file_mime_type, item.mediaSizeLabel]
+                                      .filter(Boolean)
+                                      .join(" • ")}
+                                  </p>
+                                </div>
+
+                                <span className="w-fit rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-1 text-xs font-semibold text-[var(--text-muted)]">
+                                  Private preview
+                                </span>
+                              </div>
+                            </div>
+
+                            {item.mediaPreviewUrl &&
+                            item.mediaPreviewKind === "image" ? (
+                              <a
+                                href={item.mediaPreviewUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="block bg-[var(--surface-soft)] p-4"
+                              >
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={item.mediaPreviewUrl}
+                                  alt={item.file_name || item.title}
+                                  className="max-h-[520px] w-full rounded-xl object-contain"
+                                />
+                              </a>
+                            ) : null}
+
+                            {item.mediaPreviewUrl &&
+                            item.mediaPreviewKind === "pdf" ? (
+                              <div className="bg-[var(--surface-soft)] p-4">
+                                <a
+                                  href={item.mediaPreviewUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="flex items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+                                >
+                                  <span>Open private PDF preview</span>
+                                  <span aria-hidden="true">→</span>
+                                </a>
+                              </div>
+                            ) : null}
+
+                            {item.mediaPreviewUrl &&
+                            item.mediaPreviewKind === "file" ? (
+                              <div className="bg-[var(--surface-soft)] p-4">
+                                <a
+                                  href={item.mediaPreviewUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="flex items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+                                >
+                                  <span>Open private file preview</span>
+                                  <span aria-hidden="true">→</span>
+                                </a>
+                              </div>
+                            ) : null}
+
+                            {!item.mediaPreviewUrl ? (
+                              <div className="bg-[var(--surface-soft)] p-4">
+                                <p className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--text-muted)]">
+                                  This media file is attached, but a private
+                                  preview link could not be generated.
+                                </p>
+                              </div>
+                            ) : null}
                           </div>
                         ) : null}
 
