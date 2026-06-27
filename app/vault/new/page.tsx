@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -17,7 +18,7 @@ function FieldLabel({
   children,
 }: {
   htmlFor: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <label
@@ -29,7 +30,7 @@ function FieldLabel({
   );
 }
 
-function FieldHint({ children }: { children: React.ReactNode }) {
+function FieldHint({ children }: { children: ReactNode }) {
   return (
     <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">
       {children}
@@ -37,7 +38,7 @@ function FieldHint({ children }: { children: React.ReactNode }) {
   );
 }
 
-function PrimarySubmitButton({ children }: { children: React.ReactNode }) {
+function PrimarySubmitButton({ children }: { children: ReactNode }) {
   return (
     <button
       type="submit"
@@ -105,17 +106,17 @@ export default async function NewAchievementPage({
         <header className="grid gap-8 py-10 lg:grid-cols-[1fr_0.75fr] lg:items-end lg:py-12">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
-              Create proof record
+              Certificate intake readiness
             </p>
 
             <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
-              Add one achievement with context before evidence.
+              Create the record first. Attach certificate proof after.
             </h1>
 
             <p className="mt-6 max-w-2xl text-sm leading-8 text-[var(--text-secondary)] sm:text-base">
-              Start with the core achievement details. Evidence, audit history,
-              proof identity, and QR-backed public access can be managed after
-              the record is created.
+              Start with a clean achievement record: title, issuer, date,
+              context, and impact. Evidence files, certificate PDFs, QR access,
+              and public proof identity can be managed after the record exists.
             </p>
           </div>
 
@@ -129,8 +130,9 @@ export default async function NewAchievementPage({
             </h2>
 
             <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
-              Keep visibility private while preparing your certificate,
-              project, publication, award, leadership role, or course evidence.
+              This is safest when adding many certificates. Build the vault
+              privately, review every proof card, and only then decide what
+              deserves public visibility.
             </p>
           </GlassCard>
         </header>
@@ -139,30 +141,30 @@ export default async function NewAchievementPage({
           <aside className="space-y-4">
             <GlassCard className="p-6">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
-                Entry flow
+                Certificate entry flow
               </p>
 
               <div className="mt-6 space-y-3">
                 {[
                   [
                     "01",
-                    "Identity",
-                    "Title, category, visibility, issuer, and date.",
+                    "Create record",
+                    "Add the certificate title, category, issuer, and date.",
                   ],
                   [
                     "02",
-                    "Context",
-                    "Why the achievement matters and what it represents.",
+                    "Add context",
+                    "Explain what the certificate represents and why it matters.",
                   ],
                   [
                     "03",
-                    "Impact",
-                    "Outcome, effort, contribution, or visible result.",
+                    "Attach evidence",
+                    "Upload the certificate image/PDF from the dossier page.",
                   ],
                   [
                     "04",
-                    "Evidence later",
-                    "Attach certificates, links, files, or supporting proof.",
+                    "Review privacy",
+                    "Keep evidence private until the public proof card is ready.",
                   ],
                 ].map(([number, title, description]) => (
                   <div
@@ -190,13 +192,25 @@ export default async function NewAchievementPage({
 
             <GlassCard className="p-6">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
-                Best practice
+                Naming discipline
               </p>
 
               <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
-                Use clear titles and honest context. A record becomes powerful
-                later when the evidence ledger supports the story without
-                needing exaggeration.
+                For a large certificate vault, use titles that stay clear even
+                months later. A strong title usually includes the certificate
+                name, subject, issuing body, and result if relevant.
+              </p>
+            </GlassCard>
+
+            <GlassCard className="border-[var(--danger-border)] bg-[var(--danger-soft)] p-6">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--danger)]">
+                Privacy reminder
+              </p>
+
+              <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
+                Certificates may contain names, IDs, marks, signatures, QR
+                codes, or institutional details. Keep new records private until
+                every public-facing detail is reviewed.
               </p>
             </GlassCard>
           </aside>
@@ -204,7 +218,7 @@ export default async function NewAchievementPage({
           <GlassCard className="overflow-hidden">
             <div className="border-b border-[var(--border)] bg-[var(--surface-soft)] p-8 sm:p-10">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
-                New archive entry
+                New certificate-ready record
               </p>
 
               <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[var(--text-primary)] sm:text-4xl">
@@ -212,8 +226,8 @@ export default async function NewAchievementPage({
               </h2>
 
               <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
-                Fill the foundation carefully. You can add evidence and generate
-                public proof identity later from the record dossier.
+                Fill the foundation carefully. After creation, open the dossier
+                and attach certificate evidence privately.
               </p>
 
               {error ? (
@@ -232,12 +246,12 @@ export default async function NewAchievementPage({
                   name="title"
                   type="text"
                   required
-                  placeholder="Certificate of Training in C, C++, Java, and Python"
+                  placeholder="Certificate of Training — C, C++, Java, and Python"
                   className="mt-2 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
                 />
                 <FieldHint>
-                  Make the title specific enough that the record is easy to
-                  recognize later.
+                  For certificates, include the certificate name, subject, and
+                  major result if useful.
                 </FieldHint>
               </div>
 
@@ -251,15 +265,19 @@ export default async function NewAchievementPage({
                     className="mt-2 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)]"
                   >
                     <option value="certificate">Certificate</option>
+                    <option value="course">Course</option>
+                    <option value="award">Award</option>
                     <option value="competition">Competition</option>
                     <option value="project">Project</option>
                     <option value="publication">Publication</option>
                     <option value="leadership">Leadership</option>
                     <option value="volunteering">Volunteering</option>
-                    <option value="award">Award</option>
-                    <option value="course">Course</option>
                     <option value="other">Other</option>
                   </select>
+                  <FieldHint>
+                    Certificate is the default because this intake phase is
+                    optimized for your certificate archive.
+                  </FieldHint>
                 </div>
 
                 <div>
@@ -275,7 +293,8 @@ export default async function NewAchievementPage({
                     <option value="public">Public</option>
                   </select>
                   <FieldHint>
-                    Private is safest while the record is still being prepared.
+                    Private is safest while the record and certificate evidence
+                    are still being prepared.
                   </FieldHint>
                 </div>
               </div>
@@ -287,9 +306,13 @@ export default async function NewAchievementPage({
                     id="issuer"
                     name="issuer"
                     type="text"
-                    placeholder="Lalani Computer Academy Pvt. Ltd."
+                    placeholder="Lalani Computer Academy Pvt. Ltd. / NSDC / School / Institute"
                     className="mt-2 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
                   />
+                  <FieldHint>
+                    Add the organization, institute, event body, or official
+                    source connected to the record.
+                  </FieldHint>
                 </div>
 
                 <div>
@@ -302,6 +325,10 @@ export default async function NewAchievementPage({
                     type="date"
                     className="mt-2 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--accent)]"
                   />
+                  <FieldHint>
+                    Use the certificate issue date, completion date, event date,
+                    or closest reliable date.
+                  </FieldHint>
                 </div>
               </div>
 
@@ -311,12 +338,12 @@ export default async function NewAchievementPage({
                   id="description"
                   name="description"
                   rows={5}
-                  placeholder="Describe what this record represents, how it happened, and why it matters."
+                  placeholder="Describe what this certificate or achievement represents, what was completed, and why it matters."
                   className="mt-2 w-full resize-none rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-7 text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
                 />
                 <FieldHint>
-                  Add the background, learning, role, or circumstances behind
-                  the achievement.
+                  Mention the program/course/event, learning area, role,
+                  duration if important, and the achievement context.
                 </FieldHint>
               </div>
 
@@ -326,13 +353,42 @@ export default async function NewAchievementPage({
                   id="impactSummary"
                   name="impactSummary"
                   rows={3}
-                  placeholder="Summarize the outcome, effort, responsibility, contribution, or visible result."
+                  placeholder="Summarize the result, grade, responsibility, recognition, contribution, or learning outcome."
                   className="mt-2 w-full resize-none rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-7 text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
                 />
+                <FieldHint>
+                  For certificates, this can include grade, completion status,
+                  skill area, or the practical value of the learning.
+                </FieldHint>
+              </div>
+
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">
+                  After creating this record
+                </p>
+
+                <div className="mt-4 space-y-3">
+                  {[
+                    "Open the new record dossier.",
+                    "Add the certificate as private evidence.",
+                    "Review the certificate title, note, and file preview.",
+                    "Generate public proof only after the record is complete.",
+                  ].map((step, index) => (
+                    <div key={step} className="flex gap-3">
+                      <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-[var(--border)] bg-[var(--surface)] font-mono text-xs font-semibold text-[var(--text-muted)]">
+                        {index + 1}
+                      </span>
+
+                      <p className="text-sm leading-6 text-[var(--text-secondary)]">
+                        {step}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="flex flex-wrap items-center gap-3 border-t border-[var(--border)] pt-7">
-                <PrimarySubmitButton>Create record</PrimarySubmitButton>
+                <PrimarySubmitButton>Create private record</PrimarySubmitButton>
 
                 <Link
                   href="/vault"
