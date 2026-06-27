@@ -1,6 +1,9 @@
+import { ReactNode } from "react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { GlassCard } from "@/components/ui/GlassCard";
+import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { createClient } from "@/lib/supabase/server";
 import { updateEvidenceItem } from "@/app/vault/[achievementId]/actions";
 import { EvidenceItem } from "@/lib/proof/types";
@@ -23,6 +26,44 @@ const evidenceTypes = [
   "letter",
   "other",
 ];
+
+function FieldLabel({
+  htmlFor,
+  children,
+}: {
+  htmlFor: string;
+  children: ReactNode;
+}) {
+  return (
+    <label
+      htmlFor={htmlFor}
+      className="text-sm font-semibold text-[var(--text-primary)]"
+    >
+      {children}
+    </label>
+  );
+}
+
+function FieldHint({ children }: { children: ReactNode }) {
+  return (
+    <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">
+      {children}
+    </p>
+  );
+}
+
+function PrimarySubmitButton({ children }: { children: ReactNode }) {
+  return (
+    <button
+      type="submit"
+      className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#171512] bg-[#171512] px-6 py-3 text-sm font-semibold shadow-[var(--shadow-button)] transition hover:-translate-y-0.5 hover:bg-[#2a251f] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] dark:border-[#fffaf1] dark:bg-[#fffaf1] dark:hover:bg-[#eadfce]"
+    >
+      <span className="!text-[#fffaf1] dark:!text-[#171512]">
+        {children}
+      </span>
+    </button>
+  );
+}
 
 export default async function EditEvidencePage({
   params,
@@ -67,48 +108,186 @@ export default async function EditEvidencePage({
   const requiresPublicMediaReview = hasMediaFile && !evidence.is_public;
 
   return (
-    <main className="min-h-screen bg-[var(--background)] px-6 py-10 text-[var(--text-primary)] sm:px-10 lg:px-16">
-      <section className="mx-auto max-w-4xl">
-        <Link
-          href={`/vault/${achievementId}`}
-          className="text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
-        >
-          ← Back to record dossier
-        </Link>
+    <main className="premium-noise relative min-h-screen overflow-hidden bg-[var(--background)] px-5 py-6 text-[var(--text-primary)] sm:px-8 lg:px-10">
+      <section className="relative z-10 mx-auto max-w-7xl">
+        <nav className="flex items-center justify-between rounded-[1.75rem] border border-[var(--border)] bg-[var(--surface)]/90 px-4 py-3 shadow-[var(--shadow-soft)] backdrop-blur-xl">
+          <Link href="/dashboard" className="flex items-center gap-3">
+            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[var(--text-primary)] text-xs font-bold tracking-[0.16em] text-[var(--background)]">
+              PT
+            </div>
 
-        <GlassCard className="mt-8 overflow-hidden rounded-[2.5rem]">
-          <div className="border-b border-[var(--border)] bg-[var(--surface-soft)] p-8 sm:p-10">
+            <div>
+              <p className="text-sm font-semibold tracking-[-0.02em]">
+                ProofTrail
+              </p>
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">
+                Edit evidence
+              </p>
+            </div>
+          </Link>
+
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:block">
+              <ThemeToggle />
+            </div>
+
+            <SecondaryButton href="/vault" className="hidden sm:inline-flex">
+              Vault
+            </SecondaryButton>
+
+            <SecondaryButton href={`/vault/${achievementId}`}>
+              Dossier
+            </SecondaryButton>
+          </div>
+        </nav>
+
+        <div className="mt-8">
+          <Link
+            href={`/vault/${achievementId}`}
+            className="text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+          >
+            ← Back to record dossier
+          </Link>
+        </div>
+
+        <header className="grid gap-8 py-10 lg:grid-cols-[1fr_0.75fr] lg:items-end lg:py-12">
+          <div>
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
-              Edit evidence item
+              Evidence control
             </p>
 
-            <h1 className="mt-5 text-4xl font-semibold tracking-[-0.055em] text-[var(--text-primary)] sm:text-5xl">
-              Refine evidence details.
+            <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
+              Refine one evidence item carefully.
             </h1>
 
-            <p className="mt-5 max-w-2xl text-sm leading-8 text-[var(--text-secondary)]">
+            <p className="mt-6 max-w-2xl text-sm leading-8 text-[var(--text-secondary)] sm:text-base">
               Update the title, type, source, note, and public visibility for
-              this evidence item. Uploaded media files remain attached unless
-              the evidence item is removed.
+              this evidence item. Uploaded media remains attached unless the
+              evidence item is removed.
             </p>
           </div>
 
-          <div className="grid gap-0 lg:grid-cols-[1fr_0.85fr]">
+          <GlassCard className="p-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">
+              Parent record
+            </p>
+
+            <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-[var(--text-primary)]">
+              {achievement.title}
+            </h2>
+
+            <p className="mt-5 text-sm leading-7 text-[var(--text-secondary)]">
+              Evidence should clearly support this specific record. Keep public
+              visibility cautious until the proof presentation is reviewed.
+            </p>
+          </GlassCard>
+        </header>
+
+        <section className="grid gap-6 pb-16 lg:grid-cols-[0.72fr_1.28fr]">
+          <aside className="space-y-4">
+            <GlassCard className="p-6">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
+                Evidence summary
+              </p>
+
+              <div className="mt-6 space-y-4">
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                    Current title
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                    {evidence.title}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                    Current type
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                    {formatEvidenceType(evidence.evidence_type)}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                    Visibility
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                    {evidence.is_public ? "Public" : "Private"}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                    Media attachment
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                    {hasMediaFile ? evidence.file_name || "Attached" : "None"}
+                  </p>
+                </div>
+
+                {evidence.file_mime_type ? (
+                  <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                      File type
+                    </p>
+                    <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                      {evidence.file_mime_type}
+                    </p>
+                  </div>
+                ) : null}
+
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                    Added
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                    {formatDateTime(evidence.created_at)}
+                  </p>
+                </div>
+              </div>
+            </GlassCard>
+
+            <GlassCard className="border-[var(--danger-border)] bg-[var(--danger-soft)] p-6">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--danger)]">
+                Public safety
+              </p>
+
+              <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
+                For certificates and award moments, keep evidence private until
+                the certificate frame, description, and public proof
+                presentation are reviewed deliberately.
+              </p>
+            </GlassCard>
+          </aside>
+
+          <GlassCard className="overflow-hidden">
+            <div className="border-b border-[var(--border)] bg-[var(--surface-soft)] p-8 sm:p-10">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
+                Edit evidence item
+              </p>
+
+              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[var(--text-primary)] sm:text-4xl">
+                Update evidence details.
+              </h2>
+
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
+                Only selected public evidence appears on proof pages. Private
+                evidence remains hidden inside your vault.
+              </p>
+            </div>
+
             <form
               action={updateEvidenceItem.bind(
                 null,
                 achievementId,
                 evidenceItemId
               )}
-              className="space-y-6 p-8 sm:p-10"
+              className="space-y-7 p-8 sm:p-10"
             >
               <div>
-                <label
-                  htmlFor="evidenceType"
-                  className="text-sm font-semibold text-[var(--text-secondary)]"
-                >
-                  Evidence type
-                </label>
+                <FieldLabel htmlFor="evidenceType">Evidence type</FieldLabel>
                 <select
                   id="evidenceType"
                   name="evidenceType"
@@ -124,12 +303,7 @@ export default async function EditEvidencePage({
               </div>
 
               <div>
-                <label
-                  htmlFor="title"
-                  className="text-sm font-semibold text-[var(--text-secondary)]"
-                >
-                  Evidence title
-                </label>
+                <FieldLabel htmlFor="title">Evidence title</FieldLabel>
                 <input
                   id="title"
                   name="title"
@@ -139,15 +313,13 @@ export default async function EditEvidencePage({
                   placeholder="Certificate page / Published article / Award photo"
                   className="mt-2 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
                 />
+                <FieldHint>
+                  Use a title that explains what this evidence proves.
+                </FieldHint>
               </div>
 
               <div>
-                <label
-                  htmlFor="sourceUrl"
-                  className="text-sm font-semibold text-[var(--text-secondary)]"
-                >
-                  Source URL
-                </label>
+                <FieldLabel htmlFor="sourceUrl">Source URL</FieldLabel>
                 <input
                   id="sourceUrl"
                   name="sourceUrl"
@@ -158,19 +330,14 @@ export default async function EditEvidencePage({
                   title="Enter a valid URL beginning with http:// or https://"
                   className="mt-2 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] invalid:border-[var(--danger-border)] focus:border-[var(--accent)]"
                 />
-                <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">
-                  Optional. Use this when the evidence has a public source,
-                  official page, publication link, or project reference.
-                </p>
+                <FieldHint>
+                  Optional. Use this for official pages, publication links,
+                  project references, or public sources.
+                </FieldHint>
               </div>
 
               <div>
-                <label
-                  htmlFor="description"
-                  className="text-sm font-semibold text-[var(--text-secondary)]"
-                >
-                  Evidence note
-                </label>
+                <FieldLabel htmlFor="description">Evidence note</FieldLabel>
                 <textarea
                   id="description"
                   name="description"
@@ -201,7 +368,7 @@ export default async function EditEvidencePage({
                       Review before making media public.
                     </p>
 
-                    <p className="mt-2 leading-6">
+                    <p className="mt-2 leading-6 text-[var(--text-secondary)]">
                       This evidence has an uploaded file attached. If you mark
                       it public, that media may appear on the public proof page
                       through a temporary signed preview link.
@@ -229,100 +396,26 @@ export default async function EditEvidencePage({
                     )}
                   </div>
                 ) : (
-                  <p className="mt-3 text-xs leading-5 text-[var(--text-muted)]">
+                  <FieldHint>
                     Only selected public evidence is shown on public proof
                     pages. Private evidence stays hidden inside the vault.
-                  </p>
+                  </FieldHint>
                 )}
               </div>
 
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <button
-                  type="submit"
-                  className="inline-flex justify-center rounded-full bg-[var(--text-primary)] px-6 py-3 text-sm font-semibold text-[var(--background)] shadow-[var(--shadow-soft)] transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
-                >
-                  Save evidence changes
-                </button>
+              <div className="flex flex-wrap items-center gap-3 border-t border-[var(--border)] pt-7">
+                <PrimarySubmitButton>Save evidence changes</PrimarySubmitButton>
 
                 <Link
                   href={`/vault/${achievementId}`}
-                  className="inline-flex justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text-secondary)] shadow-[var(--shadow-soft)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text-primary)] shadow-[var(--shadow-soft)] transition hover:-translate-y-0.5 hover:border-[var(--border-strong)] hover:bg-[var(--surface-soft)]"
                 >
                   Cancel
                 </Link>
               </div>
             </form>
-
-            <aside className="border-t border-[var(--border)] bg-[var(--surface-soft)] p-8 sm:p-10 lg:border-l lg:border-t-0">
-              <div className="rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-soft)]">
-                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
-                  Evidence summary
-                </p>
-
-                <div className="mt-6 space-y-4">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                      Parent record
-                    </p>
-                    <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                      {achievement.title}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                      Current visibility
-                    </p>
-                    <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                      {evidence.is_public ? "Public" : "Private"}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                      Media attachment
-                    </p>
-                    <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                      {hasMediaFile ? evidence.file_name || "Attached" : "None"}
-                    </p>
-                  </div>
-
-                  {evidence.file_mime_type ? (
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                        File type
-                      </p>
-                      <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                        {evidence.file_mime_type}
-                      </p>
-                    </div>
-                  ) : null}
-
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                      Added
-                    </p>
-                    <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                      {formatDateTime(evidence.created_at)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-5 rounded-[2rem] border border-[var(--danger-border)] bg-[var(--danger-soft)] p-6 text-[var(--danger)] shadow-[var(--shadow-soft)]">
-                <p className="text-sm font-semibold uppercase tracking-[0.22em]">
-                  Public safety
-                </p>
-
-                <p className="mt-4 text-sm leading-7">
-                  For certificates and award moments, keep evidence private
-                  until the certificate frame, description, and public proof
-                  presentation are reviewed deliberately.
-                </p>
-              </div>
-            </aside>
-          </div>
-        </GlassCard>
+          </GlassCard>
+        </section>
       </section>
     </main>
   );
