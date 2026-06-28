@@ -345,13 +345,13 @@ export default function Home() {
               Designed, built, and shaped by
             </p>
 
-            <h2 className="mt-4 text-4xl font-semibold tracking-[-0.06em] text-[var(--text-primary)] sm:text-5xl">
-              Sumit Dhara
+            <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em] text-[var(--text-primary)] sm:text-3xl">
+             Sumit Dhara
             </h2>
 
-            <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-[var(--text-secondary)]">
-              A private-first proof identity system for preserving achievements
-              with evidence, context, dignity, and controlled public visibility.
+            <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-[var(--text-secondary)]">
+             A private-first proof identity system for preserving achievements with
+            evidence, context, and controlled public visibility.
             </p>
 
             <div className="mt-8 flex justify-center">
