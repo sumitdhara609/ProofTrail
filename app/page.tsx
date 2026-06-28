@@ -42,7 +42,7 @@ const auditItems = [
 export default function Home() {
   return (
     <main className="premium-noise relative min-h-screen overflow-hidden bg-[var(--background)] text-[var(--text-primary)]">
-      <section className="relative z-10 mx-auto max-w-7xl px-5 py-5 sm:px-8 lg:px-10">
+      <section className="relative z-10 mx-auto w-full max-w-[96rem] px-5 py-5 sm:px-8 lg:px-10">
         <nav className="flex items-center justify-between rounded-[1.75rem] border border-[var(--border)] bg-[var(--surface)]/90 px-4 py-3 shadow-[var(--shadow-soft)] backdrop-blur-xl">
           <Link href="/" className="flex items-center gap-3">
             <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[var(--text-primary)] text-xs font-bold tracking-[0.16em] text-[var(--background)]">
@@ -104,7 +104,7 @@ export default function Home() {
               Personal achievement archive
             </div>
 
-            <h1 className="mt-8 max-w-3xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
+            <h1 className="mt-8 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
               Preserve achievements with the proof, context, and dignity they
               deserve.
             </h1>
@@ -138,6 +138,7 @@ export default function Home() {
                   <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[var(--text-muted)]">
                     {label}
                   </p>
+
                   <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
                     {value}
                   </p>
@@ -153,6 +154,7 @@ export default function Home() {
                   <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--accent)]">
                     Record dossier
                   </p>
+
                   <h2 className="mt-3 max-w-md text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)] sm:text-3xl">
                     Certificate evidence record
                   </h2>
@@ -182,10 +184,11 @@ export default function Home() {
                   <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--text-muted)]">
                     Evidence note
                   </p>
+
                   <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
                     This certificate is stored with its context, issuer, proof
-                    media, and visibility rules. It can later be framed and
-                    published only after review.
+                    media, and visibility rules. It can later be published as a
+                    controlled public proof card only after review.
                   </p>
                 </div>
 
@@ -193,6 +196,7 @@ export default function Home() {
                   <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-70">
                     Proof ID
                   </p>
+
                   <p className="mt-3 font-mono text-sm font-semibold">
                     PT-2026-9K2X
                   </p>
@@ -221,7 +225,7 @@ export default function Home() {
 
       <section
         id="archive"
-        className="relative z-10 mx-auto max-w-7xl px-5 pb-20 sm:px-8 lg:px-10"
+        className="relative z-10 mx-auto w-full max-w-[96rem] px-5 pb-20 sm:px-8 lg:px-10"
       >
         <div className="grid gap-4 lg:grid-cols-3">
           {proofLayers.map((item) => (
@@ -232,9 +236,11 @@ export default function Home() {
               <p className="font-mono text-sm font-semibold text-[var(--text-muted)]">
                 {item.label}
               </p>
+
               <h2 className="mt-7 text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
                 {item.title}
               </h2>
+
               <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
                 {item.description}
               </p>
@@ -245,7 +251,7 @@ export default function Home() {
 
       <section
         id="evidence"
-        className="relative z-10 mx-auto max-w-7xl px-5 pb-20 sm:px-8 lg:px-10"
+        className="relative z-10 mx-auto w-full max-w-[96rem] px-5 pb-20 sm:px-8 lg:px-10"
       >
         <div className="overflow-hidden rounded-[2.5rem] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-card)]">
           <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
@@ -259,9 +265,9 @@ export default function Home() {
               </h2>
 
               <p className="mt-5 max-w-xl text-sm leading-8 text-[var(--text-secondary)]">
-                For certificates, ProofTrail should first preserve proof safely:
-                certificate scan, moment image, description, issuer, date, and
-                context. Public framing should be a deliberate later step.
+                ProofTrail helps preserve the full record privately: evidence
+                media, issuer details, dates, context, source notes, and impact.
+                Public proof is a selected view, not the whole vault.
               </p>
             </div>
 
@@ -275,6 +281,7 @@ export default function Home() {
                     <div className="grid h-9 w-9 place-items-center rounded-full bg-[var(--text-primary)] font-mono text-xs text-[var(--background)]">
                       {String(index + 1).padStart(2, "0")}
                     </div>
+
                     <p className="text-sm font-semibold text-[var(--text-secondary)]">
                       {item}
                     </p>
@@ -286,6 +293,7 @@ export default function Home() {
                 <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-70">
                   Product rule
                 </p>
+
                 <p className="mt-3 text-lg font-semibold tracking-[-0.03em]">
                   Public proof is a controlled excerpt, not the whole vault.
                 </p>
@@ -297,39 +305,44 @@ export default function Home() {
 
       <section
         id="proof"
-        className="relative z-10 mx-auto max-w-7xl px-5 pb-20 sm:px-8 lg:px-10"
+        className="relative z-10 mx-auto w-full max-w-[96rem] px-5 pb-20 sm:px-8 lg:px-10"
       >
         <div className="grid gap-4 lg:grid-cols-2">
           <div className="rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[var(--shadow-soft)]">
             <p className="text-sm font-bold uppercase tracking-[0.24em] text-[var(--accent)]">
               Private by default
             </p>
+
             <h2 className="mt-5 text-3xl font-semibold leading-[1.05] tracking-[-0.05em] text-[var(--text-primary)]">
               Your evidence does not become public accidentally.
             </h2>
+
             <p className="mt-5 text-sm leading-8 text-[var(--text-secondary)]">
-              Uploaded certificates and moment images remain private unless an
-              evidence item is intentionally marked public.
+              Uploaded certificates, images, PDFs, notes, and source references
+              remain private unless an evidence item is intentionally marked
+              public.
             </p>
           </div>
 
           <div className="rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[var(--shadow-soft)]">
             <p className="text-sm font-bold uppercase tracking-[0.24em] text-[var(--accent)]">
-              Certificate frame later
+              Reviewable proof cards
             </p>
+
             <h2 className="mt-5 text-3xl font-semibold leading-[1.05] tracking-[-0.05em] text-[var(--text-primary)]">
-              Premium certificate presentation deserves its own phase.
+              Public proof pages show only the evidence you approve.
             </h2>
+
             <p className="mt-5 text-sm leading-8 text-[var(--text-secondary)]">
-              Before public certificate pages, we will design a dedicated frame
-              system for your certificates and related award moments.
+              A ProofTrail ID can present selected context, public evidence, and
+              QR-backed access while keeping private vault metadata protected.
             </p>
           </div>
         </div>
       </section>
 
       <footer className="relative z-10 border-t border-[var(--border)] px-5 py-14 sm:px-8 lg:px-10">
-        <div className="mx-auto max-w-7xl">
+        <div className="mx-auto w-full max-w-[96rem]">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-xs font-bold uppercase tracking-[0.32em] text-[var(--text-muted)]">
               ProofTrail
@@ -346,12 +359,12 @@ export default function Home() {
             </p>
 
             <h2 className="mt-4 text-2xl font-semibold tracking-[-0.035em] text-[var(--text-primary)] sm:text-3xl">
-             Sumit Dhara
+              Sumit Dhara
             </h2>
 
             <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-[var(--text-secondary)]">
-             A private-first proof identity system for preserving achievements with
-            evidence, context, and controlled public visibility.
+              A private-first proof identity system for preserving achievements
+              with evidence, context, and controlled public visibility.
             </p>
 
             <div className="mt-8 flex justify-center">
