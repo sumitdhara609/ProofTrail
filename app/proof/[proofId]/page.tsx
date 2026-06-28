@@ -147,8 +147,8 @@ function ProofUnavailable({
   const copy = getUnavailableCopy(reason);
 
   return (
-    <main className="premium-noise relative min-h-screen overflow-hidden bg-[var(--background)] px-5 py-6 text-[var(--text-primary)] sm:px-8 lg:px-10">
-      <section className="relative z-10 mx-auto flex min-h-[calc(100vh-3rem)] max-w-6xl flex-col">
+    <main className="premium-noise relative min-h-screen overflow-hidden bg-[var(--background)] text-[var(--text-primary)]">
+      <section className="relative z-10 mx-auto flex min-h-screen w-full max-w-[96rem] flex-col px-5 py-6 sm:px-8 lg:px-10">
         <PublicNav label="Proof unavailable" />
 
         <div className="flex flex-1 items-center justify-center py-14">
@@ -317,21 +317,21 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
     : null;
 
   return (
-    <main className="premium-noise relative min-h-screen overflow-hidden bg-[var(--background)] px-5 py-6 text-[var(--text-primary)] sm:px-8 lg:px-10">
-      <section className="relative z-10 mx-auto max-w-7xl">
+    <main className="premium-noise relative min-h-screen overflow-hidden bg-[var(--background)] text-[var(--text-primary)]">
+      <section className="relative z-10 mx-auto w-full max-w-[96rem] px-5 py-6 sm:px-8 lg:px-10">
         <PublicNav label="Public proof card" />
 
-        <header className="grid gap-8 py-10 lg:grid-cols-[1fr_0.75fr] lg:items-end lg:py-12">
+        <header className="grid gap-8 py-10 xl:grid-cols-[minmax(0,1fr)_minmax(22rem,0.75fr)] xl:items-end xl:py-12">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
               Active proof identity
             </p>
 
-            <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
+            <h1 className="mt-5 max-w-5xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
               {achievement.title}
             </h1>
 
-            <p className="mt-6 max-w-2xl text-sm leading-8 text-[var(--text-secondary)] sm:text-base">
+            <p className="mt-6 max-w-3xl text-sm leading-8 text-[var(--text-secondary)] sm:text-base">
               This public proof card presents a selected record, its visible
               context, and evidence intentionally made public by the owner.
               Private evidence and private vault data are not exposed here.
@@ -368,7 +368,7 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
           </GlassCard>
         </header>
 
-        <section className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr]">
+        <section className="grid gap-6 xl:grid-cols-[1.08fr_0.92fr]">
           <GlassCard className="overflow-hidden">
             <div className="border-b border-[var(--border)] bg-[var(--surface-soft)] p-8 sm:p-10">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
@@ -586,62 +586,70 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                             </div>
                           </div>
 
-                          {item.mediaPreviewUrl && item.mediaPreviewKind === "image" ? (
-  <CertificateFrame className="m-4">
-    <a
-      href={item.mediaPreviewUrl}
-      target="_blank"
-      rel="noreferrer"
-      className="block"
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={item.mediaPreviewUrl}
-        alt={`${getCleanEvidenceLabel(item.evidence_type)} for ${
-          achievement.title
-        }`}
-        className="max-h-[560px] w-full rounded-[1rem] object-contain"
-      />
-    </a>
-  </CertificateFrame>
-) : null}
-
-                          {item.mediaPreviewUrl && item.mediaPreviewKind === "pdf" ? (
-  <CertificateFrame className="m-4">
-    <a
-      href={item.mediaPreviewUrl}
-      target="_blank"
-      rel="noreferrer"
-      className="flex min-h-[220px] items-center justify-between gap-4 rounded-[1rem] border border-dashed border-[var(--border)] bg-[var(--surface-soft)] p-6 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
-    >
-      <span>Open public certificate evidence</span>
-      <span aria-hidden="true">→</span>
-    </a>
-  </CertificateFrame>
-) : null}
-
                           {item.mediaPreviewUrl &&
-                          item.mediaPreviewKind === "file" ? (
-                            <div className="bg-[var(--surface-soft)] p-4">
+                          item.mediaPreviewKind === "image" ? (
+                            <CertificateFrame className="m-4">
                               <a
                                 href={item.mediaPreviewUrl}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="flex items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+                                className="block"
+                              >
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={item.mediaPreviewUrl}
+                                  alt={`${getCleanEvidenceLabel(
+                                    item.evidence_type
+                                  )} for ${achievement.title}`}
+                                  className="max-h-[560px] w-full rounded-[1rem] object-contain"
+                                />
+                              </a>
+                            </CertificateFrame>
+                          ) : null}
+
+                          {item.mediaPreviewUrl &&
+                          item.mediaPreviewKind === "pdf" ? (
+                            <CertificateFrame className="m-4">
+                              <a
+                                href={item.mediaPreviewUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex min-h-[220px] items-center justify-between gap-4 rounded-[1rem] border border-dashed border-[var(--border)] bg-[var(--surface-soft)] p-6 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+                              >
+                                <span>Open public certificate evidence</span>
+                                <span aria-hidden="true">→</span>
+                              </a>
+                            </CertificateFrame>
+                          ) : null}
+
+                          {item.mediaPreviewUrl &&
+                          item.mediaPreviewKind === "file" ? (
+                            <CertificateFrame className="m-4">
+                              <a
+                                href={item.mediaPreviewUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex min-h-[220px] items-center justify-between gap-4 rounded-[1rem] border border-dashed border-[var(--border)] bg-[var(--surface-soft)] p-6 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
                               >
                                 <span>Open public evidence file</span>
                                 <span aria-hidden="true">→</span>
                               </a>
-                            </div>
+                            </CertificateFrame>
                           ) : null}
 
                           {!item.mediaPreviewUrl ? (
-                            <div className="bg-[var(--surface-soft)] p-4">
-                              <p className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--text-muted)]">
-                                This public media evidence is listed, but its
-                                preview link could not be generated.
-                              </p>
-                            </div>
+                            <CertificateFrame className="m-4">
+                              <div className="rounded-[1rem] border border-dashed border-[var(--border)] bg-[var(--surface-soft)] p-6">
+                                <p className="text-sm font-semibold text-[var(--text-primary)]">
+                                  Public media preview unavailable.
+                                </p>
+
+                                <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+                                  This evidence item is public, but the protected
+                                  media preview link could not be generated.
+                                </p>
+                              </div>
+                            </CertificateFrame>
                           ) : null}
                         </div>
                       ) : null}
