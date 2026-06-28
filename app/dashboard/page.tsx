@@ -48,6 +48,58 @@ function SecondaryAction({
   );
 }
 
+function DashboardMetric({
+  label,
+  value,
+  detail,
+}: {
+  label: string;
+  value: string | number;
+  detail: string;
+}) {
+  return (
+    <GlassCard className="p-6">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">
+        {label}
+      </p>
+
+      <p className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-[var(--text-primary)]">
+        {value}
+      </p>
+
+      <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+        {detail}
+      </p>
+    </GlassCard>
+  );
+}
+
+function CompactMetric({
+  label,
+  value,
+  detail,
+}: {
+  label: string;
+  value: string | number;
+  detail: string;
+}) {
+  return (
+    <div className="rounded-[1.6rem] border border-[var(--border)] bg-[var(--surface)]/80 p-5 shadow-[var(--shadow-soft)]">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">
+        {label}
+      </p>
+
+      <p className="mt-3 text-3xl font-semibold tracking-[-0.045em] text-[var(--text-primary)]">
+        {value}
+      </p>
+
+      <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+        {detail}
+      </p>
+    </div>
+  );
+}
+
 function isCertificateRecord(record: AchievementRecord) {
   return record.category === "certificate" || record.category === "course";
 }
@@ -109,6 +161,7 @@ export default async function DashboardPage() {
   const mediaEvidenceCount = evidence.filter((item) =>
     Boolean(item.file_path)
   ).length;
+  const publicEvidenceCount = evidence.filter((item) => item.is_public).length;
   const certificateEvidenceCount = evidence.filter(
     (item) => item.evidence_type === "certificate"
   ).length;
@@ -179,7 +232,7 @@ export default async function DashboardPage() {
 
   const recommendedLabel =
     totalRecords === 0
-      ? "Create first certificate record"
+      ? "Create first proof record"
       : certificateRecordsWaitingForEvidence.length > 0
         ? "Attach certificate evidence"
         : recordsWaitingForEvidence.length > 0
@@ -191,8 +244,8 @@ export default async function DashboardPage() {
               : "Review vault";
 
   return (
-    <main className="premium-noise relative min-h-screen overflow-hidden bg-[var(--background)] px-5 py-6 text-[var(--text-primary)] sm:px-8 lg:px-10">
-      <section className="relative z-10 mx-auto max-w-7xl">
+    <main className="premium-noise relative min-h-screen overflow-hidden bg-[var(--background)] text-[var(--text-primary)]">
+      <section className="relative z-10 mx-auto w-full max-w-[96rem] px-5 py-6 sm:px-8 lg:px-10">
         <nav className="flex items-center justify-between rounded-[1.75rem] border border-[var(--border)] bg-[var(--surface)]/90 px-4 py-3 shadow-[var(--shadow-soft)] backdrop-blur-xl">
           <Link href="/dashboard" className="flex items-center gap-3">
             <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[var(--text-primary)] text-xs font-bold tracking-[0.16em] text-[var(--background)]">
@@ -227,20 +280,20 @@ export default async function DashboardPage() {
           </div>
         </nav>
 
-        <header className="grid gap-8 py-12 lg:grid-cols-[1fr_0.78fr] lg:items-end lg:py-16">
+        <header className="grid gap-8 py-12 xl:grid-cols-[minmax(0,1fr)_minmax(22rem,0.72fr)] xl:items-end xl:py-16">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
-              Certificate command center
+              Proof command center
             </p>
 
-            <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
+            <h1 className="mt-5 max-w-5xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
               Welcome back, {fullName}.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-sm leading-8 text-[var(--text-secondary)] sm:text-base">
-              Review certificate intake progress, strengthen records with
-              private evidence, and control which achievements receive public
-              proof identities.
+            <p className="mt-6 max-w-3xl text-sm leading-8 text-[var(--text-secondary)] sm:text-base">
+              Review your proof archive, strengthen records with evidence, and
+              control which achievements receive QR-backed public proof
+              identities.
             </p>
           </div>
 
@@ -255,13 +308,14 @@ export default async function DashboardPage() {
               </p>
 
               <span className="rounded-full border border-[var(--border)] bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent)]">
-                {certificateRecords} certificate-led
+                {totalRecords} record{totalRecords === 1 ? "" : "s"}
               </span>
             </div>
 
             <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
-              Keep new certificate records private until the evidence files,
-              context, proof card, and public visibility are reviewed.
+              Your vault stays private by default. Evidence becomes public only
+              when you deliberately mark it visible and generate a proof
+              identity.
             </p>
 
             <div className="mt-6">
@@ -272,237 +326,227 @@ export default async function DashboardPage() {
           </GlassCard>
         </header>
 
-        <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[
-            ["Records", totalRecords, "Total preserved proof records"],
-            [
-              "Certificates",
-              certificateRecords,
-              "Certificate or course-led records",
-            ],
-            ["Evidence", evidenceCount, "Attached proof and support items"],
-            ["Proof IDs", proofIdentityCount, "Active public proof identities"],
-          ].map(([label, value, detail]) => (
-            <GlassCard key={label} className="p-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">
-                {label}
-              </p>
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <DashboardMetric
+            label="Records"
+            value={totalRecords}
+            detail="Structured achievements preserved inside your vault"
+          />
 
-              <p className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-[var(--text-primary)]">
-                {value}
-              </p>
+          <DashboardMetric
+            label="Evidence"
+            value={evidenceCount}
+            detail="Attached links, notes, documents, and support items"
+          />
 
-              <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
-                {detail}
-              </p>
-            </GlassCard>
-          ))}
+          <DashboardMetric
+            label="Public evidence"
+            value={publicEvidenceCount}
+            detail="Evidence items intentionally selected for proof cards"
+          />
+
+          <DashboardMetric
+            label="Proof IDs"
+            value={proofIdentityCount}
+            detail="Active QR-backed public proof identities"
+          />
         </section>
 
-        <section className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[
-            [
-              "Certificate files",
-              certificateEvidenceCount,
-              "Evidence marked as certificate",
-            ],
-            [
-              "Media files",
-              mediaEvidenceCount,
-              "Uploaded PDFs, images, or proof files",
-            ],
-            [
-              "Private review",
-              privateReviewRecords.length,
-              "Evidence-backed records not exposed publicly",
-            ],
-            [
-              "Needs evidence",
-              recordsWaitingForEvidence.length,
-              "Records waiting for proof attachment",
-            ],
-          ].map(([label, value, detail]) => (
-            <div
-              key={label}
-              className="rounded-[1.6rem] border border-[var(--border)] bg-[var(--surface)]/80 p-5 shadow-[var(--shadow-soft)]"
-            >
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">
-                {label}
-              </p>
+        <section className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <CompactMetric
+            label="Certificate records"
+            value={certificateRecords}
+            detail="Certificate or course-led records"
+          />
 
-              <p className="mt-3 text-3xl font-semibold tracking-[-0.045em] text-[var(--text-primary)]">
-                {value}
-              </p>
+          <CompactMetric
+            label="Certificate files"
+            value={certificateEvidenceCount}
+            detail="Evidence marked as certificate"
+          />
 
-              <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-                {detail}
-              </p>
-            </div>
-          ))}
+          <CompactMetric
+            label="Media files"
+            value={mediaEvidenceCount}
+            detail="Uploaded PDFs, images, certificates, or proof files"
+          />
+
+          <CompactMetric
+            label="Needs evidence"
+            value={recordsWaitingForEvidence.length}
+            detail="Records waiting for proof attachment"
+          />
         </section>
 
-        <section className="mt-6 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-          <GlassCard className="overflow-hidden">
-            <div className="border-b border-[var(--border)] bg-[var(--surface-soft)] p-7">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
-                Recommended action
-              </p>
-
-              {totalRecords === 0 ? (
-                <>
-                  <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-[var(--text-primary)]">
-                    Start with one certificate-ready record.
-                  </h2>
-                  <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
-                    Create a private record with a clear title, issuer, date,
-                    context, and enough detail to support certificate evidence
-                    later.
+        <section className="mt-6 overflow-hidden rounded-[2.25rem] border border-[var(--border)] bg-[var(--surface)]/45 shadow-[var(--shadow-soft)]">
+          <div className="grid gap-0 xl:grid-cols-[minmax(0,1.04fr)_minmax(22rem,0.96fr)]">
+            <div className="border-b border-[var(--border)] p-5 sm:p-6 lg:p-7 xl:border-b-0 xl:border-r">
+              <GlassCard className="overflow-hidden shadow-none">
+                <div className="border-b border-[var(--border)] bg-[var(--surface-soft)] p-7">
+                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
+                    Recommended action
                   </p>
-                </>
-              ) : certificateRecordsWaitingForEvidence.length > 0 ? (
-                <>
-                  <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-[var(--text-primary)]">
-                    Attach certificate files to certificate records.
-                  </h2>
-                  <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
-                    {certificateRecordsWaitingForEvidence.length} certificate-led
-                    record
-                    {certificateRecordsWaitingForEvidence.length === 1
-                      ? ""
-                      : "s"}{" "}
-                    still need certificate evidence before becoming complete
-                    proof entries.
-                  </p>
-                </>
-              ) : recordsWaitingForEvidence.length > 0 ? (
-                <>
-                  <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-[var(--text-primary)]">
-                    Strengthen records without evidence.
-                  </h2>
-                  <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
-                    {recordsWaitingForEvidence.length} record
-                    {recordsWaitingForEvidence.length === 1 ? "" : "s"} still
-                    need supporting evidence before they become meaningful proof
-                    entries.
-                  </p>
-                </>
-              ) : privateReviewRecords.length > 0 ? (
-                <>
-                  <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-[var(--text-primary)]">
-                    Private evidence is ready for careful review.
-                  </h2>
-                  <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
-                    {privateReviewRecords.length} evidence-backed record
-                    {privateReviewRecords.length === 1 ? "" : "s"} are still
-                    private. Review wording, certificate files, and proof-card
-                    presentation before making anything public.
-                  </p>
-                </>
-              ) : recordsReadyForProof.length > 0 ? (
-                <>
-                  <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-[var(--text-primary)]">
-                    Evidence-backed records are ready for proof review.
-                  </h2>
-                  <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
-                    These records already contain evidence and can receive a
-                    ProofTrail ID when you decide they are ready for controlled
-                    public sharing.
-                  </p>
-                </>
-              ) : (
-                <>
-                  <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-[var(--text-primary)]">
-                    Your proof vault is in good shape.
-                  </h2>
-                  <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
-                    Continue preserving new achievements or review existing
-                    proof identities for clarity, public evidence, and access
-                    control.
-                  </p>
-                </>
-              )}
-            </div>
 
-            <div className="p-7">
-              <PrimaryAction href={recommendedHref}>
-                {recommendedLabel}
-              </PrimaryAction>
-            </div>
-          </GlassCard>
+                  {totalRecords === 0 ? (
+                    <>
+                      <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-[var(--text-primary)]">
+                        Start with one proof-worthy record.
+                      </h2>
 
-          <GlassCard className="p-7">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
-                  Certificate intake discipline
-                </p>
-
-                <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[var(--text-primary)]">
-                  Private before public.
-                </h2>
-              </div>
-            </div>
-
-            <div className="mt-6 space-y-3">
-              {[
-                [
-                  "01",
-                  "Create private records",
-                  "Keep certificate records private while the archive is being built.",
-                ],
-                [
-                  "02",
-                  "Attach certificate evidence",
-                  "Upload the certificate image, scanned PDF, or official source link.",
-                ],
-                [
-                  "03",
-                  "Review every public detail",
-                  "Check names, IDs, QR codes, signatures, and file previews before sharing.",
-                ],
-                [
-                  "04",
-                  "Generate proof deliberately",
-                  "Create public ProofTrail IDs only for records that are ready.",
-                ],
-              ].map(([number, title, description]) => (
-                <div
-                  key={title}
-                  className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5"
-                >
-                  <div className="flex gap-4">
-                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[var(--border)] bg-[var(--surface)] font-mono text-xs font-semibold text-[var(--text-muted)]">
-                      {number}
-                    </div>
-
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--text-primary)]">
-                        {title}
+                      <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
+                        Create a private record with a clear title, issuer,
+                        date, context, and enough detail to support evidence
+                        later.
                       </p>
+                    </>
+                  ) : certificateRecordsWaitingForEvidence.length > 0 ? (
+                    <>
+                      <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-[var(--text-primary)]">
+                        Attach certificate evidence to certificate-led records.
+                      </h2>
 
-                      <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-                        {description}
+                      <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
+                        {certificateRecordsWaitingForEvidence.length}{" "}
+                        certificate-led record
+                        {certificateRecordsWaitingForEvidence.length === 1
+                          ? ""
+                          : "s"}{" "}
+                        still need certificate evidence before becoming complete
+                        proof entries.
                       </p>
-                    </div>
-                  </div>
+                    </>
+                  ) : recordsWaitingForEvidence.length > 0 ? (
+                    <>
+                      <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-[var(--text-primary)]">
+                        Strengthen records that still have no evidence.
+                      </h2>
+
+                      <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
+                        {recordsWaitingForEvidence.length} record
+                        {recordsWaitingForEvidence.length === 1 ? "" : "s"}{" "}
+                        still need supporting evidence before they become
+                        meaningful proof entries.
+                      </p>
+                    </>
+                  ) : privateReviewRecords.length > 0 ? (
+                    <>
+                      <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-[var(--text-primary)]">
+                        Evidence is attached, but public visibility needs
+                        review.
+                      </h2>
+
+                      <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
+                        {privateReviewRecords.length} evidence-backed record
+                        {privateReviewRecords.length === 1 ? "" : "s"} are
+                        still private. Review wording, evidence previews, and
+                        proof-card presentation before making anything public.
+                      </p>
+                    </>
+                  ) : recordsReadyForProof.length > 0 ? (
+                    <>
+                      <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-[var(--text-primary)]">
+                        Evidence-backed records are ready for proof review.
+                      </h2>
+
+                      <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
+                        These records already contain evidence and can receive a
+                        ProofTrail ID when they are ready for controlled public
+                        sharing.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-0.045em] text-[var(--text-primary)]">
+                        Your proof vault is in good shape.
+                      </h2>
+
+                      <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
+                        Continue preserving new achievements or review existing
+                        proof identities for clarity, public evidence, and
+                        access control.
+                      </p>
+                    </>
+                  )}
                 </div>
-              ))}
-            </div>
-          </GlassCard>
-        </section>
 
-        <section className="mt-6 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-          <GlassCard className="p-7">
-            <div className="flex items-start justify-between gap-4">
-              <div>
+                <div className="p-7">
+                  <PrimaryAction href={recommendedHref}>
+                    {recommendedLabel}
+                  </PrimaryAction>
+                </div>
+              </GlassCard>
+            </div>
+
+            <div className="p-5 sm:p-6 lg:p-7">
+              <GlassCard className="p-7 shadow-none">
                 <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
-                  Recent audit trail
+                  Proof discipline
                 </p>
 
                 <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[var(--text-primary)]">
-                  Trust events.
+                  Private first. Public only when ready.
                 </h2>
-              </div>
+
+                <div className="mt-6 space-y-3">
+                  {[
+                    [
+                      "01",
+                      "Create private records",
+                      "Preserve achievements without exposing files or details automatically.",
+                    ],
+                    [
+                      "02",
+                      "Attach real evidence",
+                      "Upload certificates, images, PDFs, source links, notes, or supporting references.",
+                    ],
+                    [
+                      "03",
+                      "Review public details",
+                      "Check titles, context, evidence previews, and visibility before sharing.",
+                    ],
+                    [
+                      "04",
+                      "Generate proof deliberately",
+                      "Create public ProofTrail IDs only for records that are ready.",
+                    ],
+                  ].map(([number, title, description]) => (
+                    <div
+                      key={title}
+                      className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5"
+                    >
+                      <div className="flex gap-4">
+                        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[var(--border)] bg-[var(--surface)] font-mono text-xs font-semibold text-[var(--text-muted)]">
+                          {number}
+                        </div>
+
+                        <div>
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">
+                            {title}
+                          </p>
+
+                          <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+                            {description}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </GlassCard>
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-6 grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+          <GlassCard className="p-7">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
+                Recent audit trail
+              </p>
+
+              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[var(--text-primary)]">
+                Trust events.
+              </h2>
             </div>
 
             {recentLogs.length === 0 ? (
