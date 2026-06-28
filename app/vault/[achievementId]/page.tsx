@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
+import { CertificateFrame } from "@/components/certificates/CertificateFrame";
 import { createClient } from "@/lib/supabase/server";
 import { AddEvidenceForm } from "@/components/vault/AddEvidenceForm";
 import {
@@ -419,7 +420,9 @@ export default async function AchievementPage({
                   ) : null}
 
                   <div className="mt-5 space-y-3">
-                    <PrimaryExternalLink href={`/proof/${proofLink.public_slug}`}>
+                    <PrimaryExternalLink
+                      href={`/proof/${proofLink.public_slug}`}
+                    >
                       Open public proof
                     </PrimaryExternalLink>
 
@@ -619,58 +622,62 @@ export default async function AchievementPage({
 
                             {item.mediaPreviewUrl &&
                             item.mediaPreviewKind === "image" ? (
-                              <a
-                                href={item.mediaPreviewUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="block bg-[var(--surface-soft)] p-4"
-                              >
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                  src={item.mediaPreviewUrl}
-                                  alt={item.file_name || item.title}
-                                  className="max-h-[520px] w-full rounded-xl object-contain"
-                                />
-                              </a>
+                              <CertificateFrame className="m-4">
+                                <a
+                                  href={item.mediaPreviewUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="block"
+                                >
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
+                                    src={item.mediaPreviewUrl}
+                                    alt={item.file_name || item.title}
+                                    className="max-h-[560px] w-full rounded-[1rem] object-contain"
+                                  />
+                                </a>
+                              </CertificateFrame>
                             ) : null}
 
                             {item.mediaPreviewUrl &&
                             item.mediaPreviewKind === "pdf" ? (
-                              <div className="bg-[var(--surface-soft)] p-4">
+                              <CertificateFrame className="m-4">
                                 <a
                                   href={item.mediaPreviewUrl}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="flex items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+                                  className="flex min-h-[220px] items-center justify-between gap-4 rounded-[1rem] border border-dashed border-[var(--border)] bg-[var(--surface-soft)] p-6 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
                                 >
-                                  <span>Open private PDF preview</span>
+                                  <span>Open private certificate PDF</span>
                                   <span aria-hidden="true">→</span>
                                 </a>
-                              </div>
+                              </CertificateFrame>
                             ) : null}
 
                             {item.mediaPreviewUrl &&
                             item.mediaPreviewKind === "file" ? (
-                              <div className="bg-[var(--surface-soft)] p-4">
+                              <CertificateFrame className="m-4">
                                 <a
                                   href={item.mediaPreviewUrl}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="flex items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+                                  className="flex min-h-[220px] items-center justify-between gap-4 rounded-[1rem] border border-dashed border-[var(--border)] bg-[var(--surface-soft)] p-6 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
                                 >
-                                  <span>Open private file preview</span>
+                                  <span>Open private evidence file</span>
                                   <span aria-hidden="true">→</span>
                                 </a>
-                              </div>
+                              </CertificateFrame>
                             ) : null}
 
                             {!item.mediaPreviewUrl ? (
-                              <div className="bg-[var(--surface-soft)] p-4">
-                                <p className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--text-muted)]">
-                                  This media file is attached, but a private
-                                  preview link could not be generated.
-                                </p>
-                              </div>
+                              <CertificateFrame className="m-4">
+                                <div className="rounded-[1rem] border border-dashed border-[var(--border)] bg-[var(--surface-soft)] p-6">
+                                  <p className="text-sm text-[var(--text-muted)]">
+                                    This media file is attached, but a private
+                                    preview link could not be generated.
+                                  </p>
+                                </div>
+                              </CertificateFrame>
                             ) : null}
                           </div>
                         ) : null}
