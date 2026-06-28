@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
+import { CertificateFrame } from "@/components/certificates/CertificateFrame";
 import { createClient } from "@/lib/supabase/server";
 import { generateQrDataUrl } from "@/lib/qr/generate";
 import {
@@ -585,39 +586,39 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                             </div>
                           </div>
 
-                          {item.mediaPreviewUrl &&
-                          item.mediaPreviewKind === "image" ? (
-                            <a
-                              href={item.mediaPreviewUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="block bg-[var(--surface-soft)] p-4"
-                            >
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={item.mediaPreviewUrl}
-                                alt={`${getCleanEvidenceLabel(
-                                  item.evidence_type
-                                )} for ${achievement.title}`}
-                                className="max-h-[420px] w-full rounded-xl object-contain"
-                              />
-                            </a>
-                          ) : null}
+                          {item.mediaPreviewUrl && item.mediaPreviewKind === "image" ? (
+  <CertificateFrame className="m-4">
+    <a
+      href={item.mediaPreviewUrl}
+      target="_blank"
+      rel="noreferrer"
+      className="block"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={item.mediaPreviewUrl}
+        alt={`${getCleanEvidenceLabel(item.evidence_type)} for ${
+          achievement.title
+        }`}
+        className="max-h-[560px] w-full rounded-[1rem] object-contain"
+      />
+    </a>
+  </CertificateFrame>
+) : null}
 
-                          {item.mediaPreviewUrl &&
-                          item.mediaPreviewKind === "pdf" ? (
-                            <div className="bg-[var(--surface-soft)] p-4">
-                              <a
-                                href={item.mediaPreviewUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="flex items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
-                              >
-                                <span>Open public certificate evidence</span>
-                                <span aria-hidden="true">→</span>
-                              </a>
-                            </div>
-                          ) : null}
+                          {item.mediaPreviewUrl && item.mediaPreviewKind === "pdf" ? (
+  <CertificateFrame className="m-4">
+    <a
+      href={item.mediaPreviewUrl}
+      target="_blank"
+      rel="noreferrer"
+      className="flex min-h-[220px] items-center justify-between gap-4 rounded-[1rem] border border-dashed border-[var(--border)] bg-[var(--surface-soft)] p-6 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+    >
+      <span>Open public certificate evidence</span>
+      <span aria-hidden="true">→</span>
+    </a>
+  </CertificateFrame>
+) : null}
 
                           {item.mediaPreviewUrl &&
                           item.mediaPreviewKind === "file" ? (

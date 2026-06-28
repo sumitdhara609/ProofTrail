@@ -247,8 +247,8 @@ export default async function AchievementPage({
     : null;
 
   return (
-    <main className="premium-noise relative min-h-screen overflow-hidden bg-[var(--background)] px-5 py-6 text-[var(--text-primary)] sm:px-8 lg:px-10">
-      <section className="relative z-10 mx-auto max-w-7xl">
+    <main className="premium-noise relative min-h-screen overflow-hidden bg-[var(--background)] text-[var(--text-primary)]">
+      <section className="relative z-10 mx-auto w-full max-w-[96rem] px-5 py-6 sm:px-8 lg:px-10">
         <nav className="flex items-center justify-between rounded-[1.75rem] border border-[var(--border)] bg-[var(--surface)]/90 px-4 py-3 shadow-[var(--shadow-soft)] backdrop-blur-xl">
           <Link href="/dashboard" className="flex items-center gap-3">
             <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[var(--text-primary)] text-xs font-bold tracking-[0.16em] text-[var(--background)]">
@@ -305,7 +305,7 @@ export default async function AchievementPage({
           </div>
         ) : null}
 
-        <header className="grid gap-6 py-10 lg:grid-cols-[1fr_0.72fr] lg:items-stretch lg:py-12">
+        <header className="grid gap-5 py-10 xl:grid-cols-[minmax(0,1.08fr)_minmax(22rem,0.92fr)] xl:items-stretch xl:py-12">
           <GlassCard className="overflow-hidden">
             <div className="border-b border-[var(--border)] bg-[var(--surface-soft)] p-8 sm:p-10">
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
@@ -447,326 +447,344 @@ export default async function AchievementPage({
           </GlassCard>
         </header>
 
-        <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <GlassCard className="p-7">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
-              Record details
-            </p>
-
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                  Issuer / origin
-                </p>
-
-                <p className="mt-3 text-sm font-semibold text-[var(--text-primary)]">
-                  {record.issuer || "Not added"}
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                  Achievement date
-                </p>
-
-                <p className="mt-3 text-sm font-semibold text-[var(--text-primary)]">
-                  {formatDate(record.achievement_date)}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                Impact
-              </p>
-
-              <p className="mt-3 text-sm leading-8 text-[var(--text-secondary)]">
-                {record.impact_summary ||
-                  "No impact summary has been added yet. Add what this achievement changed, demonstrated, or contributed."}
-              </p>
-            </div>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <SecondaryButton href={`/vault/${record.id}/edit`}>
-                Edit record
-              </SecondaryButton>
-
-              <Link
-                href={`/vault/${record.id}/delete`}
-                className="inline-flex min-h-11 items-center justify-center rounded-full border border-[var(--danger-border)] bg-[var(--danger-soft)] px-6 py-3 text-sm font-semibold text-[var(--danger)] shadow-[var(--shadow-soft)] transition hover:-translate-y-0.5 hover:border-[var(--danger)]"
-              >
-                Delete record
-              </Link>
-            </div>
-          </GlassCard>
-
-          <GlassCard className="p-7">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
-              Evidence intake
-            </p>
-
-            <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[var(--text-primary)]">
-              Attach supporting evidence.
-            </h2>
-
-            <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
-              Add source links, certificates, publications, project pages, or
-              supporting references that strengthen this record.
-            </p>
-
-            <AddEvidenceForm achievementId={record.id} />
-          </GlassCard>
-        </section>
-
-        <section className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <GlassCard className="p-7">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div>
+        <section className="overflow-hidden rounded-[2.25rem] border border-[var(--border)] bg-[var(--surface)]/45 shadow-[var(--shadow-soft)]">
+          <div className="grid gap-0 xl:grid-cols-[minmax(0,1.08fr)_minmax(22rem,0.92fr)]">
+            <div className="border-b border-[var(--border)] p-5 sm:p-6 lg:p-7 xl:border-b-0 xl:border-r">
+              <GlassCard className="p-7 shadow-none">
                 <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
-                  Evidence ledger
+                  Record details
+                </p>
+
+                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                      Issuer / origin
+                    </p>
+
+                    <p className="mt-3 text-sm font-semibold text-[var(--text-primary)]">
+                      {record.issuer || "Not added"}
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                      Achievement date
+                    </p>
+
+                    <p className="mt-3 text-sm font-semibold text-[var(--text-primary)]">
+                      {formatDate(record.achievement_date)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                    Impact
+                  </p>
+
+                  <p className="mt-3 text-sm leading-8 text-[var(--text-secondary)]">
+                    {record.impact_summary ||
+                      "No impact summary has been added yet. Add what this achievement changed, demonstrated, or contributed."}
+                  </p>
+                </div>
+
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <SecondaryButton href={`/vault/${record.id}/edit`}>
+                    Edit record
+                  </SecondaryButton>
+
+                  <Link
+                    href={`/vault/${record.id}/delete`}
+                    className="inline-flex min-h-11 items-center justify-center rounded-full border border-[var(--danger-border)] bg-[var(--danger-soft)] px-6 py-3 text-sm font-semibold text-[var(--danger)] shadow-[var(--shadow-soft)] transition hover:-translate-y-0.5 hover:border-[var(--danger)]"
+                  >
+                    Delete record
+                  </Link>
+                </div>
+              </GlassCard>
+            </div>
+
+            <div className="p-5 sm:p-6 lg:p-7">
+              <GlassCard className="p-7 shadow-none">
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
+                  Evidence intake
                 </p>
 
                 <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[var(--text-primary)]">
-                  Attached evidence.
+                  Attach supporting evidence.
                 </h2>
-              </div>
 
-              <p className="text-sm text-[var(--text-muted)]">
-                {evidence.length} item{evidence.length === 1 ? "" : "s"}
-              </p>
+                <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
+                  Add source links, certificates, publications, project pages,
+                  or supporting references that strengthen this record.
+                </p>
+
+                <AddEvidenceForm achievementId={record.id} />
+              </GlassCard>
             </div>
+          </div>
+        </section>
 
-            {evidence.length === 0 ? (
-              <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-6">
-                <p className="text-sm font-semibold text-[var(--text-primary)]">
-                  No evidence has been attached yet.
-                </p>
+        <section className="mt-6 overflow-hidden rounded-[2.25rem] border border-[var(--border)] bg-[var(--surface)]/45 shadow-[var(--shadow-soft)]">
+          <div className="grid gap-0 xl:grid-cols-[minmax(0,1.08fr)_minmax(22rem,0.92fr)]">
+            <div className="border-b border-[var(--border)] p-5 sm:p-6 lg:p-7 xl:border-b-0 xl:border-r">
+              <GlassCard className="p-7 shadow-none">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
+                      Evidence ledger
+                    </p>
 
-                <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
-                  Add a source link, project page, publication, certificate, or
-                  supporting note to strengthen this record before sharing it.
-                </p>
-              </div>
-            ) : (
-              <div className="mt-6 space-y-4">
-                {evidence.map((item, index) => (
-                  <div
-                    key={item.id}
-                    className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)]"
-                  >
-                    <div className="grid gap-0 sm:grid-cols-[5rem_1fr]">
-                      <div className="border-b border-[var(--border)] bg-[var(--surface)] p-5 sm:border-b-0 sm:border-r">
-                        <p className="text-xs uppercase tracking-[0.2em] text-[var(--text-muted)]">
-                          Item
-                        </p>
+                    <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[var(--text-primary)]">
+                      Attached evidence.
+                    </h2>
+                  </div>
 
-                        <p className="mt-2 font-mono text-xl font-semibold text-[var(--text-primary)]">
-                          {String(index + 1).padStart(2, "0")}
-                        </p>
-                      </div>
+                  <p className="text-sm text-[var(--text-muted)]">
+                    {evidence.length} item{evidence.length === 1 ? "" : "s"}
+                  </p>
+                </div>
 
-                      <div className="p-5">
-                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                          <div>
-                            <p className="text-sm font-semibold text-[var(--text-primary)]">
-                              {item.title}
+                {evidence.length === 0 ? (
+                  <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-6">
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
+                      No evidence has been attached yet.
+                    </p>
+
+                    <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
+                      Add a source link, project page, publication, certificate,
+                      or supporting note to strengthen this record before sharing
+                      it.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="mt-6 space-y-4">
+                    {evidence.map((item, index) => (
+                      <div
+                        key={item.id}
+                        className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)]"
+                      >
+                        <div className="grid gap-0 sm:grid-cols-[5rem_1fr]">
+                          <div className="border-b border-[var(--border)] bg-[var(--surface)] p-5 sm:border-b-0 sm:border-r">
+                            <p className="text-xs uppercase tracking-[0.2em] text-[var(--text-muted)]">
+                              Item
                             </p>
 
-                            <p className="mt-1 text-xs uppercase tracking-[0.16em] text-[var(--text-muted)]">
-                              {formatEvidenceType(item.evidence_type)}
+                            <p className="mt-2 font-mono text-xl font-semibold text-[var(--text-primary)]">
+                              {String(index + 1).padStart(2, "0")}
                             </p>
                           </div>
 
-                          <span
-                            className={
-                              item.is_public
-                                ? "w-fit rounded-full border border-[var(--border)] bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent)]"
-                                : "w-fit rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs font-semibold text-[var(--text-muted)]"
-                            }
-                          >
-                            {item.is_public ? "Public" : "Private"}
-                          </span>
-                        </div>
+                          <div className="p-5">
+                            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                              <div>
+                                <p className="text-sm font-semibold text-[var(--text-primary)]">
+                                  {item.title}
+                                </p>
 
-                        {item.description ? (
-                          <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
-                            {item.description}
-                          </p>
-                        ) : null}
-
-                        {item.file_path ? (
-                          <div className="mt-5 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
-                            <div className="border-b border-[var(--border)] p-4">
-                              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                                <div>
-                                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
-                                    Private media evidence
-                                  </p>
-
-                                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                                    {item.file_name || "Attached evidence file"}
-                                  </p>
-
-                                  <p className="mt-1 text-xs text-[var(--text-muted)]">
-                                    {[item.file_mime_type, item.mediaSizeLabel]
-                                      .filter(Boolean)
-                                      .join(" • ")}
-                                  </p>
-                                </div>
-
-                                <span className="w-fit rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-1 text-xs font-semibold text-[var(--text-muted)]">
-                                  Private preview
-                                </span>
+                                <p className="mt-1 text-xs uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                                  {formatEvidenceType(item.evidence_type)}
+                                </p>
                               </div>
+
+                              <span
+                                className={
+                                  item.is_public
+                                    ? "w-fit rounded-full border border-[var(--border)] bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent)]"
+                                    : "w-fit rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs font-semibold text-[var(--text-muted)]"
+                                }
+                              >
+                                {item.is_public ? "Public" : "Private"}
+                              </span>
                             </div>
 
-                            {item.mediaPreviewUrl &&
-                            item.mediaPreviewKind === "image" ? (
-                              <CertificateFrame className="m-4">
-                                <a
-                                  href={item.mediaPreviewUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="block"
-                                >
-                                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                                  <img
-                                    src={item.mediaPreviewUrl}
-                                    alt={item.file_name || item.title}
-                                    className="max-h-[560px] w-full rounded-[1rem] object-contain"
-                                  />
-                                </a>
-                              </CertificateFrame>
+                            {item.description ? (
+                              <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
+                                {item.description}
+                              </p>
                             ) : null}
 
-                            {item.mediaPreviewUrl &&
-                            item.mediaPreviewKind === "pdf" ? (
-                              <CertificateFrame className="m-4">
-                                <a
-                                  href={item.mediaPreviewUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="flex min-h-[220px] items-center justify-between gap-4 rounded-[1rem] border border-dashed border-[var(--border)] bg-[var(--surface-soft)] p-6 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
-                                >
-                                  <span>Open private certificate PDF</span>
-                                  <span aria-hidden="true">→</span>
-                                </a>
-                              </CertificateFrame>
-                            ) : null}
+                            {item.file_path ? (
+                              <div className="mt-5 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
+                                <div className="border-b border-[var(--border)] p-4">
+                                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                    <div>
+                                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
+  {item.is_public ? "Public media evidence" : "Private media evidence"}
+</p>
 
-                            {item.mediaPreviewUrl &&
-                            item.mediaPreviewKind === "file" ? (
-                              <CertificateFrame className="m-4">
-                                <a
-                                  href={item.mediaPreviewUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="flex min-h-[220px] items-center justify-between gap-4 rounded-[1rem] border border-dashed border-[var(--border)] bg-[var(--surface-soft)] p-6 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
-                                >
-                                  <span>Open private evidence file</span>
-                                  <span aria-hidden="true">→</span>
-                                </a>
-                              </CertificateFrame>
-                            ) : null}
+<p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+  {item.evidence_type === "certificate"
+    ? "Certificate evidence attached"
+    : item.evidence_type === "image"
+      ? "Image evidence attached"
+      : "Evidence file attached"}
+</p>
 
-                            {!item.mediaPreviewUrl ? (
-                              <CertificateFrame className="m-4">
-                                <div className="rounded-[1rem] border border-dashed border-[var(--border)] bg-[var(--surface-soft)] p-6">
-                                  <p className="text-sm text-[var(--text-muted)]">
-                                    This media file is attached, but a private
-                                    preview link could not be generated.
-                                  </p>
+<p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
+  {item.is_public
+    ? "This media item is selected for public proof cards."
+    : "This media item is stored privately inside the vault."}
+</p>
+                                    </div>
+
+                                    <span className="w-fit rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-1 text-xs font-semibold text-[var(--text-muted)]">
+  {item.is_public ? "Public selection" : "Private preview"}
+</span>
+                                  </div>
                                 </div>
-                              </CertificateFrame>
+
+                                {item.mediaPreviewUrl &&
+                                item.mediaPreviewKind === "image" ? (
+                                  <CertificateFrame className="m-4">
+                                    <a
+                                      href={item.mediaPreviewUrl}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="block"
+                                    >
+                                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                                      <img
+                                        src={item.mediaPreviewUrl}
+                                        alt={item.file_name || item.title}
+                                        className="max-h-[560px] w-full rounded-[1rem] object-contain"
+                                      />
+                                    </a>
+                                  </CertificateFrame>
+                                ) : null}
+
+                                {item.mediaPreviewUrl &&
+                                item.mediaPreviewKind === "pdf" ? (
+                                  <CertificateFrame className="m-4">
+                                    <a
+                                      href={item.mediaPreviewUrl}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="flex min-h-[220px] items-center justify-between gap-4 rounded-[1rem] border border-dashed border-[var(--border)] bg-[var(--surface-soft)] p-6 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+                                    >
+                                      <span>Open private certificate PDF</span>
+                                      <span aria-hidden="true">→</span>
+                                    </a>
+                                  </CertificateFrame>
+                                ) : null}
+
+                                {item.mediaPreviewUrl &&
+                                item.mediaPreviewKind === "file" ? (
+                                  <CertificateFrame className="m-4">
+                                    <a
+                                      href={item.mediaPreviewUrl}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="flex min-h-[220px] items-center justify-between gap-4 rounded-[1rem] border border-dashed border-[var(--border)] bg-[var(--surface-soft)] p-6 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+                                    >
+                                      <span>Open private evidence file</span>
+                                      <span aria-hidden="true">→</span>
+                                    </a>
+                                  </CertificateFrame>
+                                ) : null}
+
+                                {!item.mediaPreviewUrl ? (
+                                  <CertificateFrame className="m-4">
+                                    <div className="rounded-[1rem] border border-dashed border-[var(--border)] bg-[var(--surface-soft)] p-6">
+                                      <p className="text-sm text-[var(--text-muted)]">
+                                        This media file is attached, but a
+                                        private preview link could not be
+                                        generated.
+                                      </p>
+                                    </div>
+                                  </CertificateFrame>
+                                ) : null}
+                              </div>
                             ) : null}
+
+                            <div className="mt-4 flex flex-wrap items-center gap-4">
+                              <Link
+                                href={`/vault/${record.id}/evidence/${item.id}/edit`}
+                                className="inline-flex text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+                              >
+                                Edit evidence →
+                              </Link>
+
+                              {item.source_url ? (
+                                <a
+                                  href={item.source_url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
+                                >
+                                  Open source →
+                                </a>
+                              ) : null}
+
+                              <Link
+                                href={`/vault/${record.id}/evidence/${item.id}/delete`}
+                                className="inline-flex text-sm font-semibold text-[var(--danger)] transition hover:opacity-80"
+                              >
+                                Remove evidence
+                              </Link>
+                            </div>
                           </div>
-                        ) : null}
-
-                        <div className="mt-4 flex flex-wrap items-center gap-4">
-                          <Link
-                            href={`/vault/${record.id}/evidence/${item.id}/edit`}
-                            className="inline-flex text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
-                          >
-                            Edit evidence →
-                          </Link>
-
-                          {item.source_url ? (
-                            <a
-                              href={item.source_url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
-                            >
-                              Open source →
-                            </a>
-                          ) : null}
-
-                          <Link
-                            href={`/vault/${record.id}/evidence/${item.id}/delete`}
-                            className="inline-flex text-sm font-semibold text-[var(--danger)] transition hover:opacity-80"
-                          >
-                            Remove evidence
-                          </Link>
                         </div>
                       </div>
-                    </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            )}
-          </GlassCard>
+                )}
+              </GlassCard>
+            </div>
 
-          <GlassCard className="p-7">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
-              Trust timeline
-            </p>
-
-            <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[var(--text-primary)]">
-              Audit activity.
-            </h2>
-
-            {logs.length === 0 ? (
-              <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-6">
-                <p className="text-sm font-semibold text-[var(--text-primary)]">
-                  No trust activity recorded yet.
+            <div className="p-5 sm:p-6 lg:p-7">
+              <GlassCard className="p-7 shadow-none">
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
+                  Trust timeline
                 </p>
 
-                <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
-                  Evidence changes, record edits, proof generation, and proof
-                  withdrawal events will appear here.
-                </p>
-              </div>
-            ) : (
-              <div className="mt-6 space-y-3">
-                {logs.map((log, index) => (
-                  <div
-                    key={log.id}
-                    className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-xs font-semibold text-[var(--text-muted)]">
-                        {String(index + 1).padStart(2, "0")}
-                      </div>
+                <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[var(--text-primary)]">
+                  Audit activity.
+                </h2>
 
-                      <div>
-                        <p className="text-sm font-semibold text-[var(--text-primary)]">
-                          {getAuditActionLabel(log.action)}
-                        </p>
+                {logs.length === 0 ? (
+                  <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-6">
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
+                      No trust activity recorded yet.
+                    </p>
 
-                        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-                          {getAuditActionDescription(log.action)}
-                        </p>
-
-                        <p className="mt-3 text-xs text-[var(--text-muted)]">
-                          {formatDateTime(log.created_at)}
-                        </p>
-                      </div>
-                    </div>
+                    <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
+                      Evidence changes, record edits, proof generation, and proof
+                      withdrawal events will appear here.
+                    </p>
                   </div>
-                ))}
-              </div>
-            )}
-          </GlassCard>
+                ) : (
+                  <div className="mt-6 space-y-3">
+                    {logs.map((log, index) => (
+                      <div
+                        key={log.id}
+                        className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5"
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-xs font-semibold text-[var(--text-muted)]">
+                            {String(index + 1).padStart(2, "0")}
+                          </div>
+
+                          <div>
+                            <p className="text-sm font-semibold text-[var(--text-primary)]">
+                              {getAuditActionLabel(log.action)}
+                            </p>
+
+                            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+                              {getAuditActionDescription(log.action)}
+                            </p>
+
+                            <p className="mt-3 text-xs text-[var(--text-muted)]">
+                              {formatDateTime(log.created_at)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </GlassCard>
+            </div>
+          </div>
         </section>
 
         {proofLinks.length > 0 ? (
