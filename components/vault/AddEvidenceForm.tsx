@@ -107,7 +107,7 @@ export function AddEvidenceForm({ achievementId }: AddEvidenceFormProps) {
           name="title"
           type="text"
           required
-          placeholder="Certificate of Training — C, C++, Java, and Python"
+          placeholder="Certificate of Publishing — Rethink What We Eat"
           className="mt-2 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
         />
         <FieldHint>
