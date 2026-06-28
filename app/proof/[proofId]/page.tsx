@@ -30,7 +30,6 @@ type ProofUnavailableReason =
 type PublicEvidenceWithMediaPreview = EvidenceItem & {
   mediaPreviewUrl: string | null;
   mediaPreviewKind: "image" | "pdf" | "file" | null;
-  mediaSizeLabel: string | null;
 };
 
 function getUnavailableCopy(reason: ProofUnavailableReason) {
@@ -87,20 +86,20 @@ function getMediaPreviewKind(mimeType: string | null) {
   return "file";
 }
 
-function formatFileSize(bytes: number | null) {
-  if (!bytes) {
-    return null;
+function getCleanEvidenceLabel(evidenceType: string) {
+  if (evidenceType === "certificate") {
+    return "Certificate evidence";
   }
 
-  if (bytes < 1024) {
-    return `${bytes} B`;
+  if (evidenceType === "document") {
+    return "Document evidence";
   }
 
-  if (bytes < 1024 * 1024) {
-    return `${(bytes / 1024).toFixed(1)} KB`;
+  if (evidenceType === "image") {
+    return "Image evidence";
   }
 
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return "Public media evidence";
 }
 
 function PublicNav({ label }: { label: string }) {
@@ -287,14 +286,12 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
   const evidence: PublicEvidenceWithMediaPreview[] = await Promise.all(
     rawEvidence.map(async (item) => {
       const mediaPreviewKind = getMediaPreviewKind(item.file_mime_type);
-      const mediaSizeLabel = formatFileSize(item.file_size_bytes);
 
       if (!item.file_path || !item.storage_bucket) {
         return {
           ...item,
           mediaPreviewUrl: null,
           mediaPreviewKind,
-          mediaSizeLabel,
         };
       }
 
@@ -306,7 +303,6 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
         ...item,
         mediaPreviewUrl: signedUrlData?.signedUrl || null,
         mediaPreviewKind,
-        mediaSizeLabel,
       };
     })
   );
@@ -574,17 +570,12 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                               <div>
                                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
-                                  Public media evidence
+                                  {getCleanEvidenceLabel(item.evidence_type)}
                                 </p>
 
-                                <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                                  {item.file_name || "Published evidence file"}
-                                </p>
-
-                                <p className="mt-1 text-xs text-[var(--text-muted)]">
-                                  {[item.file_mime_type, item.mediaSizeLabel]
-                                    .filter(Boolean)
-                                    .join(" • ")}
+                                <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+                                  A public evidence item selected for this proof
+                                  card.
                                 </p>
                               </div>
 
@@ -605,7 +596,9 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 src={item.mediaPreviewUrl}
-                                alt={item.file_name || item.title}
+                                alt={`${getCleanEvidenceLabel(
+                                  item.evidence_type
+                                )} for ${achievement.title}`}
                                 className="max-h-[420px] w-full rounded-xl object-contain"
                               />
                             </a>
@@ -620,7 +613,7 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                                 rel="noreferrer"
                                 className="flex items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-strong)]"
                               >
-                                <span>Open public PDF evidence</span>
+                                <span>Open public certificate evidence</span>
                                 <span aria-hidden="true">→</span>
                               </a>
                             </div>
@@ -644,7 +637,7 @@ export default async function PublicProofPage({ params }: PublicProofPageProps) 
                           {!item.mediaPreviewUrl ? (
                             <div className="bg-[var(--surface-soft)] p-4">
                               <p className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--text-muted)]">
-                                This public media file is listed, but its
+                                This public media evidence is listed, but its
                                 preview link could not be generated.
                               </p>
                             </div>
