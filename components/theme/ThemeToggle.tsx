@@ -4,48 +4,6 @@ import { useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
 
-function SunIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className="absolute left-1/2 top-1/2 block h-[21px] w-[21px] -translate-x-1/2 -translate-y-1/2"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2.8v2.4" />
-      <path d="M12 18.8v2.4" />
-      <path d="M2.8 12h2.4" />
-      <path d="M18.8 12h2.4" />
-      <path d="M5.5 5.5l1.7 1.7" />
-      <path d="M16.8 16.8l1.7 1.7" />
-      <path d="M18.5 5.5l-1.7 1.7" />
-      <path d="M7.2 16.8l-1.7 1.7" />
-    </svg>
-  );
-}
-
-function MoonIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className="absolute left-1/2 top-1/2 block h-[22px] w-[22px] -translate-x-1/2 -translate-y-1/2"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M20.6 14.1A8.2 8.2 0 0 1 9.9 3.4a8.7 8.7 0 1 0 10.7 10.7Z" />
-    </svg>
-  );
-}
-
 export function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
@@ -61,7 +19,6 @@ export function ThemeToggle() {
 
   function toggleTheme() {
     const nextTheme = theme === "dark" ? "light" : "dark";
-
     setTheme(nextTheme);
     localStorage.setItem("prooftrail-theme", nextTheme);
     document.documentElement.classList.toggle("dark", nextTheme === "dark");
@@ -76,11 +33,47 @@ export function ThemeToggle() {
       aria-label="Toggle theme"
       className="inline-flex h-16 items-center gap-4 rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 pr-7 text-[15px] font-semibold text-[var(--text-secondary)] shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-0.5 hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
     >
-      <span className="relative h-11 w-11 shrink-0 rounded-full bg-[var(--accent-soft)] text-[var(--accent)]">
-        {isDark ? <MoonIcon /> : <SunIcon />}
+      <span className="grid h-10 w-10 place-items-center rounded-full bg-[var(--accent-soft)]">
+        {isDark ? (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.9"
+            className="h-5 w-5 text-[var(--accent)]"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 12.79A9 9 0 1 1 11.21 3c-.04.33-.06.66-.06 1a9 9 0 0 0 9 9c.34 0 .67-.02 1-.06Z"
+            />
+          </svg>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.9"
+            className="h-5 w-5 text-[var(--accent)]"
+          >
+            <circle cx="12" cy="12" r="4.2" />
+            <path strokeLinecap="round" d="M12 2.5v2.2" />
+            <path strokeLinecap="round" d="M12 19.3v2.2" />
+            <path strokeLinecap="round" d="M4.93 4.93l1.56 1.56" />
+            <path strokeLinecap="round" d="M17.51 17.51l1.56 1.56" />
+            <path strokeLinecap="round" d="M2.5 12h2.2" />
+            <path strokeLinecap="round" d="M19.3 12h2.2" />
+            <path strokeLinecap="round" d="M4.93 19.07l1.56-1.56" />
+            <path strokeLinecap="round" d="M17.51 6.49l1.56-1.56" />
+          </svg>
+        )}
       </span>
 
-      <span className="leading-none">{isDark ? "Dark" : "Light"}</span>
+      <span className="text-[15px] font-semibold tracking-[-0.01em]">
+        {isDark ? "Dark" : "Light"}
+      </span>
     </button>
   );
 }
