@@ -9,22 +9,22 @@ function SunIcon() {
     <svg
       viewBox="0 0 24 24"
       aria-hidden="true"
-      className="block h-5 w-5"
+      className="absolute left-1/2 top-1/2 block h-[21px] w-[21px] -translate-x-1/2 -translate-y-1/2"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.9"
+      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <circle cx="12" cy="12" r="4.2" />
-      <path d="M12 2.75v2.5" />
-      <path d="M12 18.75v2.5" />
-      <path d="M2.75 12h2.5" />
-      <path d="M18.75 12h2.5" />
-      <path d="M5.45 5.45l1.77 1.77" />
-      <path d="M16.78 16.78l1.77 1.77" />
-      <path d="M18.55 5.45l-1.77 1.77" />
-      <path d="M7.22 16.78l-1.77 1.77" />
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2.8v2.4" />
+      <path d="M12 18.8v2.4" />
+      <path d="M2.8 12h2.4" />
+      <path d="M18.8 12h2.4" />
+      <path d="M5.5 5.5l1.7 1.7" />
+      <path d="M16.8 16.8l1.7 1.7" />
+      <path d="M18.5 5.5l-1.7 1.7" />
+      <path d="M7.2 16.8l-1.7 1.7" />
     </svg>
   );
 }
@@ -34,14 +34,14 @@ function MoonIcon() {
     <svg
       viewBox="0 0 24 24"
       aria-hidden="true"
-      className="block h-5 w-5"
+      className="absolute left-1/2 top-1/2 block h-[22px] w-[22px] -translate-x-1/2 -translate-y-1/2"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.9"
+      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M21 12.8A8.8 8.8 0 1 1 11.2 3a7.2 7.2 0 1 0 9.8 9.8Z" />
+      <path d="M20.6 14.1A8.2 8.2 0 0 1 9.9 3.4a8.7 8.7 0 1 0 10.7 10.7Z" />
     </svg>
   );
 }
@@ -76,7 +76,7 @@ export function ThemeToggle() {
       aria-label="Toggle theme"
       className="inline-flex h-16 items-center gap-4 rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 pr-7 text-[15px] font-semibold text-[var(--text-secondary)] shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-0.5 hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
     >
-      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[var(--accent-soft)] text-[var(--accent)]">
+      <span className="relative h-11 w-11 shrink-0 rounded-full bg-[var(--accent-soft)] text-[var(--accent)]">
         {isDark ? <MoonIcon /> : <SunIcon />}
       </span>
 
