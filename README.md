@@ -650,34 +650,6 @@ prooftrail/
 │
 ├── docs/
 │   └── screenshots/
-│       ├── 01-landing-hero-light.png
-│       ├── 02-home-dark.png
-│       ├── 03-principles-private-by-default.png
-│       ├── 05-auth-sign-in.png
-│       ├── 06-auth-create-vault.png
-│       ├── 07-vault-archive-overview.png
-│       ├── 08-vault-record-index.png
-│       ├── 09-dashboard-overview.png
-│       ├── 10-dashboard-review-guidance.png
-│       ├── 11-dashboard-activity-recent-records.png
-│       ├── 12-create-record-intro.png
-│       ├── 13-create-record-flow.png
-│       ├── 14-create-record-guidelines.png
-│       ├── 15-create-record-form-top.png
-│       ├── 16-create-record-form-bottom.png
-│       ├── 17-record-dossier-proof-identity.png
-│       ├── 18-record-details.png
-│       ├── 19-evidence-intake-overview.png
-│       ├── 20-evidence-intake-upload-note.png
-│       ├── 21-evidence-intake-safety-workflow.png
-│       ├── 22-evidence-ledger-overview.png
-│       ├── 23-evidence-ledger-author-photo.png
-│       ├── 24-evidence-ledger-certificate.png
-│       ├── 25-public-proof-overview.png
-│       ├── 26-public-proof-evidence-photo.png
-│       ├── 27-public-proof-evidence-certificate.png
-│       ├── 29-proof-history.png
-│       └── 30-footer-brand-identity.png
 │
 ├── lib/
 │   └── supabase/
@@ -845,7 +817,7 @@ Potential future improvements:
 
 This project is open-source under the **MIT License**.
 
-© 2026 Sumit Dhara.
+**© 2026 Sumit Dhara.**
 
 ---
 
