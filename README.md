@@ -627,3 +627,16 @@ Potential future improvements:
   <strong>ProofTrail</strong><br />
   Evidence · Context · Controlled Proof
 </p>
+
+---
+
+## 📜 License
+ This project is open-source under the  **MIT License.**
+
+#### © 2026 Sumit Dhara. All rights reserved.
+
+---
+
+## ⭐ Support 
+- ProofTrail took 3 months of persistence to launch publicly.
+- If you appreciate builders who keep improving until ideas become real products, consider giving this repository a **star.**
